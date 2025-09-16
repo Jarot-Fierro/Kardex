@@ -35,8 +35,6 @@ class Paciente(StandardModel):
     representante_legal = models.CharField(max_length=100, null=True, blank=True, verbose_name='Representante Legal')
     nombre_social = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre Social')
 
-    ficha = models.ForeignKey('kardex.Ficha', on_delete=models.CASCADE, null=True, blank=True,
-                              verbose_name='Ficha')
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.CASCADE, null=False, verbose_name='Comuna')
     prevision = models.ForeignKey('kardex.Prevision', on_delete=models.CASCADE, null=False, verbose_name='Previsión')
 

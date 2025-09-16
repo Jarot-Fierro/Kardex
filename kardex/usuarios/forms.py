@@ -50,6 +50,7 @@ class CustomLoginForm(forms.Form):
                     user_obj = User.objects.get(email=identifier)
                     print(f"{user_obj.email}-EL USUARIO")
                     user = authenticate(username=user_obj.username, password=password)
+                    print(user)
                 except User.DoesNotExist:
                     user = None
 
@@ -59,6 +60,15 @@ class CustomLoginForm(forms.Form):
             self.user = user
         print(f"Asignando usuario: {self.user}")
         return cleaned_data
+
+    def save(self, commit=True):
+        user = self.instance
+        password = self.cleaned_data.get('password')
+        if password:
+            user.set_password(password)  # <- aquí está la magia
+        if commit:
+            user.save()
+        return user
 
     def get_user(self):
         return getattr(self, 'user', None)

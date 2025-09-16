@@ -1,6 +1,7 @@
 from django.db import models
 
 from config.abstract import StandardModel
+from kardex.choices import ESTADO_RESPUESTA
 
 
 class MovimientoFicha(StandardModel):
@@ -12,7 +13,7 @@ class MovimientoFicha(StandardModel):
     observacion_salida = models.TextField(null=True, blank=True, verbose_name='Observación de Salida')
     usuario_entrega = models.CharField(max_length=100, null=True, blank=True, verbose_name='Usuario que Entrega')
     usuario_entrada = models.CharField(max_length=100, null=True, blank=True, verbose_name='Usuario que Entrada')
-    status2 = models.CharField(max_length=50, choices=[('ENTREGA', 'Entrgado'), ('RECIBIDO', 'Recibido')],
+    status2 = models.CharField(max_length=50, choices=ESTADO_RESPUESTA,
                                default='EN ESPERA', null=False, verbose_name='Estado')
 
     establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.DO_NOTHING,

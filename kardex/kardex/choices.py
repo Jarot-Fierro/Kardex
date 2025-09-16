@@ -22,3 +22,8 @@ TIPO_PERFIL = [
     ('ADMINISTRATIVO', 'Administrativo'),
     ('DERIVA', 'Deriva')
 ]
+
+ESTADO_RESPUESTA = [
+    ('ENTREGA', 'Entrgado'),
+    ('RECIBIDO', 'Recibido')
+]

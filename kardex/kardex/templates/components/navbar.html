@@ -24,40 +24,52 @@
                     <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true"
                        aria-expanded="false" class="nav-link dropdown-toggle">Mantenedores</a>
                     <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
-                        <li><a href="{% url 'kardex:establishment_active' %}" class="dropdown-item">Establecimientos</a>
+                        <li><a href="{% url 'kardex:establecimiento_active' %}"
+                               class="dropdown-item">Establecimientos</a>
                         </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:commune_active' %}" class="dropdown-item">Comunas</a></li>
+                        <li><a href="{% url 'kardex:comuna_active' %}" class="dropdown-item">Comunas</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="#" class="dropdown-item">Usuarios Sistema</a></li>
+                        <!--                        <li><a href="{% url 'kardex:comuna_active' %}" class="dropdown-item">Usuarios Sistema</a></li>-->
+                        <!--                        <li class="dropdown-divider"></li>-->
+                        <li><a href="{% url 'kardex:servicio_clinico_active' %}" class="dropdown-item">Servicios
+                            Clínicos</a>
+                        </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="#" class="dropdown-item">Servicios Clínicos</a></li>
+                        <li><a href="{% url 'kardex:profesionales_active' %}" class="dropdown-item">Profesionales</a>
+                        </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="#" class="dropdown-item">Profesionales</a></li>
+                        <li><a href="{% url 'kardex:prevision_active' %}" class="dropdown-item">Previsión</a>
+                        </li>
 
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">Consulta Pacientes</a>
+                    <a href="{% url 'kardex:paciente_active' %}" class="nav-link">Pacientes</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false" class="nav-link dropdown-toggle">Informes</a>
+                       aria-expanded="false" class="nav-link dropdown-toggle">Consultas</a>
                     <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
                         <li><a href="#" class="dropdown-item">Ingresos por rango de fechas</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="#" class="dropdown-item">Consulta recien nacidos</a></li>
-                        <li><a href="#" class="dropdown-item">Consulta extranjeros</a></li>
-                        <li class="dropdown-divider"></li>
-                        <li><a href="#" class="dropdown-item">Consulta fallecidos</a></li>
+                        <li><a href="{% url 'kardex:paciente_recien_nacidos_active' %}" class="dropdown-item">Consulta
+                            recien nacidos</a></li>
+                        <li><a href="{% url 'kardex:paciente_extranjeros_active' %}" class="dropdown-item">Consulta
+                            extranjeros</a></li>
+                        <li><a href="{% url 'kardex:paciente_fallecidos_active' %}" class="dropdown-item">Consulta
+                            fallecidos</a></li>
+
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
                     <a id="dropdownSubMenu3" href="#" data-toggle="dropdown" aria-haspopup="true"
                        aria-expanded="false" class="nav-link dropdown-toggle">Movimiento Ficha</a>
                     <ul aria-labelledby="dropdownSubMenu3" class="dropdown-menu border-0 shadow">
-                        <li><a href="#" class="dropdown-item">Salida fichas</a></li>
-                        <li><a href="#" class="dropdown-item">Entrada fichas</a></li>
+                        <li><a href="{% url 'kardex:movimiento_ficha_entrada_active' %}" class="dropdown-item">Entrada
+                            fichas</a></li>
+                        <li><a href="{% url 'kardex:movimiento_ficha_salida_active' %}" class="dropdown-item">Salida
+                            fichas</a></li>
                         <li><a href="#" class="dropdown-item">Traspaso entre servicios clinicos y/o
                             profesionales</a></li>
                         <li class="dropdown-divider"></li>

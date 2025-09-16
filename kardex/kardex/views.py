@@ -1,8 +1,15 @@
 from kardex.base_views import BaseCRUDView
 from kardex.forms.comunas import FormComuna
 from kardex.forms.establecimientos import FormEstablecimiento
+from kardex.forms.fichas import FormFicha
+from kardex.forms.movimiento_ficha import FormEntradaFicha, FormSalidaFicha
+from kardex.forms.pacientes import FormPaciente
+from kardex.forms.prevision import FormPrevision
+from kardex.forms.profesionales import FormProfesional
+from kardex.forms.servicio_clinico import FormServicioClinico
 
-from kardex.models import Establecimiento, Comuna
+from kardex.models import Establecimiento, Comuna, Ficha, Paciente, MovimientoFicha, Prevision, Profesional, \
+    ServicioClinico
 
 
 class BaseCRUDEstablecimientoView(BaseCRUDView):
@@ -28,13 +35,6 @@ class EstablecimientoView(BaseCRUDEstablecimientoView):
         return Establecimiento.objects.filter(status='ACTIVE').order_by('-updated_at')
 
 
-class EstablecimientoInactiveView(BaseCRUDEstablecimientoView):
-    success_url = 'establishment_inactive'
-
-    def get_queryset(self):
-        return Establecimiento.objects.filter(status='INACTIVE').order_by('-updated_at')
-
-
 class BaseCRUDComunaView(BaseCRUDView):
     model = Comuna
     form_class = FormComuna
@@ -58,8 +58,180 @@ class ComunaView(BaseCRUDComunaView):
         return Comuna.objects.filter(status='ACTIVE').order_by('-updated_at')
 
 
-class ComunaInactiveView(BaseCRUDComunaView):
-    success_url = 'commune_inactive'
+class BaseCRUDFicha(BaseCRUDView):
+    model = Ficha
+    form_class = FormFicha
+    template_name = 'crud/index.html'
+    success_url = 'fichas_active'
+    exclude_fields = ['created_at', 'updated_at', 'status']
+    title = 'Fichas'
+
+    active_url_name = 'kardex:fichas_active'
+    inactive_url_name = 'kardex:fichas_inactive'
+    update_url_name = 'kardex:fichas_update'
+    toggle_url_name = 'kardex:fichas_toggle_status'
+    # history_url_name = 'kardex:fichas_history'
+    # export_report_url_name = 'reports:export_fichas'
+
+
+class FichaView(BaseCRUDFicha):
+    success_url = 'fichas_active'
 
     def get_queryset(self):
-        return Comuna.objects.filter(status='INACTIVE').order_by('-updated_at')
+        return Ficha.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class BaseCRUDPaciente(BaseCRUDView):
+    model = Paciente
+    form_class = FormPaciente
+    template_name = 'crud/index.html'
+    success_url = 'pacientes_active'
+    exclude_fields = ['created_at', 'updated_at', 'status']
+    title = 'Pacientes'
+
+    active_url_name = 'kardex:pacientes_active'
+    inactive_url_name = 'kardex:pacientes_inactive'
+    update_url_name = 'kardex:pacientes_update'
+    toggle_url_name = 'kardex:pacientes_toggle_status'
+    # history_url_name = 'kardex:pacientes_history'
+    # export_report_url_name = 'reports:export_pacientes'
+
+
+class PacienteView(BaseCRUDPaciente):
+    success_url = 'pacientes_active'
+
+    def get_queryset(self):
+        return Paciente.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class PacienteRecienNacidoView(BaseCRUDPaciente):
+    success_url = 'pacientes_active'
+
+    def get_queryset(self):
+        return Paciente.objects.filter(status='ACTIVE', recien_nacido=True).order_by('-updated_at')
+
+
+class PacienteExtranjeroView(BaseCRUDPaciente):
+    success_url = 'pacientes_active'
+
+    def get_queryset(self):
+        return Paciente.objects.filter(status='ACTIVE', extranjero=True).order_by('-updated_at')
+
+
+class PacienteFallecidoView(BaseCRUDPaciente):
+    success_url = 'pacientes_active'
+
+    def get_queryset(self):
+        return Paciente.objects.filter(status='ACTIVE', fallecido=True).order_by('-updated_at')
+
+
+class BaseCRUDMovimientoFichaEntrada(BaseCRUDView):
+    model = MovimientoFicha
+
+    template_name = 'crud/index.html'
+    success_url = 'movimiento_fichas_active'
+    title = 'Salida Ficha'
+    exclude_fields = ['fecha_salida', 'observacion_salida', 'usuario_entrega', 'created_at', 'updated_at', 'status']
+    active_url_name = 'kardex:movimiento_fichas_active'
+    inactive_url_name = 'kardex:movimiento_fichas_inactive'
+    update_url_name = 'kardex:movimiento_fichas_update'
+    toggle_url_name = 'kardex:movimiento_fichas_toggle_status'
+    # history_url_name = 'kardex:movimiento_fichas_history'
+    # export_report_url_name = 'reports:export_movimiento_fichas'
+
+
+class MovimientoFichaEntradaView(BaseCRUDMovimientoFichaEntrada):
+    success_url = 'movimiento_fichas_active'
+    form_class = FormEntradaFicha
+
+    def get_queryset(self):
+        return MovimientoFicha.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class BaseCRUDMovimientoFichaSalida(BaseCRUDView):
+    model = MovimientoFicha
+
+    template_name = 'crud/index.html'
+    success_url = 'movimiento_fichas_active'
+    title = 'Entrada Ficha'
+    exclude_fields = ['fecha_entrada', 'observacion_entrada', 'usuario_entrada', 'created_at', 'updated_at', 'status']
+    active_url_name = 'kardex:movimiento_fichas_active'
+    inactive_url_name = 'kardex:movimiento_fichas_inactive'
+    update_url_name = 'kardex:movimiento_fichas_update'
+    toggle_url_name = 'kardex:movimiento_fichas_toggle_status'
+    # history_url_name = 'kardex:movimiento_fichas_history'
+    # export_report_url_name = 'reports:export_movimiento_fichas'
+
+
+class MovimientoFichaSalidaView(BaseCRUDMovimientoFichaSalida):
+    success_url = 'movimiento_fichas_active'
+    form_class = FormSalidaFicha
+
+    def get_queryset(self):
+        return MovimientoFicha.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class BaseCRUDPrevision(BaseCRUDView):
+    model = Prevision
+    form_class = FormPrevision
+    template_name = 'crud/index.html'
+    success_url = 'prevision_active'
+    title = 'Entrada Ficha'
+    exclude_fields = ['created_at', 'updated_at', 'status']
+    active_url_name = 'kardex:prevision_active'
+    inactive_url_name = 'kardex:prevision_inactive'
+    update_url_name = 'kardex:prevision_update'
+    toggle_url_name = 'kardex:prevision_toggle_status'
+    # history_url_name = 'kardex:prevision_history'
+    # export_report_url_name = 'reports:export_prevision'
+
+
+class PrevisionView(BaseCRUDPrevision):
+    success_url = 'prevision_active'
+
+    def get_queryset(self):
+        return Prevision.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class BaseCRUDProfesionales(BaseCRUDView):
+    model = Profesional
+    form_class = FormProfesional
+    template_name = 'crud/index.html'
+    success_url = 'profesionales_active'
+    title = 'Profesionales'
+    exclude_fields = ['created_at', 'updated_at', 'status']
+    active_url_name = 'kardex:profesionales_active'
+    inactive_url_name = 'kardex:profesionales_inactive'
+    update_url_name = 'kardex:profesionales_update'
+    toggle_url_name = 'kardex:profesionales_toggle_status'
+    # history_url_name = 'kardex:profesionales_history'
+    # export_report_url_name = 'reports:export_profesionales'
+
+
+class ProfesionalesView(BaseCRUDProfesionales):
+    success_url = 'profesionales_active'
+
+    def get_queryset(self):
+        return Profesional.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class BaseCRUDServicioClinico(BaseCRUDView):
+    model = ServicioClinico
+    form_class = FormServicioClinico
+    template_name = 'crud/index.html'
+    success_url = 'servicio_clinico_active'
+    title = 'Servicios Clínicos'
+    exclude_fields = ['created_at', 'updated_at', 'status']
+    active_url_name = 'kardex:servicio_clinico_active'
+    inactive_url_name = 'kardex:servicio_clinico_inactive'
+    update_url_name = 'kardex:servicio_clinico_update'
+    toggle_url_name = 'kardex:servicio_clinico_toggle_status'
+    # history_url_name = 'kardex:servicio_clinico_history'
+    # export_report_url_name = 'reports:export_servicio_clinico'
+
+
+class ServicioClinicoView(BaseCRUDServicioClinico):
+    success_url = 'servicio_clinico_active'
+
+    def get_queryset(self):
+        return ServicioClinico.objects.filter(status='ACTIVE').order_by('-updated_at')
