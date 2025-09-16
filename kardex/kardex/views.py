@@ -1,13 +1,13 @@
 from kardex.base_views import BaseCRUDView
-from kardex.forms.commune import FormCommune
-from kardex.forms.establishment import FormEstablishment
+from kardex.forms.comunas import FormComuna
+from kardex.forms.establecimientos import FormEstablecimiento
 
-from kardex.models import Establishment, Commune
+from kardex.models import Establecimiento, Comuna
 
 
-class BaseCRUDEstablishmentView(BaseCRUDView):
-    model = Establishment
-    form_class = FormEstablishment
+class BaseCRUDEstablecimientoView(BaseCRUDView):
+    model = Establecimiento
+    form_class = FormEstablecimiento
     template_name = 'crud/index.html'
     success_url = 'establishment_active'
     exclude_fields = ['created_at', 'updated_at', 'status']
@@ -21,23 +21,23 @@ class BaseCRUDEstablishmentView(BaseCRUDView):
     # export_report_url_name = 'reports:export_establishment'
 
 
-class EstablishmentView(BaseCRUDEstablishmentView):
+class EstablecimientoView(BaseCRUDEstablecimientoView):
     success_url = 'establishment_active'
 
     def get_queryset(self):
-        return Establishment.objects.filter(status='ACTIVE').order_by('-updated_at')
+        return Establecimiento.objects.filter(status='ACTIVE').order_by('-updated_at')
 
 
-class EstablishmentInactiveView(BaseCRUDEstablishmentView):
+class EstablecimientoInactiveView(BaseCRUDEstablecimientoView):
     success_url = 'establishment_inactive'
 
     def get_queryset(self):
-        return Establishment.objects.filter(status='INACTIVE').order_by('-updated_at')
+        return Establecimiento.objects.filter(status='INACTIVE').order_by('-updated_at')
 
 
-class BaseCRUDCommuneView(BaseCRUDView):
-    model = Commune
-    form_class = FormCommune
+class BaseCRUDComunaView(BaseCRUDView):
+    model = Comuna
+    form_class = FormComuna
     template_name = 'crud/index.html'
     success_url = 'commune_active'
     exclude_fields = ['created_at', 'updated_at', 'status']
@@ -51,15 +51,15 @@ class BaseCRUDCommuneView(BaseCRUDView):
     # export_report_url_name = 'reports:export_commune'
 
 
-class CommuneView(BaseCRUDCommuneView):
+class ComunaView(BaseCRUDComunaView):
     success_url = 'commune_active'
 
     def get_queryset(self):
-        return Commune.objects.filter(status='ACTIVE').order_by('-updated_at')
+        return Comuna.objects.filter(status='ACTIVE').order_by('-updated_at')
 
 
-class CommuneInactiveView(BaseCRUDCommuneView):
+class ComunaInactiveView(BaseCRUDComunaView):
     success_url = 'commune_inactive'
 
     def get_queryset(self):
-        return Commune.objects.filter(status='INACTIVE').order_by('-updated_at')
+        return Comuna.objects.filter(status='INACTIVE').order_by('-updated_at')

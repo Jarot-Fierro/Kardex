@@ -1,16 +1,16 @@
 from django import forms
 from django.core.validators import MaxLengthValidator
 
-# from config.validation_forms import validate_name, validate_description, validate_spaces, validate_exists
-from kardex.models import Establishment
+# from config.validation_forms import validate_nombre, validate_description, validate_spaces, validate_exists
+from kardex.models import Establecimiento
 
 
-class FormEstablishment(forms.ModelForm):
-    name = forms.CharField(
+class FormEstablecimiento(forms.ModelForm):
+    nombre = forms.CharField(
         label='Nombre del Establecimiento',
         widget=forms.TextInput(
             attrs={
-                'id': 'name_establishment',
+                'id': 'nombre_establishment',
                 'class': 'form-control',
                 'placeholder': 'Nombre del Establecimiento',
                 'minlenght': '1',
@@ -18,11 +18,11 @@ class FormEstablishment(forms.ModelForm):
             }),
         required=True
     )
-    address = forms.CharField(
+    direccion = forms.CharField(
         label='Dirección',
         widget=forms.TextInput(
             attrs={
-                'id': 'address_establishment',
+                'id': 'direccion_establishment',
                 'class': 'form-control',
                 'placeholder': 'Ohiggins 20',
                 'minlenght': '1',
@@ -31,11 +31,11 @@ class FormEstablishment(forms.ModelForm):
         required=True
     )
 
-    phone = forms.CharField(
+    telefono = forms.CharField(
         label='Teléfono',
         widget=forms.TextInput(
             attrs={
-                'id': 'phone_establishment',
+                'id': 'telefono_establishment',
                 'class': 'form-control',
                 'placeholder': '+56912345678',
             }),
@@ -44,5 +44,5 @@ class FormEstablishment(forms.ModelForm):
     )
 
     class Meta:
-        model = Establishment
-        fields = ['name', 'address', 'phone']
+        model = Establecimiento
+        fields = ['nombre', 'direccion', 'telefono']

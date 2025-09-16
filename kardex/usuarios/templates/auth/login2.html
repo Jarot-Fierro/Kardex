@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar Sesión | Kardex App</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte3/plugins/fontawesome-free/css/all.min.css' %}" />
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="{% static 'adminlte3/plugins/bootstrap/css/bootstrap.min.css' %}" />
+
+    <!-- AdminLTE -->
+    <link rel="stylesheet" href="{% static 'adminlte3/css/adminlte.min.css' %}" />
+</head>
+
+<body class="hold-transition login-page bg-light">
+<div class="login-box">
+    <div class="login-logo">
+        <a href="#"><b>Inventario</b>DVT</a>
+    </div>
+
+    <!-- Login card -->
+    <div class="card">
+        {% include 'components/messages/messages.html' %}
+
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">Bienvenido! Inicia sesión para continuar</p>
+
+            <!-- Aquí se carga tu formulario de login -->
+            {% include 'auth/form/form2.html' %}
+
+            <!-- Opcional: enlaces extra -->
+            <p class="mb-1 mt-3 text-center">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="{% static 'adminlte3/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'adminlte3/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'adminlte3/js/adminlte.min.js' %}"></script>
+
+</body>
+</html>

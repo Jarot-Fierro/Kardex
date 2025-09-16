@@ -1,15 +1,15 @@
 from django import forms
 
 # from config.validation_forms import validate_name, validate_description, validate_spaces, validate_exists
-from kardex.models import Commune
+from kardex.models import Comuna
 
 
-class FormCommune(forms.ModelForm):
-    name = forms.CharField(
+class FormComuna(forms.ModelForm):
+    nombre = forms.CharField(
         label='Nombre de la comuna',
         widget=forms.TextInput(
             attrs={
-                'id': 'name_establishment',
+                'id': 'nombre_establishment',
                 'class': 'form-control',
                 'placeholder': 'Lebu',
                 'minlenght': '1',
@@ -17,11 +17,11 @@ class FormCommune(forms.ModelForm):
             }),
         required=True
     )
-    code = forms.CharField(
+    codigo = forms.CharField(
         label='Código de Comuna',
         widget=forms.TextInput(
             attrs={
-                'id': 'code_establishment',
+                'id': 'codigo_establishment',
                 'class': 'form-control',
                 'placeholder': '1132',
                 'minlenght': '1',
@@ -31,5 +31,5 @@ class FormCommune(forms.ModelForm):
     )
 
     class Meta:
-        model = Commune
-        fields = ['name', 'code']
+        model = Comuna
+        fields = ['nombre', 'codigo']
