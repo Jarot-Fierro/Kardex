@@ -1,0 +1,92 @@
+{% load static %}
+
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand-md navbar-light navbar-white py-3">
+    <div class="container">
+        <a href="#" class="navbar-brand">
+            <img src="{% static 'adminlte3/img/AdminLTELogo.png' %}" alt="AdminLTE Logo"
+                 class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">Kardex</span>
+        </a>
+
+        <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Inicio</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false" class="nav-link dropdown-toggle">Mantenedores</a>
+                    <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
+                        <li><a href="{% url 'kardex:establishment_active' %}" class="dropdown-item">Establecimientos</a>
+                        </li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="{% url 'kardex:commune_active' %}" class="dropdown-item">Comunas</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item">Usuarios Sistema</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item">Servicios Clínicos</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item">Profesionales</a></li>
+
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Consulta Pacientes</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false" class="nav-link dropdown-toggle">Informes</a>
+                    <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
+                        <li><a href="#" class="dropdown-item">Ingresos por rango de fechas</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item">Consulta recien nacidos</a></li>
+                        <li><a href="#" class="dropdown-item">Consulta extranjeros</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item">Consulta fallecidos</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a id="dropdownSubMenu3" href="#" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false" class="nav-link dropdown-toggle">Movimiento Ficha</a>
+                    <ul aria-labelledby="dropdownSubMenu3" class="dropdown-menu border-0 shadow">
+                        <li><a href="#" class="dropdown-item">Salida fichas</a></li>
+                        <li><a href="#" class="dropdown-item">Entrada fichas</a></li>
+                        <li><a href="#" class="dropdown-item">Traspaso entre servicios clinicos y/o
+                            profesionales</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a href="#" class="dropdown-item">Ficha en transito</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+            <li class="nav-item dropdown">
+                <a id="dropdownUserMenu" href="#" data-toggle="dropdown" aria-haspopup="true"
+                   aria-expanded="false" class="nav-link dropdown-toggle">
+                    <i class="fas fa-user"></i>
+                </a>
+                <ul aria-labelledby="dropdownUserMenu" class="dropdown-menu dropdown-menu-right border-0 shadow">
+                    <li><a href="#" class="dropdown-item"><i class="fas fa-id-badge mr-2"></i> Perfil</a></li>
+                    <li><a href="#" class="dropdown-item"><i class="fas fa-key mr-2"></i> Cambiar contraseña</a>
+                    </li>
+
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <a href="#" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- /.navbar -->

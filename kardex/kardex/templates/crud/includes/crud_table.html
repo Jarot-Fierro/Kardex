@@ -1,0 +1,67 @@
+<div class="card shadow-sm card-primary card-outline mb-4 mt-3">
+    <div class="card-header">
+        <div class="row align-items-center w-100">
+            <div class="col">
+                <h5 class="mb-0">Registros</h5>
+            </div>
+            <div class="col-auto text-end">
+                <a href="" class="btn btn-success me-2">
+                    <i class="bi bi-file-earmark-excel"></i> Reporte
+                </a>
+                <button type="button" class="btn btn-primary new-record-btn" data-toggle="modal"
+                        data-target="#formModal">
+                    <i class="bi bi-plus-circle"></i>
+                    Agregar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <table id="Table" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Acciones</th>
+                {% for col in columns %}
+                <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-info edit-btn"
+                            data-toggle="modal" data-target="#formModal"
+                            data-url="{% url update_url_name item.pk %}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <!--                    <a href="#"-->
+                    <!--                       class="btn btn-sm toggle-status {% if item.object.status == 'ACTIVE' %}btn-danger{% else %}btn-success{% endif %}"-->
+                    <!--                       data-url=""-->
+                    <!--                       data-status="{{ item.object.status }}">-->
+                    <!--                        <i class="bi bi-trash"></i>-->
+                    <!--                    </a>-->
+                </td>
+                {% for value in item.values %}
+                {% if forloop.first %}
+                <td>
+                    <a class="btn btn-light" href=""
+                       title="Ver historial">
+                        {{ value }}
+                        <i class="bi bi-clock-history text-info ms-1"></i>
+                    </a>
+                </td>
+                {% else %}
+                <td>{{ value|default:"-" }}</td>
+                {% endif %}
+                {% endfor %}
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

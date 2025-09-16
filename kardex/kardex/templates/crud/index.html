@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+    <section>
+        {% if 'crud/includes/widgets.html' %}
+            {% include "crud/includes/widgets.html" %}
+        {% endif %}
+    </section>
+
+    <section>
+        {% if 'crud/includes/crud_table.html' %}
+            {% include "crud/includes/crud_table.html" %}
+        {% endif %}
+    </section>
+
+    {% if 'crud/includes/crud_form.html' %}
+        {% include "crud/includes/crud_form.html" %}
+    {% endif %}
+
+{% endblock %}

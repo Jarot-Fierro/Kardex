@@ -1,0 +1,41 @@
+<div class="d-flex align-items-center mb-3">
+    <div class="d-flex flex-grow-1 gap-3">
+        <div class="info-box flex-fill m-3">
+            <span class="info-box-icon bg-primary shadow-sm">
+                <i class="fas fa-archive text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Registros</span>
+                <span class="info-box-number">{{ total|default:"-" }}</span>
+            </div>
+        </div>
+
+        <div class="info-box flex-fill m-3">
+            <span class="info-box-icon bg-success shadow-sm">
+                <i class="fas fa-check-circle text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">
+                    <a class="text-decoration-none text-success" href="">
+                        Vigentes
+                    </a>
+                </span>
+                <span class="info-box-number">{{ actives|default:"-" }}</span>
+            </div>
+        </div>
+
+        <div class="info-box flex-fill m-3">
+            <span class="info-box-icon bg-danger shadow-sm">
+                <i class="fas fa-times-circle text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">
+                    <a class="text-decoration-none text-danger" href="">
+                        No Vigentes
+                    </a>
+                </span>
+                <span class="info-box-number">{{ inactives|default:"-" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
