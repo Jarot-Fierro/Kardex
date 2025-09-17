@@ -18,50 +18,22 @@
     </div>
 
     <div class="card-body">
-        <table id="Table" class="table table-bordered table-striped">
+        <table id="Table" class="table table-bordered table-striped table-sm">
             <thead>
             <tr>
-                <th>#</th>
+                <th>ID</th>
                 <th>Acciones</th>
                 {% for col in columns %}
+                {% if col != 'ID' %}
                 <th>{{ col }}</th>
+                {% endif %}
                 {% endfor %}
             </tr>
             </thead>
             <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-info edit-btn"
-                            data-toggle="modal" data-target="#formModal"
-                            data-url="{% url update_url_name item.pk %}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <!--                    <a href="#"-->
-                    <!--                       class="btn btn-sm toggle-status {% if item.object.status == 'ACTIVE' %}btn-danger{% else %}btn-success{% endif %}"-->
-                    <!--                       data-url=""-->
-                    <!--                       data-status="{{ item.object.status }}">-->
-                    <!--                        <i class="bi bi-trash"></i>-->
-                    <!--                    </a>-->
-                </td>
-                {% for value in item.values %}
-                {% if forloop.first %}
-                <td>
-                    <a class="btn btn-light" href=""
-                       title="Ver historial">
-                        {{ value }}
-                        <i class="bi bi-clock-history text-info ms-1"></i>
-                    </a>
-                </td>
-                {% else %}
-                <td>{{ value|default:"-" }}</td>
-                {% endif %}
-                {% endfor %}
 
-            </tr>
-            {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+

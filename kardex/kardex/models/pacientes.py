@@ -5,7 +5,7 @@ from kardex.choices import ESTADO_CIVIL
 
 
 class Paciente(StandardModel):
-    rut = models.CharField(max_length=100, unique=True, null=False, verbose_name='R.U.T.')
+    rut = models.CharField(max_length=100, unique=True, null=False, verbose_name='Rut')
     nombre = models.CharField(max_length=100, unique=True, null=False, verbose_name='Nombre')
 
     apellido_paterno = models.CharField(max_length=100, unique=True, null=False, verbose_name='Apellido Paterno')

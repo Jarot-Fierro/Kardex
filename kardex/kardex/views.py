@@ -85,41 +85,45 @@ class BaseCRUDPaciente(BaseCRUDView):
     model = Paciente
     form_class = FormPaciente
     template_name = 'crud/index.html'
-    success_url = 'pacientes_active'
-    exclude_fields = ['created_at', 'updated_at', 'status']
+    success_url = 'paciente_active'
     title = 'Pacientes'
-
-    active_url_name = 'kardex:pacientes_active'
-    inactive_url_name = 'kardex:pacientes_inactive'
-    update_url_name = 'kardex:pacientes_update'
-    toggle_url_name = 'kardex:pacientes_toggle_status'
-    # history_url_name = 'kardex:pacientes_history'
-    # export_report_url_name = 'reports:export_pacientes'
+    exclude_fields = ['sexo', 'rut_madre', 'estado_civil', 'nombres_pabre', 'nombres_madre', 'nombre_pareja',
+                      'fecha_movimiento', 'pasaporte', 'recien_nacido', 'extranjero', 'fallecido',
+                      'fecha_fallecimiento', 'ocupacion', 'representante_legal', 'nombre_social', 'extranjero',
+                      'fallecido', 'ocupacion', 'representante_legal', 'nombre_social', 'nombre_social', 'comuna',
+                      'prevision', 'usuario',
+                      'created_at', 'updated_at', 'status']
+    active_url_name = 'kardex:paciente_active'
+    inactive_url_name = 'kardex:paciente_inactive'
+    update_url_name = 'kardex:paciente_update'
+    toggle_url_name = 'kardex:paciente_toggle_status'
+    # history_url_name = 'kardex:paciente_history'
+    # export_report_url_name = 'reports:export_paciente'
 
 
 class PacienteView(BaseCRUDPaciente):
-    success_url = 'pacientes_active'
+    success_url = 'paciente_active'
 
     def get_queryset(self):
         return Paciente.objects.filter(status='ACTIVE').order_by('-updated_at')
 
 
 class PacienteRecienNacidoView(BaseCRUDPaciente):
-    success_url = 'pacientes_active'
+    success_url = 'paciente_active'
 
     def get_queryset(self):
         return Paciente.objects.filter(status='ACTIVE', recien_nacido=True).order_by('-updated_at')
 
 
 class PacienteExtranjeroView(BaseCRUDPaciente):
-    success_url = 'pacientes_active'
+    success_url = 'paciente_active'
 
     def get_queryset(self):
         return Paciente.objects.filter(status='ACTIVE', extranjero=True).order_by('-updated_at')
 
 
 class PacienteFallecidoView(BaseCRUDPaciente):
-    success_url = 'pacientes_active'
+    success_url = 'paciente_active'
 
     def get_queryset(self):
         return Paciente.objects.filter(status='ACTIVE', fallecido=True).order_by('-updated_at')

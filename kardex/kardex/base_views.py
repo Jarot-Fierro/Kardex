@@ -137,14 +137,31 @@ class BaseCRUDView(TemplateView, FormMixin, ProcessFormView):
         data = []
         fields = [f for f in self.model._meta.fields if f.name not in (self.exclude_fields or [])]
         for obj in qs_page:
-            data.append([self.format_value(obj, f, self.model._meta.pk.name) for f in fields])
+            row = {
+                'actions': self.render_actions(obj),  # agrega esto para los botones
+            }
+            for f in fields:
+                row[f.verbose_name] = self.format_value(obj, f, self.model._meta.pk.name)
+            data.append(row)
 
         return JsonResponse({
             'draw': draw,
-            'recordsTotal': records_total,
+            'recordsTotal': self.model.objects.count(),
             'recordsFiltered': records_filtered,
             'data': data
         })
+
+    def render_actions(self, obj):
+        pk = getattr(obj, self.model._meta.pk.name)
+        update_url = reverse_lazy(self.update_url_name, kwargs={'pk': pk})
+        # Aquí puedes construir más botones si quieres
+        return f"""
+            <button type="button" class="btn btn-sm btn-info edit-btn"
+                data-toggle="modal" data-target="#formModal"
+                data-url="{update_url}">
+                <i class="fas fa-edit"></i>
+            </button>
+        """
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()  # aquí ya respeta self.object si es update
