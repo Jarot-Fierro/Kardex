@@ -37,4 +37,6 @@ urlpatterns = [
     path('servicio-clinico', ServicioClinicoView.as_view(), name='servicio_clinico_active'),
     path('servicio-clinico/<int:pk>', ServicioClinicoView.as_view(), name='servicio_clinico_update'),
 
+    path('pacientes-por-fecha/', PacientePorFechaView.as_view(), name='pacientes_por_fecha'),
+
 ]

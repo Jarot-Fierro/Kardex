@@ -1,3 +1,5 @@
+from django.views.generic import TemplateView
+
 from kardex.base_views import BaseCRUDView
 from kardex.forms.comunas import FormComuna
 from kardex.forms.establecimientos import FormEstablecimiento
@@ -6,8 +8,8 @@ from kardex.forms.movimiento_ficha import FormEntradaFicha, FormSalidaFicha
 from kardex.forms.pacientes import FormPaciente
 from kardex.forms.prevision import FormPrevision
 from kardex.forms.profesionales import FormProfesional
+from kardex.forms.rango_fechas import RangoFechaPacienteForm
 from kardex.forms.servicio_clinico import FormServicioClinico
-
 from kardex.models import Establecimiento, Comuna, Ficha, Paciente, MovimientoFicha, Prevision, Profesional, \
     ServicioClinico
 
@@ -239,3 +241,32 @@ class ServicioClinicoView(BaseCRUDServicioClinico):
 
     def get_queryset(self):
         return ServicioClinico.objects.filter(status='ACTIVE').order_by('-updated_at')
+
+
+class PacientePorFechaView(TemplateView):
+    template_name = 'kardex/paciente_por_fecha.html'
+    form_class = RangoFechaPacienteForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class()
+        context['pacientes'] = None
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        context = self.get_context_data()
+        if form.is_valid():
+            fecha_inicio = form.cleaned_data['fecha_inicio']
+            fecha_fin = form.cleaned_data['fecha_fin']
+
+            pacientes = Paciente.objects.filter(
+                fecha_nacimiento__range=(fecha_inicio, fecha_fin)
+            ).order_by('fecha_nacimiento')
+
+            context['pacientes'] = pacientes
+            context['form'] = form
+        else:
+            context['form'] = form
+
+        return self.render_to_response(context)

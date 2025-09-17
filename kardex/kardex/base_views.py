@@ -156,7 +156,7 @@ class BaseCRUDView(TemplateView, FormMixin, ProcessFormView):
         update_url = reverse_lazy(self.update_url_name, kwargs={'pk': pk})
         # Aquí puedes construir más botones si quieres
         return f"""
-            <button type="button" class="btn btn-sm btn-info edit-btn"
+            <button type="button" class="btn btn-sm btn-info edit-btn p-1"
                 data-toggle="modal" data-target="#formModal"
                 data-url="{update_url}">
                 <i class="fas fa-edit"></i>
