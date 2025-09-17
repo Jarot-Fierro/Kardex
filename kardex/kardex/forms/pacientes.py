@@ -9,7 +9,8 @@ class FormPaciente(forms.ModelForm):
         label='R.U.T.',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese el RUT'
+            'placeholder': 'Ingrese el RUT',
+            'id': 'rut_paciente'
         }),
         required=True
     )
@@ -18,7 +19,8 @@ class FormPaciente(forms.ModelForm):
         label='Nombre',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese el nombre'
+            'placeholder': 'Ingrese el nombre',
+            'id': 'nombre_paciente'
         }),
         required=True
     )
@@ -27,7 +29,8 @@ class FormPaciente(forms.ModelForm):
         label='Apellido Paterno',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese el apellido paterno'
+            'placeholder': 'Ingrese el apellido paterno',
+            'id': 'apellido_paterno_paciente'
         }),
         required=True
     )
@@ -36,7 +39,8 @@ class FormPaciente(forms.ModelForm):
         label='Apellido Materno',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese el apellido materno'
+            'placeholder': 'Ingrese el apellido materno',
+            'id': 'apellido_materno_paciente'
         }),
         required=True
     )
@@ -45,7 +49,8 @@ class FormPaciente(forms.ModelForm):
         label='R.U.T. Madre',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'rut_madre_paciente'
         }),
         required=False
     )
@@ -54,7 +59,8 @@ class FormPaciente(forms.ModelForm):
         label='Fecha de Nacimiento',
         widget=forms.DateInput(attrs={
             'class': 'form-control',
-            'type': 'date'
+            'type': 'date',
+            'id': 'fecha_nacimiento_paciente'
         }),
         required=True
     )
@@ -62,14 +68,14 @@ class FormPaciente(forms.ModelForm):
     sexo = forms.ChoiceField(
         label='Sexo',
         choices=Paciente._meta.get_field('sexo').choices,
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'sexo_paciente'}),
         required=True
     )
 
     estado_civil = forms.ChoiceField(
         label='Estado Civil',
         choices=Paciente._meta.get_field('estado_civil').choices,
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'estado_civil_paciente'}),
         required=True
     )
 
@@ -77,7 +83,8 @@ class FormPaciente(forms.ModelForm):
         label='Nombres del Padre',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'nombres_pabre_paciente'
         }),
         required=False
     )
@@ -86,7 +93,8 @@ class FormPaciente(forms.ModelForm):
         label='Nombres de la Madre',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'nombres_madre_paciente'
         }),
         required=False
     )
@@ -95,7 +103,8 @@ class FormPaciente(forms.ModelForm):
         label='Nombre de la Pareja',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'nombre_pareja_paciente'
         }),
         required=False
     )
@@ -104,7 +113,8 @@ class FormPaciente(forms.ModelForm):
         label='Dirección',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ejemplo: O’Higgins 123'
+            'placeholder': 'Ejemplo: O’Higgins 123',
+            'id': 'direccion_paciente'
         }),
         required=True
     )
@@ -113,7 +123,8 @@ class FormPaciente(forms.ModelForm):
         label='Teléfono 1',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '+56912345678'
+            'placeholder': '+56912345678',
+            'id': 'numero_telefono1_paciente'
         }),
         required=False
     )
@@ -122,7 +133,8 @@ class FormPaciente(forms.ModelForm):
         label='Teléfono 2',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'numero_telefono2_paciente'
         }),
         required=False
     )
@@ -131,31 +143,36 @@ class FormPaciente(forms.ModelForm):
         label='Pasaporte',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'pasaporte_paciente'
         }),
         required=False
     )
 
     recien_nacido = forms.BooleanField(
         label='¿Es recién nacido?',
-        required=False
+        required=False,
+        widget=forms.CheckboxInput(attrs={'id': 'recien_nacido_paciente'})
     )
 
     extranjero = forms.BooleanField(
         label='¿Es extranjero?',
-        required=False
+        required=False,
+        widget=forms.CheckboxInput(attrs={'id': 'extranjero_paciente'})
     )
 
     fallecido = forms.BooleanField(
         label='¿Está fallecido?',
-        required=False
+        required=False,
+        widget=forms.CheckboxInput(attrs={'id': 'fallecido_paciente'})
     )
 
     fecha_fallecimiento = forms.DateField(
         label='Fecha de Fallecimiento',
         widget=forms.DateInput(attrs={
             'class': 'form-control',
-            'type': 'date'
+            'type': 'date',
+            'id': 'fecha_fallecimiento_paciente'
         }),
         required=False
     )
@@ -164,7 +181,8 @@ class FormPaciente(forms.ModelForm):
         label='Ocupación',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ejemplo: Profesor(a)'
+            'placeholder': 'Ejemplo: Profesor(a)',
+            'id': 'ocupacion_paciente'
         }),
         required=False
     )
@@ -173,7 +191,8 @@ class FormPaciente(forms.ModelForm):
         label='Representante Legal',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'representante_legal_paciente'
         }),
         required=False
     )
@@ -182,7 +201,8 @@ class FormPaciente(forms.ModelForm):
         label='Nombre Social',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Opcional'
+            'placeholder': 'Opcional',
+            'id': 'nombre_social_paciente'
         }),
         required=False
     )
@@ -190,21 +210,21 @@ class FormPaciente(forms.ModelForm):
     comuna = forms.ModelChoiceField(
         label='Comuna',
         queryset=Comuna.objects.filter(status='ACTIVE'),
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'comuna_paciente'}),
         required=True
     )
 
     prevision = forms.ModelChoiceField(
         label='Previsión',
         queryset=Prevision.objects.filter(status='ACTIVE'),
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'prevision_paciente'}),
         required=True
     )
 
     usuario = forms.ModelChoiceField(
         label='Usuario Login',
         queryset=UsuarioPersonalizado.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'usuario_paciente'}),
         required=True
     )
 

@@ -8,7 +8,8 @@ class FormProfesional(forms.ModelForm):
         label='R.U.T.',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese el RUT del profesional'
+            'placeholder': 'Ingrese el RUT del profesional',
+            'id': 'rut_profesional'
         }),
         required=True
     )
@@ -17,7 +18,8 @@ class FormProfesional(forms.ModelForm):
         label='Nombre',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese el nombre del profesional'
+            'placeholder': 'Ingrese el nombre del profesional',
+            'id': 'nombres_profesional'
         }),
         required=True
     )
@@ -26,7 +28,8 @@ class FormProfesional(forms.ModelForm):
         label='Correo Electrónico',
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'correo@ejemplo.cl'
+            'placeholder': 'correo@ejemplo.cl',
+            'id': 'correo_profesional'
         }),
         required=True
     )
@@ -35,7 +38,8 @@ class FormProfesional(forms.ModelForm):
         label='Teléfono',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '+56912345678'
+            'placeholder': '+56912345678',
+            'id': 'telefono_profesional'
         }),
         required=True
     )
@@ -44,7 +48,8 @@ class FormProfesional(forms.ModelForm):
         label='Tipo de Usuario',
         choices=Profesional._meta.get_field('tipo_usuario').choices,
         widget=forms.Select(attrs={
-            'class': 'form-control'
+            'class': 'form-control',
+            'id': 'tipo_usuario_profesional'
         }),
         required=True
     )
@@ -53,7 +58,8 @@ class FormProfesional(forms.ModelForm):
         label='Establecimiento',
         queryset=Establecimiento.objects.filter(status='ACTIVE'),
         widget=forms.Select(attrs={
-            'class': 'form-control'
+            'class': 'form-control',
+            'id': 'establecimiento_profesional'
         }),
         required=False
     )

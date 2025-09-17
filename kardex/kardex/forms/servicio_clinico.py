@@ -8,7 +8,8 @@ class FormServicioClinico(forms.ModelForm):
         label='Nombre del Servicio',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ej: Urgencias, Pediatría, etc.'
+            'placeholder': 'Ej: Urgencias, Pediatría, etc.',
+            'id': 'nombre_servicioclinico'
         }),
         required=True
     )
@@ -17,7 +18,8 @@ class FormServicioClinico(forms.ModelForm):
         label='Tiempo en Horas',
         widget=forms.NumberInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Cantidad de horas asignadas'
+            'placeholder': 'Cantidad de horas asignadas',
+            'id': 'tiempo_horas_servicioclinico'
         }),
         required=True
     )
@@ -26,7 +28,8 @@ class FormServicioClinico(forms.ModelForm):
         label='Correo del Jefe a Cargo',
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'correo@ejemplo.cl'
+            'placeholder': 'correo@ejemplo.cl',
+            'id': 'correo_jefe_servicioclinico'
         }),
         required=True
     )
@@ -35,7 +38,8 @@ class FormServicioClinico(forms.ModelForm):
         label='Teléfono',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '+56912345678'
+            'placeholder': '+56912345678',
+            'id': 'telefono_servicioclinico'
         }),
         required=True
     )
@@ -44,7 +48,8 @@ class FormServicioClinico(forms.ModelForm):
         label='Establecimiento',
         queryset=Establecimiento.objects.filter(status='ACTIVE'),
         widget=forms.Select(attrs={
-            'class': 'form-control'
+            'class': 'form-control',
+            'id': 'establecimiento_servicioclinico'
         }),
         required=False
     )

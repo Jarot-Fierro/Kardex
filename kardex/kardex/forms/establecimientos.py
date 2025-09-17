@@ -10,7 +10,7 @@ class FormEstablecimiento(forms.ModelForm):
         label='Nombre del Establecimiento',
         widget=forms.TextInput(
             attrs={
-                'id': 'nombre_establishment',
+                'id': 'nombre_establecimiento',
                 'class': 'form-control',
                 'placeholder': 'Nombre del Establecimiento',
                 'minlenght': '1',
@@ -22,7 +22,7 @@ class FormEstablecimiento(forms.ModelForm):
         label='Dirección',
         widget=forms.TextInput(
             attrs={
-                'id': 'direccion_establishment',
+                'id': 'direccion_establecimiento',
                 'class': 'form-control',
                 'placeholder': 'Ohiggins 20',
                 'minlenght': '1',
@@ -35,7 +35,7 @@ class FormEstablecimiento(forms.ModelForm):
         label='Teléfono',
         widget=forms.TextInput(
             attrs={
-                'id': 'telefono_establishment',
+                'id': 'telefono_establecimiento',
                 'class': 'form-control',
                 'placeholder': '+56912345678',
             }),

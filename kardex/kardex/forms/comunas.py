@@ -9,7 +9,7 @@ class FormComuna(forms.ModelForm):
         label='Nombre de la comuna',
         widget=forms.TextInput(
             attrs={
-                'id': 'nombre_establishment',
+                'id': 'nombre_comuna',
                 'class': 'form-control',
                 'placeholder': 'Lebu',
                 'minlenght': '1',
@@ -21,7 +21,7 @@ class FormComuna(forms.ModelForm):
         label='Código de Comuna',
         widget=forms.TextInput(
             attrs={
-                'id': 'codigo_establishment',
+                'id': 'codigo_comuna',
                 'class': 'form-control',
                 'placeholder': '1132',
                 'minlenght': '1',

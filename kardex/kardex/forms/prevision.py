@@ -9,9 +9,9 @@ class FormPrevision(forms.ModelForm):
         label='Nombre de la Previsión',
         widget=forms.TextInput(
             attrs={
-                'id': 'nombre_establishment',
+                'id': 'nombre_prevision',
                 'class': 'form-control',
-                'placeholder': 'Lebu',
+                'placeholder': 'Fonasa A, Isapre, etc...',
                 'minlenght': '1',
                 'maxlenght': '100'
             }),

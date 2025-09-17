@@ -109,9 +109,48 @@ class BaseCRUDView(TemplateView, FormMixin, ProcessFormView):
         context['inactives'] = counts['inactivos']
         return context
 
+    def get_datatable_data(self, request):
+        qs = self.get_queryset()
+
+        # Parámetros de DataTables
+        draw = int(request.GET.get('draw', 1))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+        search_value = request.GET.get('search[value]', '')
+
+        # Filtrado simple por búsqueda
+        if search_value:
+            search_fields = [f.name for f in self.model._meta.fields if
+                             f.get_internal_type() in ['CharField', 'TextField']]
+            q_objects = Q()
+            for f in search_fields:
+                q_objects |= Q(**{f"{f}__icontains": search_value})
+            qs = qs.filter(q_objects)
+
+        records_total = self.model.objects.count()
+        records_filtered = qs.count()
+
+        # Paginación
+        qs_page = qs[start:start + length]
+
+        # Preparar data
+        data = []
+        fields = [f for f in self.model._meta.fields if f.name not in (self.exclude_fields or [])]
+        for obj in qs_page:
+            data.append([self.format_value(obj, f, self.model._meta.pk.name) for f in fields])
+
+        return JsonResponse({
+            'draw': draw,
+            'recordsTotal': records_total,
+            'recordsFiltered': records_filtered,
+            'data': data
+        })
+
     def get(self, request, *args, **kwargs):
         form = self.get_form()  # aquí ya respeta self.object si es update
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if request.GET.get('datatable', None):
+                return self.get_datatable_data(request)
             context = self.get_context_data(form=form, object=self.object)
             return render(request, 'crud/includes/crud_form.html', context)
 

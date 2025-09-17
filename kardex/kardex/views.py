@@ -16,20 +16,20 @@ class BaseCRUDEstablecimientoView(BaseCRUDView):
     model = Establecimiento
     form_class = FormEstablecimiento
     template_name = 'crud/index.html'
-    success_url = 'establishment_active'
+    success_url = 'establecimiento_active'
     exclude_fields = ['created_at', 'updated_at', 'status']
     title = 'Establecimientos'
 
-    active_url_name = 'kardex:establishment_active'
-    inactive_url_name = 'kardex:establishment_inactive'
-    update_url_name = 'kardex:establishment_update'
-    toggle_url_name = 'kardex:establishment_toggle_status'
-    # history_url_name = 'kardex:establishment_history'
-    # export_report_url_name = 'reports:export_establishment'
+    active_url_name = 'kardex:establecimiento_active'
+    inactive_url_name = 'kardex:establecimiento_inactive'
+    update_url_name = 'kardex:establecimiento_update'
+    toggle_url_name = 'kardex:establecimiento_toggle_status'
+    # history_url_name = 'kardex:establecimiento_history'
+    # export_report_url_name = 'reports:export_establecimiento'
 
 
 class EstablecimientoView(BaseCRUDEstablecimientoView):
-    success_url = 'establishment_active'
+    success_url = 'establecimiento_active'
 
     def get_queryset(self):
         return Establecimiento.objects.filter(status='ACTIVE').order_by('-updated_at')
@@ -39,20 +39,20 @@ class BaseCRUDComunaView(BaseCRUDView):
     model = Comuna
     form_class = FormComuna
     template_name = 'crud/index.html'
-    success_url = 'commune_active'
+    success_url = 'comuna_active'
     exclude_fields = ['created_at', 'updated_at', 'status']
     title = 'Comunas'
 
-    active_url_name = 'kardex:commune_active'
-    inactive_url_name = 'kardex:commune_inactive'
-    update_url_name = 'kardex:commune_update'
-    toggle_url_name = 'kardex:commune_toggle_status'
-    # history_url_name = 'kardex:commune_history'
-    # export_report_url_name = 'reports:export_commune'
+    active_url_name = 'kardex:comuna_active'
+    inactive_url_name = 'kardex:comuna_inactive'
+    update_url_name = 'kardex:comuna_update'
+    toggle_url_name = 'kardex:comuna_toggle_status'
+    # history_url_name = 'kardex:comuna_history'
+    # export_report_url_name = 'reports:export_comuna'
 
 
 class ComunaView(BaseCRUDComunaView):
-    success_url = 'commune_active'
+    success_url = 'comuna_active'
 
     def get_queryset(self):
         return Comuna.objects.filter(status='ACTIVE').order_by('-updated_at')
