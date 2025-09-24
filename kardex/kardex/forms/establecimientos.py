@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import MaxLengthValidator
 
 # from config.validation_forms import validate_nombre, validate_description, validate_spaces, validate_exists
-from kardex.models import Establecimiento
+from kardex.models import Establecimiento, Comuna
 
 
 class FormEstablecimiento(forms.ModelForm):
@@ -42,7 +42,18 @@ class FormEstablecimiento(forms.ModelForm):
         required=False,
         validators=[MaxLengthValidator(15, message='No puedes escribir más de 15 caracteres.')],
     )
+    comuna = forms.ModelChoiceField(
+        label="Comuna",
+        empty_label="Selecciona una Comuna",
+        queryset=Comuna.objects.filter(status="ACTIVE"),
+        widget=forms.Select(
+            attrs={
+                'id': 'comuna_establecimiento',
+                'class': 'form-control select2',
+            }),
+        required=True
+    )
 
     class Meta:
         model = Establecimiento
-        fields = ['nombre', 'direccion', 'telefono']
+        fields = ['nombre', 'direccion', 'telefono', 'comuna']
