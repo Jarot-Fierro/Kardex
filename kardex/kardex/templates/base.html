@@ -121,46 +121,52 @@
 
     <script>
     $(function () {
-        const table = $("#Table").DataTable({
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            lengthChange: true,
-            autoWidth: false,
-            pageLength: 10,
-            ajax: {
-                url: window.location.href,
-                data: {
-                    datatable: 1  // Flag que tu vista ya reconoce
-                }
-            },
-            buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
-            language: {
-                url: "{% static 'adminlte3/plugins/datatables/es-ES.json' %}"
-            },
-            columns: [
-                { data: 'ID' },  // Primer campo: ID
-                { data: 'actions', orderable: false },  // Botones
-                {% for col in columns %}
-                    {% if col != 'ID' %}
-                        { data: '{{ col }}' },
-                    {% endif %}
-                {% endfor %}
-            ],
+        {% if datatable_enabled %}
+        const tableEl = $("#Table");
+        if (tableEl.length) {
+            const table = tableEl.DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                lengthChange: true,
+                autoWidth: false,
+                pageLength: 10,
+                order: {{ datatable_order|default:"[[0, 'asc']]"|safe }},
+                ajax: {
+                    url: window.location.href,
+                    data: {
+                        datatable: 1  // Flag que tu vista ya reconoce
+                    }
+                },
+                buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                language: {
+                    url: "{% static 'adminlte3/plugins/datatables/es-ES.json' %}"
+                },
+                columns: [
+                    { data: 'ID' },  // Primer campo: ID
+                    { data: 'actions', orderable: false, searchable: false },  // Botones
+                    {% for col in columns %}
+                        {% if col != 'ID' %}
+                            { data: '{{ col }}' },
+                        {% endif %}
+                    {% endfor %}
+                ],
+            });
+
+            table.buttons().container().appendTo('#Table_wrapper .col-md-6:eq(0)');
+        }
+        {% endif %}
+    });
+    </script>
+
+    <script>
+      $('#formModal').on('shown.bs.modal', function () {
+          $(this).find('.select2').select2({
+            theme: 'bootstrap4',
+            dropdownParent: $('#formModal')  // Esto es clave dentro de modales
+          });
         });
-
-        table.buttons().container().appendTo('#Table_wrapper .col-md-6:eq(0)');
-    });
-</script>
-
-<script>
-  $('#formModal').on('shown.bs.modal', function () {
-      $(this).find('.select2').select2({
-        theme: 'bootstrap4',
-        dropdownParent: $('#formModal')  // Esto es clave dentro de modales
-      });
-    });
-</script>
+    </script>
 
 
 </body>

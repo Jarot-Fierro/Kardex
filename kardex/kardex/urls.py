@@ -1,6 +1,7 @@
 from django.urls import path
 
 from kardex.views import *
+from kardex.views_folders.comuna import *
 
 app_name = 'kardex'
 
@@ -39,4 +40,9 @@ urlpatterns = [
 
     path('pacientes-por-fecha/', PacientePorFechaView.as_view(), name='pacientes_por_fecha'),
 
+    # Vistas básicas para Comunas (basadas en base.html)
+    path('comunas-simple/', ComunaListView.as_view(), name='comuna_list'),
+    path('comunas-simple/crear/', ComunaCreateView.as_view(), name='comuna_create'),
+    path('comunas-simple/<int:pk>/editar/', ComunaUpdateView.as_view(), name='comuna_update'),
+    path('comunas-simple/<int:pk>/eliminar/', ComunaDeleteView.as_view(), name='comuna_delete'),
 ]
