@@ -131,7 +131,8 @@ class ComunaCreateView(CreateView):
             return redirect(self.success_url)
         from django.contrib import messages
         messages.error(request, 'Hay errores en el formulario')
-        return self.form_invalid(form)
+        self.object = None
+        return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
