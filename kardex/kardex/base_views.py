@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -26,9 +26,14 @@ class BaseCRUDView(TemplateView, FormMixin, ProcessFormView):
     export_report_url_name = None
 
     def dispatch(self, request, *args, **kwargs):
-        """Detecta si es create o update según pk"""
-        pk = kwargs.get(self.pk_url_kwarg)
-        self.object = get_object_or_404(self.model, pk=pk) if pk else None
+        if self.allowed_groups:
+            if not request.user.is_authenticated:
+                return self.handle_no_permission()
+            if not request.user.groups.filter(name__in=self.allowed_groups).exists():
+                return HttpResponseForbidden("No tienes permiso para acceder a esta vista.")
+
+        self.object = get_object_or_404(self.model, pk=kwargs.get(self.pk_url_kwarg)) if kwargs.get(
+            self.pk_url_kwarg) else None
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):

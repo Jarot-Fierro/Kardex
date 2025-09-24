@@ -7,15 +7,64 @@ from .models import UsuarioPersonalizado
 @admin.register(UsuarioPersonalizado)
 class CustomUserAdmin(UserAdmin):
     model = UsuarioPersonalizado
-    # Opcional: personaliza los campos que se muestran en el admin
-    list_display = ('username', 'email', 'is_staff', 'is_superuser')
-    fieldsets = UserAdmin.fieldsets + (
-        ('Campos adicionales', {
-            'fields': ('comuna', 'establecimiento', 'tipo_perfil'),
+
+    list_display = (
+        'username',
+        'rut',
+        'first_name',
+        'last_name',
+        'email',
+        'tipo_perfil',
+        'comuna',
+        'is_staff',
+        'is_superuser',
+    )
+
+    search_fields = ('username', 'rut', 'email', 'first_name', 'last_name')
+
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Información Personal', {
+            'fields': (
+                'rut',
+                'first_name',
+                'last_name',
+                'email',
+                'comuna',
+                'tipo_perfil',
+            ),
+        }),
+        ('Permisos', {
+            'fields': (
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'groups',
+                'user_permissions',
+            ),
+        }),
+        ('Fechas importantes', {
+            'fields': ('last_login', 'date_joined'),
         }),
     )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Campos adicionales', {
-            'fields': ('comuna', 'establecimiento', 'tipo_perfil'),
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'username',
+                'password1',
+                'password2',
+                'rut',
+                'first_name',
+                'last_name',
+                'email',
+                'comuna',
+                'tipo_perfil',
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'groups',
+            ),
         }),
     )

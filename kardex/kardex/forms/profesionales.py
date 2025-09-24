@@ -1,6 +1,7 @@
 from django import forms
 
 from kardex.models import Profesional, Establecimiento
+from kardex.models.profesion import Profesion
 
 
 class FormProfesional(forms.ModelForm):
@@ -43,13 +44,12 @@ class FormProfesional(forms.ModelForm):
         }),
         required=True
     )
-
-    tipo_usuario = forms.ChoiceField(
-        label='Tipo de Usuario',
-        choices=Profesional._meta.get_field('tipo_usuario').choices,
+    profesion = forms.ModelChoiceField(
+        label='Profesión',
+        queryset=Profesion.objects.filter(status='ACTIVE'),
         widget=forms.Select(attrs={
             'class': 'form-control',
-            'id': 'tipo_usuario_profesional'
+            'id': 'profesion_profesional'
         }),
         required=True
     )
@@ -61,7 +61,7 @@ class FormProfesional(forms.ModelForm):
             'class': 'form-control',
             'id': 'establecimiento_profesional'
         }),
-        required=False
+        required=True
     )
 
     class Meta:
@@ -71,6 +71,6 @@ class FormProfesional(forms.ModelForm):
             'nombres',
             'correo',
             'telefono',
-            'tipo_usuario',
+            'profesion',
             'establecimiento'
         ]

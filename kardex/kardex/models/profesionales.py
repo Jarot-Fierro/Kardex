@@ -1,18 +1,17 @@
 from django.db import models
 
 from config.abstract import StandardModel
-from kardex.choices import TIPO_USUARIO
 
 
 class Profesional(StandardModel):
     rut = models.CharField(max_length=100, unique=True, null=False, verbose_name='R.U.T.')
-    nombres = models.CharField(max_length=100, unique=True, null=False, verbose_name='Nombre')
+    nombres = models.CharField(max_length=100, null=False, verbose_name='Nombre')
     correo = models.EmailField(max_length=100, unique=True, null=False, verbose_name='Correo')
-    telefono = models.CharField(max_length=15, unique=True, verbose_name='Teléfono')
-    tipo_usuario = models.CharField(max_length=100, choices=TIPO_USUARIO, default='ADMINISTRATIVE',
-                                    verbose_name='Tipo de Usuario')
+    telefono = models.CharField(max_length=15, verbose_name='Teléfono')
+    profesion = models.ForeignKey('kardex.Profesion', null=True, blank=True, on_delete=models.SET_NULL,
+                                  verbose_name='Profesión')
 
-    establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.DO_NOTHING,
+    establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.SET_NULL,
                                         verbose_name='Establecimiento')
 
     def __str__(self):

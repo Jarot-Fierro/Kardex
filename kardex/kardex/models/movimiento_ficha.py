@@ -13,18 +13,18 @@ class MovimientoFicha(StandardModel):
     observacion_salida = models.TextField(null=True, blank=True, verbose_name='Observación de Salida')
     usuario_entrega = models.CharField(max_length=100, null=True, blank=True, verbose_name='Usuario que Entrega')
     usuario_entrada = models.CharField(max_length=100, null=True, blank=True, verbose_name='Usuario que Entrada')
-    status2 = models.CharField(max_length=50, choices=ESTADO_RESPUESTA,
-                               default='EN ESPERA', null=False, verbose_name='Estado')
+    estado_respuesta = models.CharField(max_length=50, choices=ESTADO_RESPUESTA,
+                                        default='EN ESPERA', null=False, verbose_name='Estado de Respuesta')
 
-    establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.DO_NOTHING,
-                                        verbose_name='Establecimiento')
-    ficha = models.ForeignKey('kardex.Ficha', null=True, blank=True, on_delete=models.DO_NOTHING,
+    servicio_clinico = models.ForeignKey('kardex.ServicioClinico', null=False, on_delete=models.PROTECT,
+                                         verbose_name='Servicio Clínico')
+    ficha = models.ForeignKey('kardex.Ficha', null=True, blank=True, on_delete=models.PROTECT,
                               verbose_name='Ficha')
-    usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', null=True, blank=True, on_delete=models.DO_NOTHING,
+    usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', null=True, blank=True, on_delete=models.PROTECT,
                                 verbose_name='Usuario')
 
     def __str__(self):
-        return self.name
+        return f"Movimiento de Ficha #{self.ficha.id if self.ficha else 'N/A'}"
 
     class Meta:
         verbose_name = 'Movimiento Ficha'

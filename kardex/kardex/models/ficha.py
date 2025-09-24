@@ -9,19 +9,16 @@ class Ficha(StandardModel):
     fecha_creacion = models.DateField(auto_now_add=True, verbose_name='Fecha de Creación')
     fecha_mov = models.DateField(null=True, blank=True, verbose_name='Fecha de Movimiento')
 
-    establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.DO_NOTHING,
-                                        verbose_name='Establecimiento')
-
-    usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.DO_NOTHING, null=False,
+    usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.PROTECT, null=False,
                                 verbose_name='Usuario')
-    profesional = models.ForeignKey('kardex.Profesional', on_delete=models.DO_NOTHING, null=True, blank=True,
+    profesional = models.ForeignKey('kardex.Profesional', on_delete=models.PROTECT, null=False,
                                     verbose_name='Profesional')
 
-    paciente = models.ForeignKey('kardex.Paciente', on_delete=models.DO_NOTHING, null=True, blank=True,
-                                 verbose_name='Paciente')
+    ingreso_paciente = models.ForeignKey('kardex.IngresoPaciente', on_delete=models.PROTECT, null=False,
+                                         verbose_name='Paciente')
 
     def __str__(self):
-        return self.numero_ficha
+        return str(self.numero_ficha)
 
     class Meta:
         verbose_name = 'Ficha'
