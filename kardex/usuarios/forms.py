@@ -1,13 +1,14 @@
-# users/forms.py
+from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 
-User = get_user_model()
+from .models import UsuarioPersonalizado
 
 # from config.validation_forms import validate_email
 
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import UsuarioPersonalizado
+User = get_user_model()
 
 
 class UsuarioPersonalizadoCreationForm(UserCreationForm):
@@ -20,10 +21,6 @@ class UsuarioPersonalizadoChangeForm(UserChangeForm):
     class Meta:
         model = UsuarioPersonalizado
         fields = ('username', 'email', 'rut', 'tipo_perfil', 'comuna')
-
-
-from django import forms
-from django.contrib.auth import authenticate
 
 
 class CustomLoginForm(forms.Form):

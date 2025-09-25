@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 
-from kardex.base_views import BaseCRUDView
+from kardex.crud_views import BaseCRUDView
 from kardex.forms.comunas import FormComuna
 from kardex.forms.establecimientos import FormEstablecimiento
 from kardex.forms.fichas import FormFicha

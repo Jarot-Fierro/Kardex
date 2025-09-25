@@ -1,48 +1,94 @@
 from django.urls import path
 
-from kardex.views import *
-from kardex.views_folders.comuna import *
+from kardex.views.comuna import *
+from kardex.views.establecimiento import *
+from kardex.views.ficha import *
+from kardex.views.ingreso_paciente import *
+from kardex.views.movimiento_ficha import *
+from kardex.views.pacientes import *
+from kardex.views.pais import *
+from kardex.views.prevision import *
+from kardex.views.profesion import *
+from kardex.views.profesionales import *
+from kardex.views.servicio_clinico import *
 
 app_name = 'kardex'
 
 urlpatterns = [
-    path('establecimientos', EstablecimientoView.as_view(), name='establecimiento_active'),
-    path('establecimientos/<int:pk>', EstablecimientoView.as_view(), name='establecimiento_update'),
+    # Vistas básicas para Paises
+    path('paises/', PaisListView.as_view(), name='pais_list'),
+    path('paises/crear/', PaisCreateView.as_view(), name='pais_create'),
+    path('paises/<int:pk>/editar/', PaisUpdateView.as_view(), name='pais_update'),
+    path('paises/<int:pk>/eliminar/', PaisDeleteView.as_view(), name='pais_delete'),
+    path('paises/<int:pk>/detalle/', PaisDetailView.as_view(), name='pais_detail'),
 
-    path('comunas', ComunaView.as_view(), name='comuna_active'),
-    path('comunas/<int:pk>', ComunaView.as_view(), name='comuna_update'),
+    # Vistas básicas para Comunas
+    path('comunas/', ComunaListView.as_view(), name='comuna_list'),
+    path('comunas/crear/', ComunaCreateView.as_view(), name='comuna_create'),
+    path('comunas/<int:pk>/editar/', ComunaUpdateView.as_view(), name='comuna_update'),
+    path('comunas/<int:pk>/eliminar/', ComunaDeleteView.as_view(), name='comuna_delete'),
+    path('comunas/<int:pk>/detalle/', ComunaDetailView.as_view(), name='comuna_detail'),
 
-    path('fichas', FichaView.as_view(), name='ficha_active'),
-    path('fichas/<int:pk>', FichaView.as_view(), name='ficha_update'),
+    # Vistas básicas para Establecimientos
+    path('establecimientos/', EstablecimientoListView.as_view(), name='establecimiento_list'),
+    path('establecimientos/crear/', EstablecimientoCreateView.as_view(), name='establecimiento_create'),
+    path('establecimientos/<int:pk>/editar/', EstablecimientoUpdateView.as_view(), name='establecimiento_update'),
+    path('establecimientos/<int:pk>/eliminar/', EstablecimientoDeleteView.as_view(), name='establecimiento_delete'),
+    path('establecimientos/<int:pk>/detalle/', EstablecimientoDetailView.as_view(), name='establecimiento_detail'),
 
-    path('pacientes', PacienteView.as_view(), name='paciente_active'),
-    path('pacientes/<int:pk>', PacienteView.as_view(), name='paciente_update'),
+    # Vistas básicas para Profesiones
+    path('profesiones/', ProfesionListView.as_view(), name='profesion_list'),
+    path('profesiones/crear/', ProfesionCreateView.as_view(), name='profesion_create'),
+    path('profesiones/<int:pk>/editar/', ProfesionUpdateView.as_view(), name='profesion_update'),
+    path('profesiones/<int:pk>/eliminar/', ProfesionDeleteView.as_view(), name='profesion_delete'),
+    path('profesiones/<int:pk>/detalle/', ProfesionDetailView.as_view(), name='profesion_detail'),
 
-    path('pacientes-recien-nacidos', PacienteRecienNacidoView.as_view(), name='paciente_recien_nacidos_active'),
-    path('pacientes-extranjeros', PacienteExtranjeroView.as_view(), name='paciente_extranjeros_active'),
-    path('pacientes-fallecidos', PacienteFallecidoView.as_view(), name='paciente_fallecidos_active'),
+    # Vistas básicas para Profesionales
+    path('profesionales/', ProfesionalListView.as_view(), name='profesional_list'),
+    path('profesionales/crear/', ProfesionalCreateView.as_view(), name='profesional_create'),
+    path('profesionales/<int:pk>/editar/', ProfesionalUpdateView.as_view(), name='profesional_update'),
+    path('profesionales/<int:pk>/eliminar/', ProfesionalDeleteView.as_view(), name='profesional_delete'),
+    path('profesionales/<int:pk>/detalle/', ProfesionalDetailView.as_view(), name='profesional_detail'),
 
-    path('movimiento-fichas-entrada', MovimientoFichaEntradaView.as_view(), name='movimiento_ficha_entrada_active'),
-    path('movimiento-fichas-entrada/<int:pk>', MovimientoFichaEntradaView.as_view(),
-         name='movimiento_ficha_entrada_update'),
-    path('movimiento-fichas-salida', MovimientoFichaSalidaView.as_view(), name='movimiento_ficha_salida_active'),
-    path('movimiento-fichas-salida/<int:pk>', MovimientoFichaSalidaView.as_view(),
-         name='movimiento_ficha_salida_update'),
+    # Vistas básicas para Prevision
+    path('prevision/', PrevisionListView.as_view(), name='prevision_list'),
+    path('prevision/crear/', PrevisionCreateView.as_view(), name='prevision_create'),
+    path('prevision/<int:pk>/editar/', PrevisionUpdateView.as_view(), name='prevision_update'),
+    path('prevision/<int:pk>/eliminar/', PrevisionDeleteView.as_view(), name='prevision_delete'),
+    path('prevision/<int:pk>/detalle/', PrevisionDetailView.as_view(), name='prevision_detail'),
 
-    path('prevision', PrevisionView.as_view(), name='prevision_active'),
-    path('prevision/<int:pk>', PrevisionView.as_view(), name='prevision_update'),
+    # Vistas básicas para Pacientes
+    path('pacientes/', PacienteListView.as_view(), name='paciente_list'),
+    path('pacientes/crear/', PacienteCreateView.as_view(), name='paciente_create'),
+    path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
+    path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),
+    path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
 
-    path('profesionales', ProfesionalesView.as_view(), name='profesionales_active'),
-    path('profesionales/<int:pk>', ProfesionalesView.as_view(), name='profesionales_update'),
+    # Vistas básicas para Fichas
+    path('fichas/', FichaListView.as_view(), name='ficha_list'),
+    path('fichas/crear/', FichaCreateView.as_view(), name='ficha_create'),
+    path('fichas/<int:pk>/editar/', FichaUpdateView.as_view(), name='ficha_update'),
+    path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
+    path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
 
-    path('servicio-clinico', ServicioClinicoView.as_view(), name='servicio_clinico_active'),
-    path('servicio-clinico/<int:pk>', ServicioClinicoView.as_view(), name='servicio_clinico_update'),
+    # Vistas básicas para Ingresos de Paciente
+    path('ingresos-paciente/', IngresoPacienteListView.as_view(), name='ingreso_paciente_list'),
+    path('ingresos-paciente/crear/', IngresoPacienteCreateView.as_view(), name='ingreso_paciente_create'),
+    path('ingresos-paciente/<int:pk>/editar/', IngresoPacienteUpdateView.as_view(), name='ingreso_paciente_update'),
+    path('ingresos-paciente/<int:pk>/eliminar/', IngresoPacienteDeleteView.as_view(), name='ingreso_paciente_delete'),
+    path('ingresos-paciente/<int:pk>/detalle/', IngresoPacienteDetailView.as_view(), name='ingreso_paciente_detail'),
 
-    path('pacientes-por-fecha/', PacientePorFechaView.as_view(), name='pacientes_por_fecha'),
+    # Vistas básicas para Movimientos de Ficha
+    path('movimientos-ficha/', MovimientoFichaListView.as_view(), name='movimiento_ficha_list'),
+    path('movimientos-ficha/crear/', MovimientoFichaCreateView.as_view(), name='movimiento_ficha_create'),
+    path('movimientos-ficha/<int:pk>/editar/', MovimientoFichaUpdateView.as_view(), name='movimiento_ficha_update'),
+    path('movimientos-ficha/<int:pk>/eliminar/', MovimientoFichaDeleteView.as_view(), name='movimiento_ficha_delete'),
+    path('movimientos-ficha/<int:pk>/detalle/', MovimientoFichaDetailView.as_view(), name='movimiento_ficha_detail'),
 
-    # Vistas básicas para Comunas (basadas en base.html)
-    path('comunas-simple/', ComunaListView.as_view(), name='comuna_list'),
-    path('comunas-simple/crear/', ComunaCreateView.as_view(), name='comuna_create'),
-    path('comunas-simple/<int:pk>/editar/', ComunaUpdateView.as_view(), name='comuna_update'),
-    path('comunas-simple/<int:pk>/eliminar/', ComunaDeleteView.as_view(), name='comuna_delete'),
+    # Vistas básicas para Servicios Clínicos
+    path('servicios-clinicos/', ServicioClinicoListView.as_view(), name='servicio_clinico_list'),
+    path('servicios-clinicos/crear/', ServicioClinicoCreateView.as_view(), name='servicio_clinico_create'),
+    path('servicios-clinicos/<int:pk>/editar/', ServicioClinicoUpdateView.as_view(), name='servicio_clinico_update'),
+    path('servicios-clinicos/<int:pk>/eliminar/', ServicioClinicoDeleteView.as_view(), name='servicio_clinico_delete'),
+    path('servicios-clinicos/<int:pk>/detalle/', ServicioClinicoDetailView.as_view(), name='servicio_clinico_detail'),
 ]
