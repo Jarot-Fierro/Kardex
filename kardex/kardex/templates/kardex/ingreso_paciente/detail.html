@@ -1,0 +1,30 @@
+{% load static %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h5 class="mb-3">Detalle de Ingreso de Paciente</h5>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">ID</dt>
+                <dd class="col-sm-8">{{ object.id|default:"-" }}</dd>
+
+                <dt class="col-sm-4">Paciente</dt>
+                <dd class="col-sm-8">{{ object.paciente.rut|default:"-" }}</dd>
+
+                <dt class="col-sm-4">Fecha Ingreso</dt>
+                <dd class="col-sm-8">{{ object.fecha_ingreso|date:'Y-m-d'|default:"-" }}</dd>
+
+                <dt class="col-sm-4">Motivo Ingreso</dt>
+                <dd class="col-sm-8">{{ object.motivo_ingreso|default:"-" }}</dd>
+
+                <dt class="col-sm-4">Diagnóstico Ingreso</dt>
+                <dd class="col-sm-8">{{ object.diagnostico_ingreso|default:"-" }}</dd>
+
+                <dt class="col-sm-4">Estado Actual</dt>
+                <dd class="col-sm-8">{{ object.estado_actual|default:"-" }}</dd>
+
+                <dt class="col-sm-4">Fecha Egreso</dt>
+                <dd class="col-sm-8">{{ object.fecha_egreso|date:'Y-m-d'|default:"-" }}</dd>
+            </dl>
+        </div>
+    </div>
+</div>

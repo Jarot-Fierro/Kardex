@@ -9,8 +9,8 @@ class FormProfesional(forms.ModelForm):
         label='R.U.T.',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
+            'id': 'id_rut',
             'placeholder': 'Ingrese el RUT del profesional',
-            'id': 'rut_profesional'
         }),
         required=True
     )
@@ -39,7 +39,8 @@ class FormProfesional(forms.ModelForm):
         label='Teléfono',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '+56912345678',
+            'id': 'telefono_personal',
+            'placeholder': '+569 1234 5678',
             'id': 'telefono_profesional'
         }),
         required=True
@@ -47,8 +48,9 @@ class FormProfesional(forms.ModelForm):
     profesion = forms.ModelChoiceField(
         label='Profesión',
         queryset=Profesion.objects.filter(status='ACTIVE'),
+        empty_label="Seleccione una Profesión",
         widget=forms.Select(attrs={
-            'class': 'form-control',
+            'class': 'form-control select2',
             'id': 'profesion_profesional'
         }),
         required=True
@@ -57,8 +59,9 @@ class FormProfesional(forms.ModelForm):
     establecimiento = forms.ModelChoiceField(
         label='Establecimiento',
         queryset=Establecimiento.objects.filter(status='ACTIVE'),
+        empty_label='Seleccione un Establecimiento',
         widget=forms.Select(attrs={
-            'class': 'form-control',
+            'class': 'form-control select2',
             'id': 'establecimiento_profesional'
         }),
         required=True

@@ -46,12 +46,13 @@ class FormServicioClinico(forms.ModelForm):
 
     establecimiento = forms.ModelChoiceField(
         label='Establecimiento',
+        empty_label='Seleccione un Establecimiento',
         queryset=Establecimiento.objects.filter(status='ACTIVE'),
         widget=forms.Select(attrs={
-            'class': 'form-control',
+            'class': 'form-control select2',
             'id': 'establecimiento_servicioclinico'
         }),
-        required=False
+        required=True
     )
 
     class Meta:

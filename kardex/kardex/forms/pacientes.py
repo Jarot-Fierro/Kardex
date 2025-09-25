@@ -10,7 +10,7 @@ class FormPaciente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Ingrese el RUT',
-            'id': 'rut_paciente'
+            'id': 'id_rut'
         }),
         required=True
     )
@@ -50,7 +50,7 @@ class FormPaciente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Opcional',
-            'id': 'rut_madre_paciente'
+            'id': 'id_rut'
         }),
         required=False
     )
@@ -79,12 +79,12 @@ class FormPaciente(forms.ModelForm):
         required=True
     )
 
-    nombres_pabre = forms.CharField(
+    nombres_padre = forms.CharField(
         label='Nombres del Padre',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Opcional',
-            'id': 'nombres_pabre_paciente'
+            'id': 'nombres_padre_paciente'
         }),
         required=False
     )
@@ -209,22 +209,25 @@ class FormPaciente(forms.ModelForm):
 
     comuna = forms.ModelChoiceField(
         label='Comuna',
+        empty_label='Seleccione una Comuna',
         queryset=Comuna.objects.filter(status='ACTIVE'),
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'comuna_paciente'}),
+        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'comuna_paciente'}),
         required=True
     )
 
     prevision = forms.ModelChoiceField(
         label='Previsión',
+        empty_label='Seleccione una Previsión',
         queryset=Prevision.objects.filter(status='ACTIVE'),
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'prevision_paciente'}),
+        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'prevision_paciente'}),
         required=True
     )
 
     usuario = forms.ModelChoiceField(
         label='Usuario Login',
+        empty_label='Seleccione un Usuario',
         queryset=UsuarioPersonalizado.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'usuario_paciente'}),
+        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'usuario_paciente'}),
         required=True
     )
 
@@ -239,7 +242,7 @@ class FormPaciente(forms.ModelForm):
             'fecha_nacimiento',
             'sexo',
             'estado_civil',
-            'nombres_pabre',
+            'nombres_padre',
             'nombres_madre',
             'nombre_pareja',
             'direccion',

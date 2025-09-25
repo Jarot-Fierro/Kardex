@@ -13,9 +13,11 @@ MODULE_NAME = 'Servicios Clínicos'
 class ServicioClinicoListView(DataTableMixin, TemplateView):
     template_name = 'kardex/servicio_clinico/list.html'
     model = ServicioClinico
-    datatable_columns = ['ID', 'Nombre', 'Descripción']
-    datatable_order_fields = ['id', None, 'nombre', 'descripcion']
-    datatable_search_fields = ['nombre__icontains', 'descripcion__icontains']
+    datatable_columns = ['ID', 'Nombre', 'Horas', 'Jefe Área', 'Teléfono', 'Establecimiento']
+    datatable_order_fields = ['id', None, 'nombre', 'tiempo_horas', 'correo_jefe', 'telefono',
+                              'establecimiento__nombre']
+    datatable_search_fields = ['nombre__icontains', 'tiempo_horas__icontains', 'correo_jefe__icontains',
+                               'telefono__icontains', 'establecimiento__nombre__icontains']
 
     url_detail = 'kardex:servicio_clinico_detail'
     url_update = 'kardex:servicio_clinico_update'
@@ -25,7 +27,10 @@ class ServicioClinicoListView(DataTableMixin, TemplateView):
         return {
             'ID': obj.id,
             'Nombre': (obj.nombre or '').upper(),
-            'Descripción': (obj.descripcion or ''),
+            'Horas': (obj.tiempo_horas or ''),
+            'Jefe Área': (obj.correo_jefe or ''),
+            'Teléfono': (obj.telefono or ''),
+            'Establecimiento': (obj.establecimiento.nombre or '').upper(),
         }
 
     def get(self, request, *args, **kwargs):

@@ -2,18 +2,12 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
-from django import forms
 
+from kardex.forms.profesiones import FormProfesion
 from kardex.mixin import DataTableMixin
 from kardex.models import Profesion
 
 MODULE_NAME = 'Profesiones'
-
-
-class FormProfesion(forms.ModelForm):
-    class Meta:
-        model = Profesion
-        fields = ['nombre']
 
 
 class ProfesionListView(DataTableMixin, TemplateView):
