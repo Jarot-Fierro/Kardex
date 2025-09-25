@@ -4,16 +4,26 @@
         {{ form.non_field_errors }}
     </div>
 
-    <div class="input-group mb-3">
-        {{ form.identifier }}
-        <!--        <input type="email" class="form-control" placeholder="Email"/>-->
-        <div class="input-group-text"><span class="bi bi-envelope"></span></div>
+    <div class="form-group mb-3">
+        <label>RUT:</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+            </div>
+            {{ form.username }}
+        </div>
     </div>
-    <div class="input-group mb-3">
-        {{ form.password }}
-        <!--        <input type="password" class="form-control" placeholder="Password"/>-->
-        <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+
+    <div class="form-group mb-3">
+        <label>Contraseña:</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            </div>
+            {{ form.password }}
+        </div>
     </div>
+
     <!--begin::Row-->
     <div class="row">
         <div class="col-6">

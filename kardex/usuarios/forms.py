@@ -1,5 +1,4 @@
 # users/forms.py
-from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
@@ -7,7 +6,6 @@ User = get_user_model()
 
 # from config.validation_forms import validate_email
 
-from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import UsuarioPersonalizado
 
@@ -24,13 +22,17 @@ class UsuarioPersonalizadoChangeForm(UserChangeForm):
         fields = ('username', 'email', 'rut', 'tipo_perfil', 'comuna')
 
 
+from django import forms
+from django.contrib.auth import authenticate
+
+
 class CustomLoginForm(forms.Form):
-    identifier = forms.CharField(
-        label="Correo Electrónico",
-        widget=forms.EmailInput(attrs={
+    username = forms.CharField(
+        label="RUT",
+        widget=forms.TextInput(attrs={
+            'id': 'id_rut',
             'class': 'form-control',
-            'name': 'username',
-            'placeholder': 'example@gmail.com'
+            'placeholder': 'Ej: 12.345.678-9'
         }),
         required=True
     )
@@ -38,54 +40,33 @@ class CustomLoginForm(forms.Form):
         label="Contraseña",
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'name': 'password',
             'placeholder': 'Contraseña'
         }),
         required=True
     )
 
-    def clean_identifier(self):
-        identifier = self.cleaned_data.get('identifier')
-        # validate_email(identifier)
-        return identifier
-
     def clean(self):
         cleaned_data = super().clean()
-        identifier = cleaned_data.get('identifier')
+        username = cleaned_data.get('username')
         password = cleaned_data.get('password')
 
-        if identifier and password:
-            # Intentar autenticar por username
-            user = authenticate(username=identifier, password=password)
+        if username and password:
+            user = authenticate(username=username, password=password)
+            # print(username, password)
+            # print(User.objects.filter(username='20.930.055-9'))
 
             if not user:
-                # Buscar por correo
-                try:
-                    user_obj = User.objects.get(email=identifier)
-                    print(f"{user_obj.email}-EL USUARIO")
-                    user = authenticate(username=user_obj.username, password=password)
-                    print(user)
-                except User.DoesNotExist:
-                    user = None
-
-            if not user:
-                raise forms.ValidationError("Credenciales inválidas.")
+                raise forms.ValidationError("Credenciales Inválidas.")
 
             self.user = user
-        print(f"Asignando usuario: {self.user}")
-        return cleaned_data
 
-    def save(self, commit=True):
-        user = self.instance
-        password = self.cleaned_data.get('password')
-        if password:
-            user.set_password(password)  # <- aquí está la magia
-        if commit:
-            user.save()
-        return user
+        return cleaned_data
 
     def get_user(self):
         return getattr(self, 'user', None)
+
+    def save(self, commit=True):
+        return self.get_user()
 
 
 class FormUpdatePasswordUser(forms.ModelForm):

@@ -167,6 +167,23 @@
           });
         });
     </script>
+    <script>
+      $(document).ready(function() {
+        const $rut = $('#id_rut');
+        if ($rut.length && typeof $rut.inputmask === 'function') {
+          $rut.inputmask({
+            mask: '9{1,2}.999.999-@',
+            definitions: {
+              '@': { validator: '[0-9Kk]' }
+            },
+            showMaskOnHover: false,
+            showMaskOnFocus: true,
+            clearIncomplete: false
+          });
+        }
+      });
+    </script>
+
 
 
 </body>

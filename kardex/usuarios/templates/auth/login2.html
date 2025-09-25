@@ -47,6 +47,30 @@
 <script src="{% static 'adminlte3/plugins/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'adminlte3/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'adminlte3/js/adminlte.min.js' %}"></script>
+<!-- InputMask -->
+<script src="{% static 'adminlte3/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    const $rut = $('#id_rut');
+    if ($rut.length && typeof $rut.inputmask === 'function') {
+      $rut.inputmask({
+        mask: ['9.999.999-@', '99.999.999-@'],
+        definitions: {
+          '@': {
+            validator: '[0-9Kk]',
+            casing: 'upper'  // Fuerza que "k" se convierta en "K"
+          }
+        },
+        greedy: false,
+        placeholder: '_',
+        clearIncomplete: false,
+        showMaskOnHover: false,
+        showMaskOnFocus: true
+      });
+    }
+  });
+</script>
+
 
 </body>
 </html>
