@@ -46,13 +46,16 @@
                         <li><a href="{% url 'kardex:profesional_list' %}" class="dropdown-item">Profesionales</a>
                         </li>
                         <li class="dropdown-divider"></li>
+                        <li><a href="{% url 'kardex:paciente_list' %}" class="dropdown-item">Pacientes</a>
+                        </li>
+                        <li class="dropdown-divider"></li>
                         <li><a href="{% url 'kardex:prevision_list' %}" class="dropdown-item">Previsión</a>
                         </li>
 
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'kardex:paciente_list' %}" class="nav-link">Pacientes</a>
+                    <a href="{% url 'kardex:ingreso_paciente_list' %}" class="nav-link">Ingreso Pacientes</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true"

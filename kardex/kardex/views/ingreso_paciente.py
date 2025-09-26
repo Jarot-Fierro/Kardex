@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
 
+from kardex.forms.ingreso_pacientes import FormIngresoPaciente
 from kardex.mixin import DataTableMixin
 from kardex.models import IngresoPaciente
 
@@ -65,7 +66,7 @@ class IngresoPacienteDetailView(DetailView):
 class IngresoPacienteCreateView(CreateView):
     template_name = 'kardex/ingreso_paciente/form.html'
     model = IngresoPaciente
-    fields = '__all__'
+    form_class = FormIngresoPaciente
     success_url = reverse_lazy('kardex:ingreso_paciente_list')
     permission_required = 'add_ingresopaciente'
 
@@ -94,7 +95,7 @@ class IngresoPacienteCreateView(CreateView):
 class IngresoPacienteUpdateView(UpdateView):
     template_name = 'kardex/ingreso_paciente/form.html'
     model = IngresoPaciente
-    fields = '__all__'
+    form_class = FormIngresoPaciente
     success_url = reverse_lazy('kardex:ingreso_paciente_list')
     permission_required = 'change_ingresopaciente'
 

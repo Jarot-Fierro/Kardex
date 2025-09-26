@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
@@ -13,11 +15,24 @@ MODULE_NAME = 'Pacientes'
 class PacienteListView(DataTableMixin, TemplateView):
     template_name = 'kardex/paciente/list.html'
     model = Paciente
-    datatable_columns = ['ID', 'RUT', 'Nombre', 'Ap. Paterno', 'Ap. Materno', 'Sexo', 'Estado Civil', 'Comuna', 'Previsión']
-    datatable_order_fields = ['id', None, 'rut', 'nombre', 'apellido_paterno', 'apellido_materno', 'sexo', 'estado_civil', 'comuna__nombre', 'prevision__nombre']
+    datatable_columns = ['ID', 'RUT', 'Nombre', 'Sexo', 'Estado Civil', 'Comuna', 'Previsión']
+    datatable_order_fields = [
+        'id',
+        None,
+        None,
+        'sexo',
+        'estado_civil',
+        'comuna__nombre',
+        'prevision__nombre'
+    ]
+
     datatable_search_fields = [
-        'rut__icontains', 'nombre__icontains', 'apellido_paterno__icontains', 'apellido_materno__icontains',
-        'comuna__nombre__icontains', 'prevision__nombre__icontains'
+        'rut__icontains',
+        'nombre__icontains',
+        'apellido_paterno__icontains',
+        'apellido_materno__icontains',
+        'comuna__nombre__icontains',
+        'prevision__nombre__icontains'
     ]
 
     url_detail = 'kardex:paciente_detail'
@@ -25,14 +40,13 @@ class PacienteListView(DataTableMixin, TemplateView):
     url_delete = 'kardex:paciente_delete'
 
     def render_row(self, obj):
+        nombre_completo = f"{(obj.nombre or '').upper()} {(obj.apellido_paterno or '').upper()} {(obj.apellido_materno or '').upper()}".strip()
         return {
             'ID': obj.id,
             'RUT': obj.rut,
-            'Nombre': (obj.nombre or '').upper(),
-            'Ap. Paterno': (obj.apellido_paterno or '').upper(),
-            'Ap. Materno': (obj.apellido_materno or '').upper(),
-            'Sexo': (obj.sexo or ''),
-            'Estado Civil': (obj.estado_civil or ''),
+            'Nombre': nombre_completo,
+            'Sexo': obj.sexo or '',
+            'Estado Civil': obj.estado_civil or '',
             'Comuna': (getattr(obj.comuna, 'nombre', '') or '').upper(),
             'Previsión': (getattr(obj.prevision, 'nombre', '') or '').upper(),
         }
@@ -79,12 +93,10 @@ class PacienteCreateView(CreateView):
         form = self.get_form()
         if form.is_valid():
             form.save()
-            from django.contrib import messages
-            from django.shortcuts import redirect
             messages.success(request, 'Paciente creado correctamente')
             return redirect(self.success_url)
-        from django.contrib import messages
         messages.error(request, 'Hay errores en el formulario')
+        print(form.errors)
         self.object = None
         return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
@@ -112,11 +124,8 @@ class PacienteUpdateView(UpdateView):
         form = self.get_form()
         if form.is_valid():
             form.save()
-            from django.contrib import messages
-            from django.shortcuts import redirect
             messages.success(request, 'Paciente actualizado correctamente')
             return redirect(self.success_url)
-        from django.contrib import messages
         messages.error(request, 'Hay errores en el formulario')
         return self.form_invalid(form)
 
@@ -136,8 +145,6 @@ class PacienteDeleteView(DeleteView):
     permission_required = 'delete_paciente'
 
     def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
         try:
             obj = self.get_object()
             obj.delete()

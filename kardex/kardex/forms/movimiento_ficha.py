@@ -47,7 +47,7 @@ class FormEntradaFicha(forms.ModelForm):
         required=True
     )
 
-    status2 = forms.ChoiceField(
+    estado_respuesta = forms.ChoiceField(
         label='Estado',
         choices=ESTADO_RESPUESTA,
         widget=forms.Select(
@@ -102,7 +102,7 @@ class FormEntradaFicha(forms.ModelForm):
             'fecha_entrada',
             'observacion_entrada',
             'usuario_entrada',
-            'status2',
+            'estado_respuesta',
             'establecimiento',
             'ficha',
             'usuario',
@@ -151,7 +151,7 @@ class FormSalidaFicha(forms.ModelForm):
         required=True
     )
 
-    status2 = forms.ChoiceField(
+    estado_respuesta = forms.ChoiceField(
         label='Estado',
         choices=ESTADO_RESPUESTA,
         widget=forms.Select(
@@ -206,7 +206,7 @@ class FormSalidaFicha(forms.ModelForm):
             'fecha_salida',
             'observacion_salida',
             'usuario_entrega',
-            'status2',
+            'estado_respuesta',
             'establecimiento',
             'ficha',
             'usuario',

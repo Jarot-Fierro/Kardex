@@ -44,7 +44,7 @@ class Paciente(StandardModel):
                                 verbose_name='Usuario')
 
     def __str__(self):
-        return self.rut
+        return f"{self.rut} - {self.nombre} {self.apellido_paterno} {self.apellido_materno}"
 
     class Meta:
         verbose_name = 'Paciente'

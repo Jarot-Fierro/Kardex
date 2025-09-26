@@ -14,21 +14,73 @@
             {{ form.non_field_errors }}
             <input type="hidden" name="action" value="{{ action|default:'add' }}">
 
+            <!-- Primera fila: 3 columnas -->
             <div class="row">
-                {% for field in form %}
                 <div class="col-md-6 mb-3">
-                    <label for="id_{{ field.name }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                    {% endif %}
-                    {% for error in field.errors %}
+                    <label for="id_fecha_ingreso">{{ form.fecha_ingreso.label }}</label>
+                    {{ form.fecha_ingreso }}
+                    {% for error in form.fecha_ingreso.errors %}
                     <div class="invalid-feedback d-block">{{ error }}</div>
                     {% endfor %}
                 </div>
-                {% endfor %}
+
+                <div class="col-md-6 mb-3">
+                    <label for="id_fecha_egreso">{{ form.fecha_egreso.label }}</label>
+                    {{ form.fecha_egreso }}
+                    {% for error in form.fecha_egreso.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="id_paciente">{{ form.paciente.label }}</label>
+                    {{ form.paciente }}
+                    {% for error in form.paciente.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                 <div class="col-md-6 mb-3">
+                    <label for="id_establecimiento">{{ form.establecimiento.label }}</label>
+                    {{ form.establecimiento }}
+                    {% for error in form.establecimiento.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
             </div>
 
+            <hr>
+
+            <!-- Segunda fila: 2 columnas -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="id_motivo_ingreso">{{ form.motivo_ingreso.label }}</label>
+                    {{ form.motivo_ingreso }}
+                    {% for error in form.motivo_ingreso.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="id_diagnostico_ingreso">{{ form.diagnostico_ingreso.label }}</label>
+                    {{ form.diagnostico_ingreso }}
+                    {% for error in form.diagnostico_ingreso.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Estado actual en fila completa -->
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="id_estado_actual">{{ form.estado_actual.label }}</label>
+                    {{ form.estado_actual }}
+                    {% for error in form.estado_actual.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Botones -->
             <div class="d-flex justify-content-end gap-2">
                 <a href="{% url 'kardex:ingreso_paciente_list' %}" class="btn btn-secondary mx-2">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Guardar</button>

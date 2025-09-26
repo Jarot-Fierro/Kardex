@@ -11,7 +11,7 @@ class FormProfesion(forms.ModelForm):
             attrs={
                 'id': 'nombre_profesion',
                 'class': 'form-control',
-                'placeholder': 'Ej: Médico, Enfermera, etc...',
+                'placeholder': 'Ej: Medicina, Enfermería, etc...',
                 'minlenght': '1',
                 'maxlenght': '100'
             }),

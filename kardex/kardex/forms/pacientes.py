@@ -228,7 +228,7 @@ class FormPaciente(forms.ModelForm):
         empty_label='Seleccione un Usuario',
         queryset=UsuarioPersonalizado.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'usuario_paciente'}),
-        required=True
+        required=False
     )
 
     class Meta:
