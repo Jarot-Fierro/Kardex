@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from kardex.forms.pacientes import FormPaciente
 from kardex.mixin import DataTableMixin
@@ -158,4 +158,93 @@ class PacienteDeleteView(DeleteView):
         context['title'] = 'Eliminar Paciente'
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
+        return context
+
+
+class PacienteRecienNacidoListView(PacienteListView):
+    def get_base_queryset(self):
+        return Paciente.objects.filter(recien_nacido=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Pacientes Recién Nacidos',
+            'list_url': reverse_lazy('kardex:paciente_recien_nacido_list'),
+        })
+        return context
+
+
+class PacienteExtranjeroListView(PacienteListView):
+    def get_base_queryset(self):
+        return Paciente.objects.filter(extranjero=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Pacientes Extranjeros',
+            'list_url': reverse_lazy('kardex:paciente_extranjero_list'),
+        })
+        return context
+
+
+class PacienteFallecidoListView(PacienteListView):
+    def get_base_queryset(self):
+        return Paciente.objects.filter(fallecido=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Pacientes Fallecidos',
+            'list_url': reverse_lazy('kardex:paciente_fallecido_list'),
+        })
+        return context
+
+
+from kardex.forms.pacientes import PacienteFechaRangoForm, FormPaciente
+from django.utils.dateparse import parse_date
+
+
+class PacienteFechaFormView(FormView):
+    template_name = 'kardex/paciente/fecha_rango_form.html'
+    form_class = PacienteFechaRangoForm
+
+    def get_success_url(self):
+        return reverse_lazy('kardex:paciente_por_fecha_list')
+
+    def form_valid(self, form):
+        # Redirect with GET params for datatable view
+        fecha_inicio = form.cleaned_data['fecha_inicio'].strftime('%Y-%m-%d')
+        fecha_fin = form.cleaned_data['fecha_fin'].strftime('%Y-%m-%d')
+        url = f"{self.get_success_url()}?fecha_inicio={fecha_inicio}&fecha_fin={fecha_fin}"
+        return redirect(url)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['title'] = 'Consultar por rango de fechas'
+        return ctx
+
+
+class PacientePorFechaListView(PacienteListView):
+    def get_base_queryset(self):
+        qs = Paciente.objects.all()
+        fecha_inicio = self.request.GET.get('fecha_inicio')
+        fecha_fin = self.request.GET.get('fecha_fin')
+        if fecha_inicio and fecha_fin:
+            fi = parse_date(fecha_inicio)
+            ff = parse_date(fecha_fin)
+            if fi and ff:
+                from datetime import datetime, time
+                start_dt = datetime.combine(fi, time.min)
+                end_dt = datetime.combine(ff, time.max)
+                qs = qs.filter(created_at__range=(start_dt, end_dt))
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = PacienteFechaRangoForm(self.request.GET or None)
+        context.update({
+            'title': 'Pacientes por Rango de Fecha',
+            'list_url': reverse_lazy('kardex:paciente_por_fecha_list'),
+            'date_range_form': form,
+        })
         return context

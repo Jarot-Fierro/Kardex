@@ -59,6 +59,11 @@ urlpatterns = [
 
     # Vistas básicas para Pacientes
     path('pacientes/', PacienteListView.as_view(), name='paciente_list'),
+    path('pacientes/recien-nacidos/', PacienteRecienNacidoListView.as_view(), name='paciente_recien_nacido_list'),
+    path('pacientes/extranjeros/', PacienteExtranjeroListView.as_view(), name='paciente_extranjero_list'),
+    path('pacientes/fallecidos/', PacienteFallecidoListView.as_view(), name='paciente_fallecido_list'),
+    path('pacientes/por-fecha/', PacientePorFechaListView.as_view(), name='paciente_por_fecha_list'),
+        path('pacientes/por-fecha/form/', PacienteFechaFormView.as_view(), name='paciente_fecha_form'),
     path('pacientes/crear/', PacienteCreateView.as_view(), name='paciente_create'),
     path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
     path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),

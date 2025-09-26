@@ -260,3 +260,17 @@ class FormPaciente(forms.ModelForm):
             'prevision',
             'usuario',
         ]
+
+
+
+class PacienteFechaRangoForm(forms.Form):
+    fecha_inicio = forms.DateField(
+        label='Fecha inicio',
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        required=True,
+    )
+    fecha_fin = forms.DateField(
+        label='Fecha fin',
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        required=True,
+    )
