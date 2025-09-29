@@ -14,13 +14,13 @@ User = get_user_model()
 class UsuarioPersonalizadoCreationForm(UserCreationForm):
     class Meta:
         model = UsuarioPersonalizado
-        fields = ('username', 'email', 'rut', 'tipo_perfil', 'comuna')
+        fields = ('username', 'email', 'rut', 'tipo_perfil', 'establecimiento')
 
 
 class UsuarioPersonalizadoChangeForm(UserChangeForm):
     class Meta:
         model = UsuarioPersonalizado
-        fields = ('username', 'email', 'rut', 'tipo_perfil', 'comuna')
+        fields = ('username', 'email', 'rut', 'tipo_perfil', 'establecimiento')
 
 
 class CustomLoginForm(forms.Form):

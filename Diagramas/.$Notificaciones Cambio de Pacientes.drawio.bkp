@@ -1,0 +1,73 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.1.2 Chrome/138.0.7204.243 Electron/37.4.0 Safari/537.36" version="28.1.2">
+  <diagram name="Página-1" id="RGo6sU8An8bc2RvGEmz9">
+    <mxGraphModel dx="679" dy="404" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="NjNZhUd56raHzz_TgT_h-25" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-39" target="NjNZhUd56raHzz_TgT_h-21">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="170" y="100" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-27" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-39" target="NjNZhUd56raHzz_TgT_h-23">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="156.00339771610948" y="120" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-34" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.501;exitY=0.949;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-39" target="NjNZhUd56raHzz_TgT_h-40">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="120" as="sourcePoint" />
+            <mxPoint x="110" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-37" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-40" target="NjNZhUd56raHzz_TgT_h-33">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="210" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-26" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-21" target="NjNZhUd56raHzz_TgT_h-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-32" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-21" target="NjNZhUd56raHzz_TgT_h-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-21" value="Quien lo Creó" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="226" y="80" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-22" value="Cuando" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="346" y="40" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-28" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-23" target="NjNZhUd56raHzz_TgT_h-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-30" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-23" target="NjNZhUd56raHzz_TgT_h-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-23" value="Quien lo Actualizó" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="226" y="150" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-24" value="Cuando" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="346" y="150" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-29" value="Datos Involucrados" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="346" y="210" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-31" value="Datos Involucrados" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="346" y="90" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-33" value="Notificación" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="65" y="260" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-39" value="Paciente" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="50" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-40" value="Cuando haya un cambio en un Registro" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="150" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="NjNZhUd56raHzz_TgT_h-41" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.434;entryY=0.971;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="NjNZhUd56raHzz_TgT_h-33" target="NjNZhUd56raHzz_TgT_h-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

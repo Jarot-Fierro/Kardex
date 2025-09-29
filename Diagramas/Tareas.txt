@@ -1,0 +1,16 @@
+MODELOS
+
+Cambiar en Usuarios del Sistema comuna_id por estableicmiento_id
+Cambiar en Pacientes el usuario_id
+Cambiar en Ingreso Asignar automaticamente el establecimiento al cual tiene relacion el usuario logueado en el Sistema
+
+Un ingreso de Paciente solo puede tener asociada 5 Fichas (la cantidad de hospitales)
+Un Paciente puede tener asociada solo una Ficha por Establecimiento
+
+
+CAMPOS ADICIONALES
+NIE
+
+VISTAS
+Vista de filtrado para Fichas
+Vista de filtrado para ultimas modificaciones RN, Extranjeros y de usuarios normales

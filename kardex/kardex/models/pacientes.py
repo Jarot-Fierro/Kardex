@@ -5,35 +5,49 @@ from kardex.choices import ESTADO_CIVIL
 
 
 class Paciente(StandardModel):
-    rut = models.CharField(max_length=100, unique=True, null=False, verbose_name='Rut')
+    # IDENTIFICACIÓN
+    codigo = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Código')
+    rut = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Rut')
+    nie = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='NIE')
     nombre = models.CharField(max_length=100, null=False, verbose_name='Nombre')
-
+    rut_madre = models.CharField(max_length=100, null=True, blank=True, verbose_name='R.U.T. Madre')
     apellido_paterno = models.CharField(max_length=100, null=False, verbose_name='Apellido Paterno')
     apellido_materno = models.CharField(max_length=100, null=False, verbose_name='Apellido Materno')
-    rut_madre = models.CharField(max_length=100, null=True, blank=True, verbose_name='R.U.T. Madre')
+
+    rut_responsable_temporal = models.CharField(max_length=100, null=True, blank=True,
+                                                verbose_name='RUT Responsable Temporal'
+                                                )
+
+    usar_rut_madre_como_responsable = models.BooleanField(default=False,
+                                                          verbose_name='Usar RUT de la madre como responsable'
+                                                          )
+
+    pasaporte = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name='Pasaporte')
+    nombre_social = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre Social')
+
+    # DATOS DE NACIMIENTO
     fecha_nacimiento = models.DateField(null=False, verbose_name='Fecha de Nacimiento')
     sexo = models.CharField(max_length=10, choices=[('MASCULINO', 'Masculino'), ('FEMENINO', 'Femenino')], null=False,
                             verbose_name='Sexo')
     estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL, null=False, verbose_name='Estado Civil')
 
+    # DATOS FAMILIARES
     nombres_padre = models.CharField(max_length=100, verbose_name='Nombres del Padre', null=True, blank=True)
     nombres_madre = models.CharField(max_length=100, verbose_name='Nombres de la Madre', null=True, blank=True)
     nombre_pareja = models.CharField(max_length=100, verbose_name='Nombre de la Pareja', null=True, blank=True)
+    representante_legal = models.CharField(max_length=100, null=True, blank=True, verbose_name='Representante Legal')
 
+    # CONTACTO Y DIRECCIÓN
     direccion = models.CharField(max_length=200, verbose_name='Dirección', null=False)
     numero_telefono1 = models.CharField(max_length=15, verbose_name='Número de Teléfono', null=False)
     numero_telefono2 = models.CharField(max_length=15, verbose_name='Número de Teléfono 2', null=True, blank=True)
-    fecha_movimiento = models.DateField(auto_now=True, verbose_name='Fecha de Movimiento')
-    pasaporte = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name='Pasaporte')
+    ocupacion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Ocupación')
 
+    # ESTADO DEL PACIENTE
     recien_nacido = models.BooleanField(default=False, verbose_name='Recién Nacido')
     extranjero = models.BooleanField(default=False, verbose_name='Extranjero')
     fallecido = models.BooleanField(default=False, verbose_name='Fallecido')
     fecha_fallecimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de Fallecimiento')
-
-    ocupacion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Ocupación')
-    representante_legal = models.CharField(max_length=100, null=True, blank=True, verbose_name='Representante Legal')
-    nombre_social = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre Social')
 
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.PROTECT, null=False,
                                verbose_name='Comuna')

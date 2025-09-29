@@ -1,0 +1,22 @@
+Si Paciente_Recien_Nacido == True
+Campos bloqueados: Ocupación, Nombre Pareja, Pasaporte, Fecha Fallecimiento
+Campos habilitados: Código, Rut Responsable, Booleano de Rut Responsable
+Código a Generar: 'RN-00012' <- AutoIncremental con id
+
+Si Paciente_Recien_Nacido y Extranjero == True
+Campos bloqueados: Ocupación, Nombre Pareja, Fecha Fallecimiento
+Campos habilitados: Código, NIE, Rut Responsable, Booleano de Rut Responsable, Pasaporte
+Código a Generar: 'RN-NIE-0012' <- AutoIncremental con id
+
+Si Paciente_Extranjero == True
+Campos bloqueados: Rut Responsable, Booleano de Rut Responsable
+Campos habilitados: Código, NIE, Pasaporte, Fecha Fallecimiento
+Código a Generar: 'NIE-0012' <- AutoIncremental con id
+
+Si Paciente_Recien_Nacido y Extranjero == False
+Campos bloqueados: Código, NIE,Rut Responsable, Booleano de Rut Reponsable, Pasaporte, Fecha Fallecimiento
+Campos habilitados: Ocupación, Nombre Pareja
+
+Para cualquiera de los casos:
+Si Paciente_Fallecido == True
+Campo habilitado: Fecha de Fallecimiento
