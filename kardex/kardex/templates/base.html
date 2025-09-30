@@ -184,7 +184,8 @@
     <script>
       $(document).ready(function () {
         $('.select2').select2({
-            theme: 'bootstrap4'
+            theme: 'bootstrap4',
+            width: '100%'
         });
       });
     </script>
@@ -193,7 +194,7 @@
 <!--    SCRIPT DE RUT PARA INPUTMASK-->
     <script>
       $(document).ready(function() {
-        const $rut = $('#id_rut');
+        const $rut = $('.id_rut');
         if ($rut.length && typeof $rut.inputmask === 'function') {
           $rut.inputmask({
             mask: '9{1,2}.999.999-@',

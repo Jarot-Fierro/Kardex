@@ -4,114 +4,341 @@
 {% block title %}Pacientes - {{ title|default:'Formulario' }}{% endblock %}
 
 {% block content %}
-<form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <input type="hidden" name="action" value="{{ action|default:'add' }}">
+<style>
+    /* Compact, print-friendly adjustments */
+    .small-input .form-control,
+    .small-input .form-select { font-size: .875rem; padding: .25rem .5rem; height: calc(1.5em + .5rem + 2px); }
+    .small-input .form-label, .small-input label { margin-bottom: .1rem; font-size: .85rem; }
+    .small-input .form-text, .small-input .small { font-size: .75rem; }
+    .small-input .card-header { padding: .4rem .75rem; }
+    .small-input .card-body { padding: .75rem; }
+    .small-input .form-check { padding-top: .15rem; }
+    .small-input .form-check-input { transform: scale(.9); margin-right: .35rem; }
+    .small-input .btn { padding: .25rem .5rem; font-size: .875rem; }
+    .card { border-color: #e9ecef; }
+    .ficha-header { border: 1px solid #dee2e6; border-left: .25rem solid #0d6efd; padding: .35rem .5rem; background-color: #f8f9fa; font-weight: 600; }
+    @media print {
+      .no-print { display: none !important; }
+      .card { box-shadow: none; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
 
-    <!-- SECCIÓN: Condiciones -->
-    <div class="card card-info">
-        <div class="card-header">
-            <h3 class="card-title">Condiciones</h3>
+</style>
+<div class="container-fluid py-2 small-input">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <input type="hidden" name="action" value="{{ action|default:'add' }}">
+
+        <!-- Encabezado de la ficha -->
+        <div class="row align-items-center mb-2">
+            <div class="col-md-6 mb-2 mb-md-0">
+                <div class="ficha-header d-flex justify-content-between align-items-center">
+                    <span>N° FICHA: 0012391</span>
+                    <div class="text-muted small">
+                        Fecha de creación: 30/09/2025 15:42
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 text-md-end">
+                <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
+                    <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 1</button>
+                    <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 2</button>
+                </div>
+            </div>
+
         </div>
-        <div class="card-body">
-            <div class="form-row">
-                {% for field in form %}
-                {% if field.name in "recien_nacido extranjero fallecido" %}
-                <div class="form-group col-md-4">
-                    <div class="form-check">
-                        {{ field }}
-                        {{ field.label_tag }}
-                        {% for error in field.errors %}
+
+        <!-- ESTADO DEL PACIENTE -->
+        <div class="card mb-2">
+            <div class="card-header">
+                <h6 class="m-0"><i class="fas fa-heartbeat me-2"></i> Estado del Paciente</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <!-- Checkbox 1 -->
+                    <div class="col-md-4">
+                        <div class="form-check mt-2">
+                            {{ form.recien_nacido }}
+                            <label class="form-check-label" for="recien_nacido_paciente">
+                                {{ form.recien_nacido.label }}
+                            </label>
+                            {% for error in form.recien_nacido.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Checkbox 2 -->
+                    <div class="col-md-4">
+                        <div class="form-check mt-2">
+                            {{ form.extranjero }}
+                            <label class="form-check-label" for="extranjero_paciente">
+                                {{ form.extranjero.label }}
+                            </label>
+                            {% for error in form.extranjero.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Checkbox 3 + input date -->
+                    <div class="col-md-4">
+                        <div class="form-check mt-2">
+                            {{ form.fallecido }}
+                            <label class="form-check-label" for="fallecido_paciente">
+                                {{ form.fallecido.label }}
+                            </label>
+                            {% for error in form.fallecido.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Input de fecha debajo del checkbox fallecido -->
+                        <div class="mt-2">
+                            <label class="form-label" for="fecha_fallecimiento_paciente">
+                                {{ form.fecha_fallecimiento.label }}
+                            </label>
+                            {{ form.fecha_fallecimiento }}
+                            {% for error in form.fecha_fallecimiento.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- IDENTIFICACIÓN -->
+        <div class="card mb-2">
+            <div class="card-header">
+                <h6 class="m-0"><i class="fas fa-id-card me-2"></i> Identificación</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_rut">
+                            {{ form.rut.label }}
+                        </label>
+                        {{ form.rut }}
+                        {% for error in form.rut.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="pasaporte_paciente">
+                            {{ form.pasaporte.label }}
+                        </label>
+                        {{ form.pasaporte }}
+                        {% for error in form.pasaporte.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nombre_paciente">
+                            {{ form.nombre.label }}
+                        </label>
+                        {{ form.nombre }}
+                        {% for error in form.nombre.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nombre_social_paciente">
+                            {{ form.nombre_social.label }}
+                        </label>
+                        {{ form.nombre_social }}
+                        {% for error in form.nombre_social.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="apellido_paterno_paciente">
+                            {{ form.apellido_paterno.label }}
+                        </label>
+                        {{ form.apellido_paterno }}
+                        {% for error in form.apellido_paterno.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="apellido_materno_paciente">
+                            {{ form.apellido_materno.label }}
+                        </label>
+                        {{ form.apellido_materno }}
+                        {% for error in form.apellido_materno.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
                 </div>
-                {% endif %}
-                {% endfor %}
+            </div>
+        </div>
 
-                <div class="form-group col-md-6">
-                    {{ form.fecha_fallecimiento.label_tag }}
-                    {{ form.fecha_fallecimiento }}
-                    {% for error in form.fecha_fallecimiento.errors %}
-                    <span class="text-danger small">{{ error }}</span>
-                    {% endfor %}
+        <!-- DATOS DE NACIMIENTO -->
+        <div class="card mb-2">
+            <div class="card-header">
+                <h6 class="m-0"><i class="fas fa-baby me-2"></i> Datos de Nacimiento</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label class="form-label" for="fecha_nacimiento_paciente">
+                            {{ form.fecha_nacimiento.label }}</label>
+                        {{ form.fecha_nacimiento }}
+                        {% for error in form.fecha_nacimiento.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="sexo_paciente">{{ form.sexo.label }}</label>
+                        {{ form.sexo }}
+                        {% for error in form.sexo.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="estado_civil_paciente">{{ form.estado_civil.label }}</label>
+                        {{ form.estado_civil }}
+                        {% for error in form.estado_civil.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- SECCIÓN: Datos Personales -->
-    <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">Datos Personales</h3>
-        </div>
-        <div class="card-body">
-            <div class="form-row">
-                {% for field in form %}
-                {% if field.name in "rut pasaporte nombre nombre_social apellido_paterno apellido_materno fecha_nacimiento sexo estado_civil prevision ocupacion fecha_movimiento" %}
-                <div class="form-group col-md-6">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% for error in field.errors %}
-                    <span class="text-danger small">{{ error }}</span>
-                    {% endfor %}
+        <!-- DATOS FAMILIARES -->
+        <div class="card mb-2">
+            <div class="card-header">
+                <h6 class="m-0"><i class="fas fa-users me-2"></i> Datos Familiares</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="id_rut">{{ form.rut_madre.label }}</label>
+                        {{ form.rut_madre }}
+                        {% for error in form.rut_madre.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nombres_madre_paciente">{{ form.nombres_madre.label }}</label>
+                        {{ form.nombres_madre }}
+                        {% for error in form.nombres_madre.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nombres_padre_paciente">{{ form.nombres_padre.label }}</label>
+                        {{ form.nombres_padre }}
+                        {% for error in form.nombres_padre.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nombre_pareja_paciente">{{ form.nombre_pareja.label }}</label>
+                        {{ form.nombre_pareja }}
+                        {% for error in form.nombre_pareja.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="representante_legal_paciente">
+                            {{ form.representante_legal.label }}
+                        </label>
+                        {{ form.representante_legal }}
+                        {% for error in form.representante_legal.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endif %}
-                {% endfor %}
-
             </div>
         </div>
-    </div>
-     <!-- SECCIÓN: Contacto y Ubicación -->
-    <div class="card card-success">
-        <div class="card-header">
-            <h3 class="card-title">Contacto y Ubicación</h3>
-        </div>
-        <div class="card-body">
-            <div class="form-row">
-                {% for field in form %}
-                {% if field.name in "direccion comuna numero_telefono1 numero_telefono2" %}
-                <div class="form-group col-md-6">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% for error in field.errors %}
-                    <span class="text-danger small">{{ error }}</span>
-                    {% endfor %}
+
+        <!-- CONTACTO Y DIRECCIÓN -->
+        <div class="card mb-2">
+            <div class="card-header">
+                <h6 class="m-0"><i class="fas fa-map-marker-alt me-2"></i> Contacto y Dirección</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-8">
+                        <label class="form-label" for="direccion_paciente">{{ form.direccion.label }}</label>
+                        {{ form.direccion }}
+                        {% for error in form.direccion.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="comuna_paciente">{{ form.comuna.label }}</label>
+                        {{ form.comuna }}
+                        {% for error in form.comuna.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="numero_telefono1_paciente">
+                            {{ form.numero_telefono1.label }}</label>
+                        {{ form.numero_telefono1 }}
+                        {% for error in form.numero_telefono1.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="numero_telefono2_paciente">
+                            {{ form.numero_telefono2.label }}</label>
+                        {{ form.numero_telefono2 }}
+                        {% for error in form.numero_telefono2.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="ocupacion_paciente">{{ form.ocupacion.label }}</label>
+                        {{ form.ocupacion }}
+                        {% for error in form.ocupacion.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endif %}
-                {% endfor %}
             </div>
         </div>
-    </div>
 
-    <!-- SECCIÓN: Información Familiar -->
-    <div class="card card-warning">
-        <div class="card-header">
-            <h3 class="card-title">Información Familiar</h3>
-        </div>
-        <div class="card-body">
-            <div class="form-row">
-                {% for field in form %}
-                {% if field.name in "rut_madre nombres_madre nombres_padre nombre_pareja representante_legal" %}
-                <div class="form-group col-md-6">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% for error in field.errors %}
-                    <span class="text-danger small">{{ error }}</span>
-                    {% endfor %}
+        <!-- GESTIÓN -->
+        <div class="card mb-2">
+            <div class="card-header">
+                <h6 class="m-0"><i class="fas fa-cogs me-2"></i> Gestión</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="prevision_paciente">{{ form.prevision.label }}</label>
+                        {{ form.prevision }}
+                        {% for error in form.prevision.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="usuario_paciente">{{ form.usuario.label }}</label>
+                        {{ form.usuario }}
+                        {% for error in form.usuario.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endif %}
-                {% endfor %}
             </div>
         </div>
-    </div>
 
-    <!-- BOTONES -->
-    <div class="d-flex justify-content-end gap-2 mt-4">
-        <a href="{% url 'kardex:paciente_list' %}" class="btn btn-secondary">Cancelar</a>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </div>
+        <!-- Pie del formulario -->
+        <div class="row mt-3 mb-4">
+            <div class="col text-end">
 
-</form>
+                <a href="{% url 'kardex:paciente_list' %}" class="btn btn-secondary btn-sm no-print">Cancelar</a>
+                <button type="submit" class="btn btn-primary btn-sm no-print">Guardar</button>
+            </div>
+        </div>
+    </form>
+</div>
 {% endblock %}

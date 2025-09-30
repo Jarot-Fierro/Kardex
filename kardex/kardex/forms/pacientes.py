@@ -8,7 +8,7 @@ class FormPaciente(forms.ModelForm):
     rut = forms.CharField(
         label='R.U.T.',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control id_rut',
             'placeholder': 'Ingrese el RUT',
             'id': 'id_rut'
         }),
@@ -48,9 +48,9 @@ class FormPaciente(forms.ModelForm):
     rut_madre = forms.CharField(
         label='R.U.T. Madre',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control id_rut',
             'placeholder': 'Opcional',
-            'id': 'id_rut'
+            'id': 'id_rut_madre'
         }),
         required=False
     )
@@ -260,7 +260,6 @@ class FormPaciente(forms.ModelForm):
             'prevision',
             'usuario',
         ]
-
 
 
 class PacienteFechaRangoForm(forms.Form):
