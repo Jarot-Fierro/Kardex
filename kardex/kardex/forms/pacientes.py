@@ -56,12 +56,16 @@ class FormPaciente(forms.ModelForm):
     )
 
     fecha_nacimiento = forms.DateField(
-        label='Fecha de Nacimiento',
-        widget=forms.DateInput(attrs={
-            'class': 'form-control fecha-input',
-            'type': 'date',
-            'id': 'fecha_nacimiento_paciente'
-        }),
+        label='Fecha de nacimiento',
+        widget=forms.DateInput(
+            attrs={
+                'class': 'form-control fecha-input',
+                'type': 'text',
+                'placeholder': 'dd/mm/aaaa'
+            },
+            format='%d/%m/%Y'
+        ),
+        input_formats=['%d/%m/%Y'],
         required=True
     )
 
@@ -195,12 +199,17 @@ class FormPaciente(forms.ModelForm):
 
     fecha_fallecimiento = forms.DateField(
         label='Fecha de Fallecimiento',
-        widget=forms.DateInput(attrs={
-            'class': 'form-control fecha-input',
-            'type': 'date',
-            'id': 'fecha_fallecimiento_paciente'
-        }),
-        required=False
+        widget=forms.DateInput(
+            attrs={
+                'id': 'fecha_fallecimiento_paciente',
+                'class': 'form-control fecha-input',
+                'type': 'text',
+                'placeholder': 'dd/mm/aaaa'
+            },
+            format='%d/%m/%Y'
+        ),
+        input_formats=['%d/%m/%Y'],
+        required=True
     )
 
     ocupacion = forms.CharField(

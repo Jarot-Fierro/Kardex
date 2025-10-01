@@ -84,15 +84,18 @@
             <div class="col-md-6 mb-2 mb-md-0">
                 <div class="ficha-header d-flex justify-content-between align-items-center">
                     <span>N° FICHA:
-                    <input type="text" name="ficha" class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
+                        <input type="text" value='{{ ficha.numero_ficha|stringformat:"04d" }}' name="ficha"
+                               class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
                     </span>
                     <div class="text-muted small">
-                        Fecha de creación: {{ ficha }}
+                        Fecha de creación: {{ ficha.created_at|date:"d/m/Y" }}<br>
+                        Última modificación: {{ ficha.updated_at|date:"d/m/Y" }}
                     </div>
                 </div>
             </div>
             <div class="col-md-3 text-md-end">
-                <input type="text" name="codigo" class="form-control" placeholder="Código" id="id_código">
+                <input type="text" value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
+                       placeholder="Código" id="id_código">
             </div>
 
             <div class="col-md-3 text-md-end">
@@ -473,42 +476,69 @@
             // Clear required by default
             setRequired([el.rut, el.pasaporte, el.nie, el.fecha_fallecimiento, el.rut_resp_temp], false);
 
-            if (fal) {
-                // Fallecido: only fecha_fallecimiento active
-                setDisabled([el.rut, el.pasaporte, el.nie, el.ocupacion, el.nombre_pareja, el.rut_resp_temp, el.usar_rut_madre], true);
-                if (el.fecha_fallecimiento) { el.fecha_fallecimiento.disabled = false; setRequired([el.fecha_fallecimiento], true); }
-                return;
-            }
-
-            // Category branches
-            if (rn && ext) {
-                // RN-NIE-0012
-                setEnabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre]);
-                setDisabled([el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
-                // nie y pasaporte no obligatorios si aún no están disponibles
-                setRequired([el.nie, el.pasaporte], false);
-                // rut no obligatorio
-                setRequired([el.rut], false);
-            } else if (rn && !ext) {
-                // RN-00012
-                setEnabled([el.rut_resp_temp, el.usar_rut_madre]);
-                setDisabled([el.nie, el.pasaporte, el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
-                // rut no obligatorio
-                setRequired([el.rut], false);
-            } else if (!rn && ext) {
-                // NIE-0012
-                setEnabled([el.nie, el.pasaporte, el.fecha_fallecimiento]);
-                setDisabled([el.rut_resp_temp, el.usar_rut_madre], true);
-                // al menos uno de NIE o pasaporte presente (validado en submit)
-                setRequired([el.nie, el.pasaporte], false);
-                // rut no obligatorio
-                setRequired([el.rut], false);
-            } else {
-                // Paciente estándar
+            if (!rn && !ext && !fal) {
+                // Estándar, sin fallecimiento
                 setEnabled([el.ocupacion, el.nombre_pareja]);
                 setDisabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento], true);
-                // rut obligatorio
                 setRequired([el.rut], true);
+            }
+
+            if (!rn && !ext && fal) {
+                // Fallecido solo
+                setEnabled([el.fecha_fallecimiento]);
+                setDisabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre, el.ocupacion, el.nombre_pareja], true);
+                setRequired([el.fecha_fallecimiento], true);
+                setRequired([el.rut_resp_temp, el.rut], false);
+            }
+
+            if (rn && !ext && !fal) {
+                // Recien nacido solo
+                setEnabled([el.rut_resp_temp, el.usar_rut_madre]);
+                setDisabled([el.nie, el.pasaporte, el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
+                setRequired([el.rut_resp_temp], true);
+                setRequired([el.rut], false);
+            }
+
+            if (rn && !ext && fal) {
+                // Recien nacido + Fallecido
+                setEnabled([el.fecha_fallecimiento, el.rut_resp_temp, el.usar_rut_madre]);
+                setDisabled([el.nombre_pareja, el.nie, el.pasaporte, el.ocupacion], true);
+                setRequired([el.fecha_fallecimiento], true);
+                setRequired([el.rut_resp_temp], false);
+                setRequired([el.rut], false);
+            }
+
+            if (!rn && ext && !fal) {
+                // Extranjero solo
+                setEnabled([el.nie, el.pasaporte]);
+                setDisabled([el.rut_resp_temp, el.usar_rut_madre, el.ocupacion, el.fecha_fallecimiento], true);
+                setRequired([el.nie, el.pasaporte], false);
+                setRequired([el.rut], false);
+            }
+
+            if (!rn && ext && fal) {
+                // Extranjero + Fallecido
+                setEnabled([el.fecha_fallecimiento, el.nie, el.pasaporte, el.nombre_pareja]);
+                setDisabled([el.rut_resp_temp, el.usar_rut_madre, el.ocupacion], true);
+                setRequired([el.fecha_fallecimiento], true);
+                setRequired([el.rut_resp_temp, el.rut], false);
+            }
+
+            if (rn && ext && !fal) {
+                // Recien nacido + Extranjero (sin fallecer)
+                setEnabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre]);
+                setDisabled([el.nombre_pareja, el.ocupacion, el.fecha_fallecimiento], true);
+                setRequired([el.rut_resp_temp], true);
+                setRequired([el.rut], false);
+            }
+
+            if (rn && ext && fal) {
+                // Recien nacido + Extranjero + Fallecido
+                setEnabled([el.fecha_fallecimiento, el.rut_resp_temp, el.usar_rut_madre, el.nie, el.pasaporte]);
+                setDisabled([el.nombre_pareja, el.ocupacion], true);
+                setRequired([el.fecha_fallecimiento], true);
+                setRequired([el.rut_resp_temp], false);
+                setRequired([el.rut], false);
             }
         }
 

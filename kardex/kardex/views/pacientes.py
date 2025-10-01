@@ -184,9 +184,31 @@ class PacienteUpdateView(UpdateView):
         context['action'] = 'edit'
         context['module_name'] = MODULE_NAME
 
-        ingresos = self.object.ingresopaciente_set.all()
-        ficha = Ficha.objects.filter(ingreso_paciente=ingresos, )
-        context['fichas'] = ficha
+        # Obtener el ingreso del paciente asociado al establecimiento del usuario logueado
+        user = getattr(self.request, 'user', None)
+        establecimiento = getattr(user, 'establecimiento', None) if user else None
+
+        ingreso = None
+        if establecimiento:
+            ingreso = self.object.ingresopaciente_set.filter(establecimiento=establecimiento).first()
+        else:
+            from django.contrib import messages
+            messages.warning(self.request, 'El usuario no tiene un establecimiento asociado.')
+
+        ficha = None
+        if ingreso:
+            ficha = Ficha.objects.filter(ingreso_paciente=ingreso).first()
+            if ficha is None:
+                from django.contrib import messages
+                messages.info(self.request, 'No existe ficha asociada al ingreso en su establecimiento.')
+        else:
+            from django.contrib import messages
+            messages.info(self.request, 'El paciente no tiene ingreso en su establecimiento.')
+
+        # Exponer objetos esperados por el template
+        context['paciente'] = self.object
+        context['ingreso'] = ingreso
+        context['ficha'] = ficha
 
         return context
 
