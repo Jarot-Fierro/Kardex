@@ -7,22 +7,71 @@
 <style>
     /* Compact, print-friendly adjustments */
     .small-input .form-control,
-    .small-input .form-select { font-size: .875rem; padding: .25rem .5rem; height: calc(1.5em + .5rem + 2px); }
-    .small-input .form-label, .small-input label { margin-bottom: .1rem; font-size: .85rem; }
-    .small-input .form-text, .small-input .small { font-size: .75rem; }
-    .small-input .card-header { padding: .4rem .75rem; }
-    .small-input .card-body { padding: .75rem; }
-    .small-input .form-check { padding-top: .15rem; }
-    .small-input .form-check-input { transform: scale(.9); margin-right: .35rem; }
-    .small-input .btn { padding: .25rem .5rem; font-size: .875rem; }
-    .card { border-color: #e9ecef; }
-    .ficha-header { border: 1px solid #dee2e6; border-left: .25rem solid #0d6efd; padding: .35rem .5rem; background-color: #f8f9fa; font-weight: 600; }
-    @media print {
-      .no-print { display: none !important; }
-      .card { box-shadow: none; }
-      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .small-input .form-select {
+        font-size: .875rem;
+        padding: .25rem .5rem;
+        height: calc(1.5em + .5rem + 2px);
     }
 
+    .small-input .form-label,
+    .small-input label {
+        margin-bottom: .1rem;
+        font-size: .85rem;
+    }
+
+    .small-input .form-text,
+    .small-input .small {
+        font-size: .75rem;
+    }
+
+    .small-input .card-header {
+        padding: .4rem .75rem;
+    }
+
+    .small-input .card-body {
+        padding: .75rem;
+    }
+
+    .small-input .form-check {
+        padding-top: .15rem;
+    }
+
+    .small-input .form-check-input {
+        transform: scale(.9);
+        margin-right: .35rem;
+    }
+
+    .small-input .btn {
+        padding: .25rem .5rem;
+        font-size: .875rem;
+    }
+
+    .card {
+        border-color: #e9ecef;
+    }
+
+    .ficha-header {
+        border: 1px solid #dee2e6;
+        border-left: .25rem solid #0d6efd;
+        padding: .35rem .5rem;
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .card {
+            box-shadow: none;
+        }
+
+        body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
 </style>
 <div class="container-fluid py-2 small-input">
     <form method="post" novalidate>
@@ -41,10 +90,7 @@
                 </div>
             </div>
             <div class="col-md-3 text-md-end">
-                {{ form.codigo }}
-                {% for error in form.codigo.errors %}
-                <span class="text-danger small">{{ error }}</span>
-                {% endfor %}
+                <input type="text" name="codigo" class="form-control" placeholder="Código" id="id_código">
 
             </div>
 
@@ -263,7 +309,8 @@
                         {% endfor %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="rut_responsable_temporal_paciente">{{ form.rut_responsable_temporal.label }}</label>
+                        <label class="form-label" for="rut_responsable_temporal_paciente">{{
+                            form.rut_responsable_temporal.label }}</label>
                         {{ form.rut_responsable_temporal }}
                         {% for error in form.rut_responsable_temporal.errors %}
                         <span class="text-danger small">{{ error }}</span>
@@ -377,157 +424,156 @@
     </form>
 </div>
 <script>
-(function(){
-  function qs(sel){return document.querySelector(sel);} 
-  function qid(id){return document.getElementById(id);} 
-  const el = {
-    codigo: document.getElementById('id_código') || qs('input[name="codigo"]'),
-    rut: qid('id_rut'),
-    nie: qid('nie_paciente'),
-    pasaporte: qid('pasaporte_paciente'),
-    ocupacion: qid('ocupacion_paciente'),
-    nombre_pareja: qid('nombre_pareja_paciente'),
-    rut_resp_temp: qid('rut_responsable_temporal_paciente'),
-    usar_rut_madre: qid('usar_rut_madre_como_responsable_paciente'),
-    recien_nacido: qid('recien_nacido_paciente'),
-    extranjero: qid('extranjero_paciente'),
-    fallecido: qid('fallecido_paciente'),
-    fecha_fallecimiento: qid('fecha_fallecimiento_paciente'),
-  };
+    (function () {
+        function qs(sel) { return document.querySelector(sel); }
+        function qid(id) { return document.getElementById(id); }
+        const el = {
+            rut: qid('id_rut'),
+            nie: qid('nie_paciente'),
+            pasaporte: qid('pasaporte_paciente'),
+            ocupacion: qid('ocupacion_paciente'),
+            nombre_pareja: qid('nombre_pareja_paciente'),
+            rut_resp_temp: qid('rut_responsable_temporal_paciente'),
+            usar_rut_madre: qid('usar_rut_madre_como_responsable_paciente'),
+            recien_nacido: qid('recien_nacido_paciente'),
+            extranjero: qid('extranjero_paciente'),
+            fallecido: qid('fallecido_paciente'),
+            fecha_fallecimiento: qid('fecha_fallecimiento_paciente'),
+        };
 
-  function setDisabled(inputs, disabled){
-    inputs.filter(Boolean).forEach(i=>{
-      i.disabled = !!disabled;
-      if(disabled){
-        if(i.type==='checkbox' || i.type==='radio'){ i.checked = false; }
-        else { i.value=''; }
-        i.removeAttribute('required');
-      }
-    });
-  }
-  function setEnabled(inputs){
-    inputs.filter(Boolean).forEach(i=>{ i.disabled=false; });
-  }
-  function setRequired(inputs, required){
-    inputs.filter(Boolean).forEach(i=>{
-      if(required) i.setAttribute('required','required'); else i.removeAttribute('required');
-    });
-  }
+        function setDisabled(inputs, disabled) {
+            inputs.filter(Boolean).forEach(i => {
+                i.disabled = !!disabled;
+                if (disabled) {
+                    if (i.type === 'checkbox' || i.type === 'radio') { i.checked = false; }
+                    else { i.value = ''; }
+                    i.removeAttribute('required');
+                }
+            });
+        }
+        function setEnabled(inputs) {
+            inputs.filter(Boolean).forEach(i => { i.disabled = false; });
+        }
+        function setRequired(inputs, required) {
+            inputs.filter(Boolean).forEach(i => {
+                if (required) i.setAttribute('required', 'required'); else i.removeAttribute('required');
+            });
+        }
 
-  function applyRules(){
-    const rn = !!(el.recien_nacido && el.recien_nacido.checked);
-    const ext = !!(el.extranjero && el.extranjero.checked);
-    const fal = !!(el.fallecido && el.fallecido.checked);
+        function applyRules() {
+            const rn = !!(el.recien_nacido && el.recien_nacido.checked);
+            const ext = !!(el.extranjero && el.extranjero.checked);
+            const fal = !!(el.fallecido && el.fallecido.checked);
 
-    // Reset defaults: enable general fields
-    setEnabled([el.rut, el.pasaporte, el.nie, el.ocupacion, el.nombre_pareja, el.codigo, el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento]);
+            // Reset defaults: enable general fields
+            setEnabled([el.rut, el.pasaporte, el.nie, el.ocupacion, el.nombre_pareja, el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento]);
 
-    // Clear required by default
-    setRequired([el.rut, el.pasaporte, el.nie, el.fecha_fallecimiento, el.rut_resp_temp], false);
+            // Clear required by default
+            setRequired([el.rut, el.pasaporte, el.nie, el.fecha_fallecimiento, el.rut_resp_temp], false);
 
-    if(fal){
-      // Fallecido: only fecha_fallecimiento active
-      setDisabled([el.rut, el.pasaporte, el.nie, el.ocupacion, el.nombre_pareja, el.codigo, el.rut_resp_temp, el.usar_rut_madre], true);
-      if(el.fecha_fallecimiento){ el.fecha_fallecimiento.disabled = false; setRequired([el.fecha_fallecimiento], true); }
-      return;
-    }
+            if (fal) {
+                // Fallecido: only fecha_fallecimiento active
+                setDisabled([el.rut, el.pasaporte, el.nie, el.ocupacion, el.nombre_pareja, el.rut_resp_temp, el.usar_rut_madre], true);
+                if (el.fecha_fallecimiento) { el.fecha_fallecimiento.disabled = false; setRequired([el.fecha_fallecimiento], true); }
+                return;
+            }
 
-    // Category branches
-    if(rn && ext){
-      // RN-NIE-0012
-      setEnabled([el.codigo, el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre]);
-      setDisabled([el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
-      // nie y pasaporte no obligatorios si aún no están disponibles
-      setRequired([el.nie, el.pasaporte], false);
-      // rut no obligatorio
-      setRequired([el.rut], false);
-    } else if(rn && !ext){
-      // RN-00012
-      setEnabled([el.codigo, el.rut_resp_temp, el.usar_rut_madre]);
-      setDisabled([el.nie, el.pasaporte, el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
-      // rut no obligatorio
-      setRequired([el.rut], false);
-    } else if(!rn && ext){
-      // NIE-0012
-      setEnabled([el.codigo, el.nie, el.pasaporte, el.fecha_fallecimiento]);
-      setDisabled([el.rut_resp_temp, el.usar_rut_madre], true);
-      // al menos uno de NIE o pasaporte presente (validado en submit)
-      setRequired([el.nie, el.pasaporte], false);
-      // rut no obligatorio
-      setRequired([el.rut], false);
-    } else {
-      // Paciente estándar
-      setEnabled([el.ocupacion, el.nombre_pareja]);
-      setDisabled([el.codigo, el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento], true);
-      // rut obligatorio
-      setRequired([el.rut], true);
-    }
-  }
+            // Category branches
+            if (rn && ext) {
+                // RN-NIE-0012
+                setEnabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre]);
+                setDisabled([el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
+                // nie y pasaporte no obligatorios si aún no están disponibles
+                setRequired([el.nie, el.pasaporte], false);
+                // rut no obligatorio
+                setRequired([el.rut], false);
+            } else if (rn && !ext) {
+                // RN-00012
+                setEnabled([el.rut_resp_temp, el.usar_rut_madre]);
+                setDisabled([el.nie, el.pasaporte, el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
+                // rut no obligatorio
+                setRequired([el.rut], false);
+            } else if (!rn && ext) {
+                // NIE-0012
+                setEnabled([el.nie, el.pasaporte, el.fecha_fallecimiento]);
+                setDisabled([el.rut_resp_temp, el.usar_rut_madre], true);
+                // al menos uno de NIE o pasaporte presente (validado en submit)
+                setRequired([el.nie, el.pasaporte], false);
+                // rut no obligatorio
+                setRequired([el.rut], false);
+            } else {
+                // Paciente estándar
+                setEnabled([el.ocupacion, el.nombre_pareja]);
+                setDisabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento], true);
+                // rut obligatorio
+                setRequired([el.rut], true);
+            }
+        }
 
-  function onSubmit(e){
-    const rn = el.recien_nacido && el.recien_nacido.checked;
-    const ext = el.extranjero && el.extranjero.checked;
-    const fal = el.fallecido && el.fallecido.checked;
+        function onSubmit(e) {
+            const rn = el.recien_nacido && el.recien_nacido.checked;
+            const ext = el.extranjero && el.extranjero.checked;
+            const fal = el.fallecido && el.fallecido.checked;
 
-    // Fallecido requires fecha_fallecimiento
-    if(fal){
-      if(el.fecha_fallecimiento && !el.fecha_fallecimiento.value){
-        e.preventDefault();
-        alert('Debe ingresar la fecha de fallecimiento.');
-        el.fecha_fallecimiento.focus();
-        return false;
-      }
-    }
+            // Fallecido requires fecha_fallecimiento
+            if (fal) {
+                if (el.fecha_fallecimiento && !el.fecha_fallecimiento.value) {
+                    e.preventDefault();
+                    alert('Debe ingresar la fecha de fallecimiento.');
+                    el.fecha_fallecimiento.focus();
+                    return false;
+                }
+            }
 
-    if(rn){
-      // Validate responsable: either rut_responsable_temporal or usar_rut_madre checked
-      const hasTemp = el.rut_resp_temp && el.rut_resp_temp.value.trim() !== '';
-      const useMadre = el.usar_rut_madre && el.usar_rut_madre.checked;
-      if(!hasTemp && !useMadre){
-        e.preventDefault();
-        alert('Debe ingresar RUT responsable temporal o activar "Usar RUT de la madre como responsable".');
-        if(el.rut_resp_temp) el.rut_resp_temp.focus();
-        return false;
-      }
-    }
+            if (rn) {
+                // Validate responsable: either rut_responsable_temporal or usar_rut_madre checked
+                const hasTemp = el.rut_resp_temp && el.rut_resp_temp.value.trim() !== '';
+                const useMadre = el.usar_rut_madre && el.usar_rut_madre.checked;
+                if (!hasTemp && !useMadre) {
+                    e.preventDefault();
+                    alert('Debe ingresar RUT responsable temporal o activar "Usar RUT de la madre como responsable".');
+                    if (el.rut_resp_temp) el.rut_resp_temp.focus();
+                    return false;
+                }
+            }
 
-    if(!rn && ext){
-      const hasNie = el.nie && el.nie.value.trim() !== '';
-      const hasPas = el.pasaporte && el.pasaporte.value.trim() !== '';
-      if(!hasNie && !hasPas){
-        e.preventDefault();
-        alert('Para pacientes extranjeros, debe ingresar al menos NIE o Pasaporte.');
-        if(el.nie) el.nie.focus();
-        return false;
-      }
-    }
+            if (!rn && ext) {
+                const hasNie = el.nie && el.nie.value.trim() !== '';
+                const hasPas = el.pasaporte && el.pasaporte.value.trim() !== '';
+                if (!hasNie && !hasPas) {
+                    e.preventDefault();
+                    alert('Para pacientes extranjeros, debe ingresar al menos NIE o Pasaporte.');
+                    if (el.nie) el.nie.focus();
+                    return false;
+                }
+            }
 
-    if(!rn && !ext && !fal){
-      if(el.rut && el.rut.value.trim()===''){
-        e.preventDefault();
-        alert('El campo RUT es obligatorio para pacientes estándar.');
-        el.rut.focus();
-        return false;
-      }
-    }
-  }
+            if (!rn && !ext && !fal) {
+                if (el.rut && el.rut.value.trim() === '') {
+                    e.preventDefault();
+                    alert('El campo RUT es obligatorio para pacientes estándar.');
+                    el.rut.focus();
+                    return false;
+                }
+            }
+        }
 
-  document.addEventListener('change', function(ev){
-    if(!ev.target) return;
-    const id = ev.target.id;
-    if(['recien_nacido_paciente','extranjero_paciente','fallecido_paciente'].includes(id)){
-      applyRules();
-    }
-  });
+        document.addEventListener('change', function (ev) {
+            if (!ev.target) return;
+            const id = ev.target.id;
+            if (['recien_nacido_paciente', 'extranjero_paciente', 'fallecido_paciente'].includes(id)) {
+                applyRules();
+            }
+        });
 
-  document.addEventListener('DOMContentLoaded', function(){
-    applyRules();
-    // Attach submit validation
-    const form = document.querySelector('form');
-    if(form){
-      form.addEventListener('submit', onSubmit);
-    }
-  });
-})();
+        document.addEventListener('DOMContentLoaded', function () {
+            applyRules();
+            // Attach submit validation
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', onSubmit);
+            }
+        });
+    })();
 </script>
 {% endblock %}

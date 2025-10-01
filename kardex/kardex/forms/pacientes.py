@@ -5,16 +5,6 @@ from usuarios.models import UsuarioPersonalizado
 
 
 class FormPaciente(forms.ModelForm):
-    codigo = forms.CharField(
-        label='Código',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Ingrese el Código',
-            'id': 'id_código'
-        }),
-        required=True
-    )
-
     rut = forms.CharField(
         label='R.U.T.',
         widget=forms.TextInput(attrs={
@@ -270,7 +260,6 @@ class FormPaciente(forms.ModelForm):
     class Meta:
         model = Paciente
         fields = [
-            'codigo',
             'rut',
             'nie',
             'pasaporte',
