@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, FormView
 
 from kardex.forms.pacientes import FormPaciente
 from kardex.mixin import DataTableMixin
-from kardex.models import Paciente
+from kardex.models import Paciente, Ficha
 
 MODULE_NAME = 'Pacientes'
 
@@ -90,13 +90,61 @@ class PacienteCreateView(CreateView):
     permission_required = 'add_paciente'
 
     def post(self, request, *args, **kwargs):
+        print("[DEBUG] POST iniciado")
         form = self.get_form()
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Paciente creado correctamente')
-            return redirect(self.success_url)
+            print("[DEBUG] Formulario válido")
+            from django.db import transaction
+            from kardex.models import IngresoPaciente, Ficha
+            user = request.user
+
+            try:
+                with transaction.atomic():
+                    paciente = form.save(commit=False)
+                    paciente.usuario = request.user
+
+                    try:
+                        paciente.save()
+                        print(f"[DEBUG] Paciente guardado: {paciente} (ID: {paciente.pk})")
+                    except Exception as e:
+                        print("[ERROR] No se pudo guardar el paciente:", e)
+                        messages.error(request, f"Error al guardar el paciente: {e}")
+                        return self.render_to_response(self.get_context_data(form=form))
+
+                    establecimiento = getattr(user, 'establecimiento', None)
+                    if not establecimiento:
+                        messages.warning(request, 'Paciente creado, pero usuario sin establecimiento.')
+                    else:
+                        ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
+                        print(f"[DEBUG] Ingresos actuales: {ingresos_qs.count()}")
+                        if ingresos_qs.count() >= 5:
+                            messages.warning(request, 'Máximo de ingresos alcanzado.')
+                        elif ingresos_qs.filter(establecimiento=establecimiento).exists():
+                            messages.warning(request, 'Ya existe ingreso en este establecimiento.')
+                        else:
+                            ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
+                            print(f"[DEBUG] Ingreso creado: ID {ingreso.pk}")
+
+                            ficha, created = Ficha.objects.get_or_create(
+                                ingreso_paciente=ingreso,
+                                defaults={'usuario': user}
+                            )
+                            if created:
+                                messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                            else:
+                                messages.info(request, 'Ficha ya existente.')
+
+                    messages.success(request, 'Paciente creado correctamente')
+                    return redirect(self.success_url)
+
+            except Exception as e:
+                print("[ERROR] Transacción fallida:", e)
+                messages.error(request, f"No se pudo completar: {e}")
+                self.object = None
+                return self.render_to_response(self.get_context_data(form=form, open_modal=True))
+
+        print("[DEBUG] Formulario inválido:", form.errors)
         messages.error(request, 'Hay errores en el formulario')
-        print(form.errors)
         self.object = None
         return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
@@ -135,6 +183,11 @@ class PacienteUpdateView(UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         context['module_name'] = MODULE_NAME
+
+        ingresos = self.object.ingresopaciente_set.all()
+        ficha = Ficha.objects.filter(ingreso_paciente=ingresos, )
+        context['fichas'] = ficha
+
         return context
 
 
@@ -200,7 +253,7 @@ class PacienteFallecidoListView(PacienteListView):
         return context
 
 
-from kardex.forms.pacientes import PacienteFechaRangoForm, FormPaciente
+from kardex.forms.pacientes import PacienteFechaRangoForm
 from django.utils.dateparse import parse_date
 
 

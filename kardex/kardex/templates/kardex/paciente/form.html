@@ -83,15 +83,16 @@
         <div class="row align-items-center mb-2">
             <div class="col-md-6 mb-2 mb-md-0">
                 <div class="ficha-header d-flex justify-content-between align-items-center">
-                    <span>N° FICHA: 0012391</span>
+                    <span>N° FICHA:
+                    <input type="text" name="ficha" class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
+                    </span>
                     <div class="text-muted small">
-                        Fecha de creación: 30/09/2025 15:42
+                        Fecha de creación: {{ ficha }}
                     </div>
                 </div>
             </div>
             <div class="col-md-3 text-md-end">
                 <input type="text" name="codigo" class="form-control" placeholder="Código" id="id_código">
-
             </div>
 
             <div class="col-md-3 text-md-end">
@@ -309,8 +310,9 @@
                         {% endfor %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="rut_responsable_temporal_paciente">{{
-                            form.rut_responsable_temporal.label }}</label>
+                        <label class="form-label" for="rut_responsable_temporal_paciente">
+                            {{ form.rut_responsable_temporal.label }}
+                        </label>
                         {{ form.rut_responsable_temporal }}
                         {% for error in form.rut_responsable_temporal.errors %}
                         <span class="text-danger small">{{ error }}</span>
@@ -402,7 +404,7 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 d-none">
                         <label class="form-label" for="usuario_paciente">{{ form.usuario.label }}</label>
                         {{ form.usuario }}
                         {% for error in form.usuario.errors %}
