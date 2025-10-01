@@ -5,6 +5,16 @@ from usuarios.models import UsuarioPersonalizado
 
 
 class FormPaciente(forms.ModelForm):
+    codigo = forms.CharField(
+        label='Código',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese el Código',
+            'id': 'id_código'
+        }),
+        required=True
+    )
+
     rut = forms.CharField(
         label='R.U.T.',
         widget=forms.TextInput(attrs={
@@ -58,7 +68,7 @@ class FormPaciente(forms.ModelForm):
     fecha_nacimiento = forms.DateField(
         label='Fecha de Nacimiento',
         widget=forms.DateInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control fecha-input',
             'type': 'date',
             'id': 'fecha_nacimiento_paciente'
         }),
@@ -149,6 +159,32 @@ class FormPaciente(forms.ModelForm):
         required=False
     )
 
+    nie = forms.CharField(
+        label='NIE',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Opcional',
+            'id': 'nie_paciente'
+        }),
+        required=False
+    )
+
+    rut_responsable_temporal = forms.CharField(
+        label='RUT Responsable Temporal',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Opcional',
+            'id': 'rut_responsable_temporal_paciente'
+        }),
+        required=False
+    )
+
+    usar_rut_madre_como_responsable = forms.BooleanField(
+        label='Usar RUT de la madre como responsable',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'id': 'usar_rut_madre_como_responsable_paciente'})
+    )
+
     recien_nacido = forms.BooleanField(
         label='¿Es recién nacido?',
         required=False,
@@ -170,7 +206,7 @@ class FormPaciente(forms.ModelForm):
     fecha_fallecimiento = forms.DateField(
         label='Fecha de Fallecimiento',
         widget=forms.DateInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control fecha-input',
             'type': 'date',
             'id': 'fecha_fallecimiento_paciente'
         }),
@@ -181,7 +217,7 @@ class FormPaciente(forms.ModelForm):
         label='Ocupación',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ejemplo: Profesor(a)',
+            'placeholder': 'Ejemplo: Docente',
             'id': 'ocupacion_paciente'
         }),
         required=False
@@ -234,11 +270,16 @@ class FormPaciente(forms.ModelForm):
     class Meta:
         model = Paciente
         fields = [
+            'codigo',
             'rut',
+            'nie',
+            'pasaporte',
             'nombre',
             'apellido_paterno',
             'apellido_materno',
             'rut_madre',
+            'rut_responsable_temporal',
+            'usar_rut_madre_como_responsable',
             'fecha_nacimiento',
             'sexo',
             'estado_civil',
@@ -248,7 +289,6 @@ class FormPaciente(forms.ModelForm):
             'direccion',
             'numero_telefono1',
             'numero_telefono2',
-            'pasaporte',
             'recien_nacido',
             'extranjero',
             'fallecido',

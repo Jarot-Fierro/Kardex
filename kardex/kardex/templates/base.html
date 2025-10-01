@@ -239,6 +239,19 @@
         });
 
     </script>
+<!--  SCRIPT DE FECHA CON INPUTMASK  -->
+    <script>
+      $(document).ready(function() {
+        $('.fecha-input').inputmask('datetime', {
+          inputFormat: "dd/mm/yyyy",
+          placeholder: "dd/mm/aaaa",
+          showMaskOnHover: false,
+          leapday: "29/02/",
+          clearIncomplete: true
+        });
+      });
+    </script>
+
 
 
 <!--    SCRIPT PARA VER DETALLES DE UN REGISTRO, ES UN MODAL-->
