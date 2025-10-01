@@ -12,7 +12,7 @@ class FormPaciente(forms.ModelForm):
             'placeholder': 'Ingrese el RUT',
             'id': 'id_rut'
         }),
-        required=True
+        required=False
     )
 
     nombre = forms.CharField(
@@ -22,7 +22,7 @@ class FormPaciente(forms.ModelForm):
             'placeholder': 'Ingrese el nombre',
             'id': 'nombre_paciente'
         }),
-        required=True
+        required=False
     )
 
     apellido_paterno = forms.CharField(
@@ -265,6 +265,18 @@ class FormPaciente(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'usuario_paciente'}),
         required=False
     )
+
+    def clean_rut(self):
+        rut = self.cleaned_data.get('rut', '').strip()
+        return rut or None
+
+    def clean_nie(self):
+        nie = self.cleaned_data.get('nie', '').strip()
+        return nie or None
+
+    def clean_pasaporte(self):
+        pasaporte = self.cleaned_data.get('pasaporte', '').strip()
+        return pasaporte or None
 
     class Meta:
         model = Paciente

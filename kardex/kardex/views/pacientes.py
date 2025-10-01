@@ -1,7 +1,9 @@
 from django.contrib import messages
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_GET
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView, FormView
 
@@ -323,3 +325,138 @@ class PacientePorFechaListView(PacienteListView):
             'date_range_form': form,
         })
         return context
+
+
+# --- API AJAX endpoints for searching Pacientes ---
+@login_required
+@require_GET
+def buscar_paciente_por_rut(request):
+    rut = (request.GET.get('rut') or '').strip()
+    if not rut:
+        return JsonResponse({'success': False, 'error': 'Parámetro "rut" es requerido.'}, status=400)
+    establecimiento = getattr(request.user, 'establecimiento', None)
+    if not establecimiento:
+        return JsonResponse({'success': False, 'error': 'Usuario sin establecimiento asignado.'}, status=403)
+
+    ficha = Ficha.objects.select_related('ingreso_paciente__paciente').filter(
+        ingreso_paciente__establecimiento=establecimiento,
+        ingreso_paciente__paciente__rut=rut
+    ).first()
+
+    if not ficha:
+        return JsonResponse({'success': False,
+                             'error': 'No se encontró paciente con ese RUT en su establecimiento o no tiene ficha asociada.'},
+                            status=404)
+
+    paciente = ficha.ingreso_paciente.paciente
+    return JsonResponse({'success': True, 'paciente': _serialize_paciente(paciente, ficha)})
+
+
+@login_required
+@require_GET
+def buscar_paciente_por_codigo(request):
+    codigo = (request.GET.get('codigo') or '').strip()
+    if not codigo:
+        return JsonResponse({'success': False, 'error': 'Parámetro "codigo" es requerido.'}, status=400)
+    establecimiento = getattr(request.user, 'establecimiento', None)
+    if not establecimiento:
+        return JsonResponse({'success': False, 'error': 'Usuario sin establecimiento asignado.'}, status=403)
+
+    ficha = Ficha.objects.select_related('ingreso_paciente__paciente').filter(
+        ingreso_paciente__establecimiento=establecimiento,
+        ingreso_paciente__paciente__codigo=codigo
+    ).first()
+
+    if not ficha:
+        return JsonResponse({'success': False,
+                             'error': 'No se encontró paciente con ese código en su establecimiento o no tiene ficha asociada.'},
+                            status=404)
+
+    paciente = ficha.ingreso_paciente.paciente
+    return JsonResponse({'success': True, 'paciente': _serialize_paciente(paciente, ficha)})
+
+
+@login_required
+@require_GET
+def buscar_paciente_por_ficha(request):
+    numero_ficha = (request.GET.get('numero_ficha') or '').strip()
+    if not numero_ficha:
+        return JsonResponse({'success': False, 'error': 'Parámetro "numero_ficha" es requerido.'}, status=400)
+    establecimiento = getattr(request.user, 'establecimiento', None)
+    if not establecimiento:
+        return JsonResponse({'success': False, 'error': 'Usuario sin establecimiento asignado.'}, status=403)
+
+    try:
+        numero_ficha_int = int(numero_ficha)
+    except ValueError:
+        return JsonResponse({'success': False, 'error': 'El número de ficha debe ser numérico.'}, status=400)
+
+    ficha = Ficha.objects.select_related('ingreso_paciente__paciente').filter(
+        ingreso_paciente__establecimiento=establecimiento,
+        numero_ficha=numero_ficha_int
+    ).first()
+
+    if not ficha:
+        return JsonResponse({'success': False, 'error': 'No se encontró ficha en su establecimiento.'}, status=404)
+
+    paciente = ficha.ingreso_paciente.paciente
+    return JsonResponse({'success': True, 'paciente': _serialize_paciente(paciente, ficha)})
+
+
+def _serialize_paciente(paciente: Paciente, ficha: Ficha):
+    fecha_nac = paciente.fecha_nacimiento.isoformat() if paciente.fecha_nacimiento else None
+    fecha_fallecimiento = paciente.fecha_fallecimiento.isoformat() if paciente.fecha_fallecimiento else None
+
+    pac_created = getattr(paciente, 'created_at', None)
+    pac_updated = getattr(paciente, 'updated_at', None)
+    fic_created = getattr(ficha, 'created_at', None) if ficha else None
+    fic_updated = getattr(ficha, 'updated_at', None) if ficha else None
+
+    return {
+        # Identificación
+        'rut': paciente.rut,
+        'codigo': paciente.codigo,
+        'nie': paciente.nie,
+        'pasaporte': paciente.pasaporte,
+        'nombre': paciente.nombre,
+        'apellido_paterno': paciente.apellido_paterno,
+        'apellido_materno': paciente.apellido_materno,
+        'rut_madre': paciente.rut_madre,
+        'rut_responsable_temporal': paciente.rut_responsable_temporal,
+        'usar_rut_madre_como_responsable': paciente.usar_rut_madre_como_responsable,
+        'nombre_social': paciente.nombre_social,
+
+        # Nacimiento y estado
+        'fecha_nacimiento': fecha_nac,
+        'sexo': paciente.sexo,
+        'estado_civil': paciente.estado_civil,
+        'recien_nacido': paciente.recien_nacido,
+        'extranjero': paciente.extranjero,
+        'fallecido': paciente.fallecido,
+        'fecha_fallecimiento': fecha_fallecimiento,
+
+        # Familiares
+        'nombres_padre': paciente.nombres_padre,
+        'nombres_madre': paciente.nombres_madre,
+        'nombre_pareja': paciente.nombre_pareja,
+        'representante_legal': paciente.representante_legal,
+
+        # Contacto y dirección
+        'direccion': paciente.direccion,
+        'numero_telefono1': paciente.numero_telefono1,
+        'numero_telefono2': paciente.numero_telefono2,
+        'ocupacion': paciente.ocupacion,
+
+        # Relacionales
+        'comuna': paciente.comuna.id if paciente.comuna else None,
+        'prevision': paciente.prevision.id if paciente.prevision else None,
+
+        # Ficha
+        'numero_ficha': str(ficha.numero_ficha).zfill(4) if ficha else None,
+
+        # Fechas de tracking
+        'paciente_created_at': pac_created.isoformat() if pac_created else None,
+        'paciente_updated_at': pac_updated.isoformat() if pac_updated else None,
+        'ficha_created_at': fic_created.isoformat() if fic_created else None,
+        'ficha_updated_at': fic_updated.isoformat() if fic_updated else None,
+    }

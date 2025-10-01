@@ -69,6 +69,11 @@ urlpatterns = [
     path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
 
+    # APIs AJAX para búsqueda de Pacientes
+    path('api/buscar_paciente_por_rut/', buscar_paciente_por_rut, name='api_buscar_paciente_por_rut'),
+    path('api/buscar_paciente_por_codigo/', buscar_paciente_por_codigo, name='api_buscar_paciente_por_codigo'),
+    path('api/buscar_paciente_por_ficha/', buscar_paciente_por_ficha, name='api_buscar_paciente_por_ficha'),
+
     # Vistas básicas para Fichas
     path('fichas/', FichaListView.as_view(), name='ficha_list'),
     path('fichas/crear/', FichaCreateView.as_view(), name='ficha_create'),

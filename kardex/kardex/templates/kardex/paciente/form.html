@@ -85,17 +85,21 @@
                 <div class="ficha-header d-flex justify-content-between align-items-center">
                     <span>N° FICHA:
                         <input type="text" value='{{ ficha.numero_ficha|stringformat:"04d" }}' name="ficha"
-                               class="form-control" placeholder="N° Ficha" id="id_numero_ficha" disabled>
+                            class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
                     </span>
                     <div class="text-muted small">
-                        Fecha de creación: {{ ficha.created_at|date:"d/m/Y" }}<br>
-                        Última modificación: {{ ficha.updated_at|date:"d/m/Y" }}
+                        <div>
+                            Fecha creación: <span id="ficha_created_at_text">
+                                {{ ficha.created_at|date:"d/m/Y"|default:"-" }}</span><br>
+                            Fecha modificación: <span id="ficha_updated_at_text">
+                                {{ ficha.updated_at|date:"d/m/Y"|default:"-" }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 text-md-end">
                 <input type="text" value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
-                       placeholder="Código" id="id_código" disabled>
+                    placeholder="Código" id="id_código">
             </div>
 
             <div class="col-md-3 text-md-end">
@@ -440,6 +444,7 @@
             nombre_pareja: qid('nombre_pareja_paciente'),
             rut_resp_temp: qid('rut_responsable_temporal_paciente'),
             usar_rut_madre: qid('usar_rut_madre_como_responsable_paciente'),
+            rut_madre: qid('id_rut_madre'),
             recien_nacido: qid('recien_nacido_paciente'),
             extranjero: qid('extranjero_paciente'),
             fallecido: qid('fallecido_paciente'),
@@ -496,6 +501,7 @@
                 setEnabled([el.rut_resp_temp, el.usar_rut_madre]);
                 setDisabled([el.nie, el.pasaporte, el.ocupacion, el.nombre_pareja, el.fecha_fallecimiento], true);
                 setRequired([el.rut_resp_temp], true);
+                setRequired([el.rut_madre], true);
                 setRequired([el.rut], false);
             }
 
@@ -505,6 +511,7 @@
                 setDisabled([el.nombre_pareja, el.nie, el.pasaporte, el.ocupacion], true);
                 setRequired([el.fecha_fallecimiento], true);
                 setRequired([el.rut_resp_temp], false);
+                setRequired([el.rut_madre], true);
                 setRequired([el.rut], false);
             }
 
@@ -529,6 +536,7 @@
                 setEnabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre]);
                 setDisabled([el.nombre_pareja, el.ocupacion, el.fecha_fallecimiento], true);
                 setRequired([el.rut_resp_temp], true);
+                setRequired([el.rut_madre], true);
                 setRequired([el.rut], false);
             }
 
@@ -537,6 +545,7 @@
                 setEnabled([el.fecha_fallecimiento, el.rut_resp_temp, el.usar_rut_madre, el.nie, el.pasaporte]);
                 setDisabled([el.nombre_pareja, el.ocupacion], true);
                 setRequired([el.fecha_fallecimiento], true);
+                setRequired([el.rut_madre], true);
                 setRequired([el.rut_resp_temp], false);
                 setRequired([el.rut], false);
             }
@@ -606,6 +615,195 @@
                 form.addEventListener('submit', onSubmit);
             }
         });
+    })();
+</script>
+<script>
+    (function () {
+        function q(id) { return document.getElementById(id); }
+        function selAll(selector) { return Array.prototype.slice.call(document.querySelectorAll(selector)); }
+        const urlRut = '{% url "kardex:api_buscar_paciente_por_rut" %}';
+        const urlCod = '{% url "kardex:api_buscar_paciente_por_codigo" %}';
+        const urlFicha = '{% url "kardex:api_buscar_paciente_por_ficha" %}';
+
+        const inputRut = q('id_rut');
+        const inputCodigo = q('id_código');
+        const inputNumFicha = q('id_numero_ficha');
+
+        const campoNombre = q('nombre_paciente');
+        const campoApPat = q('apellido_paterno_paciente');
+        const campoApMat = q('apellido_materno_paciente');
+        const campoFechaNac = q('fecha_nacimiento_paciente');
+        // Spans para fechas dinámicas
+        const spanPacCreated = q('paciente_created_at_text');
+        const spanPacUpdated = q('paciente_updated_at_text');
+        const spanFichaCreated = q('ficha_created_at_text');
+        const spanFichaUpdated = q('ficha_updated_at_text');
+
+        function lockForm(lock) {
+            const form = document.querySelector('form');
+            if (!form) return;
+            const elems = form.querySelectorAll('input, select, textarea, button');
+            elems.forEach(el => {
+                if (lock) { el.setAttribute('data-prev-disabled', el.disabled ? '1' : '0'); el.disabled = true; }
+                else { /* no-op on unlock here; we will force-enable below */ el.removeAttribute('data-prev-disabled'); }
+            });
+        }
+        function enableAllInputs() {
+            const form = document.querySelector('form');
+            if (!form) return;
+            form.querySelectorAll('input, select, textarea, button').forEach(el => { el.disabled = false; });
+        }
+
+        function isoToDMY(iso) {
+            // iso expected YYYY-MM-DD
+            if (!iso) return '';
+            const p = iso.split('-');
+            if (p.length !== 3) return iso;
+            return `${p[2]}/${p[1]}/${p[0]}`;
+        }
+        function isoToDMYHM(iso) {
+            // expects ISO datetime or date; returns dd/mm/yyyy HH:MM
+            if (!iso) return '';
+            try {
+                const d = new Date(iso);
+                if (isNaN(d.getTime())) return iso;
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                const hh = String(d.getHours()).padStart(2, '0');
+                const mi = String(d.getMinutes()).padStart(2, '0');
+                return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
+            } catch (e) {
+                return iso;
+            }
+        }
+
+        function fillForm(p) {
+            if (!p) return;
+
+            if (inputRut) inputRut.value = p.rut || '';
+            if (inputCodigo) inputCodigo.value = p.codigo || '';
+            if (campoNombre) campoNombre.value = p.nombre || '';
+            if (campoApPat) campoApPat.value = p.apellido_paterno || '';
+            if (campoApMat) campoApMat.value = p.apellido_materno || '';
+            if (campoFechaNac) campoFechaNac.value = isoToDMY(p.fecha_nacimiento);
+            if (inputNumFicha) inputNumFicha.value = p.numero_ficha || '';
+
+            // Nuevos campos
+            const nie = document.getElementById('nie_paciente');
+            if (nie) nie.value = p.nie || '';
+
+            const pasaporte = document.getElementById('pasaporte_paciente');
+            if (pasaporte) pasaporte.value = p.pasaporte || '';
+
+            const rutMadre = document.getElementById('id_rut_madre');
+            if (rutMadre) rutMadre.value = p.rut_madre || '';
+
+            const responsableTemp = document.getElementById('rut_responsable_temporal_paciente');
+            if (responsableTemp) responsableTemp.value = p.rut_responsable_temporal || '';
+
+            const nombrePareja = document.getElementById('nombre_pareja_paciente');
+            if (nombrePareja) nombrePareja.value = p.nombre_pareja || '';
+
+            const ocupacion = document.getElementById('ocupacion_paciente');
+            if (ocupacion) ocupacion.value = p.ocupacion || '';
+
+            const fechaFallecimiento = document.getElementById('fecha_fallecimiento_paciente');
+            if (fechaFallecimiento) fechaFallecimiento.value = isoToDMY(p.fecha_fallecimiento);
+
+            const comuna = document.getElementById('comuna_paciente');
+            if (comuna) comuna.value = p.comuna || '';
+
+            const prevision = document.getElementById('prevision_paciente');
+            if (prevision) prevision.value = p.prevision || '';
+
+            const usarRutMadre = document.getElementById('usar_rut_madre_como_responsable_paciente');
+            if (usarRutMadre) usarRutMadre.checked = !!p.usar_rut_madre_como_responsable;
+
+            const recienNacido = document.getElementById('recien_nacido_paciente');
+            if (recienNacido) {
+                recienNacido.checked = !!p.recien_nacido;
+                recienNacido.dispatchEvent(new Event('change'));
+            }
+
+            const extranjero = document.getElementById('extranjero_paciente');
+            if (extranjero) {
+                extranjero.checked = !!p.extranjero;
+                extranjero.dispatchEvent(new Event('change'));
+            }
+
+            const fallecido = document.getElementById('fallecido_paciente');
+            if (fallecido) {
+                fallecido.checked = !!p.fallecido;
+                fallecido.dispatchEvent(new Event('change'));
+            }
+
+            // Fechas de auditoría
+            if (spanPacCreated) spanPacCreated.textContent = isoToDMYHM(p.paciente_created_at);
+            if (spanPacUpdated) spanPacUpdated.textContent = isoToDMYHM(p.paciente_updated_at);
+            if (spanFichaCreated) spanFichaCreated.textContent = isoToDMYHM(p.ficha_created_at);
+            if (spanFichaUpdated) spanFichaUpdated.textContent = isoToDMYHM(p.ficha_updated_at);
+        }
+
+
+
+        async function doSearch(endpoint, paramName, value) {
+            if (!value) return;
+            const url = new URL(endpoint, window.location.origin);
+            url.searchParams.set(paramName, value);
+            try {
+                lockForm(true);
+                const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                const data = await resp.json();
+                if (data && data.success) {
+                    fillForm(data.paciente);
+                } else {
+                    const msg = (data && (data.error || data.message)) || 'No se encontró el paciente.';
+                    alert(msg);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Ocurrió un error realizando la búsqueda.');
+            } finally {
+                lockForm(false);
+                enableAllInputs();
+            }
+        }
+
+        function attach() {
+            if (inputRut) {
+                inputRut.addEventListener('blur', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doSearch(urlRut, 'rut', v);
+                });
+                inputRut.addEventListener('change', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doSearch(urlRut, 'rut', v);
+                });
+            }
+            if (inputCodigo) {
+                inputCodigo.addEventListener('blur', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doSearch(urlCod, 'codigo', v);
+                });
+                inputCodigo.addEventListener('change', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doSearch(urlCod, 'codigo', v);
+                });
+            }
+            if (inputNumFicha) {
+                inputNumFicha.addEventListener('blur', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doSearch(urlFicha, 'numero_ficha', v);
+                });
+                inputNumFicha.addEventListener('change', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doSearch(urlFicha, 'numero_ficha', v);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', attach);
     })();
 </script>
 {% endblock %}

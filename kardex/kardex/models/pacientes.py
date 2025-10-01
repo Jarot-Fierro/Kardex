@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Max
 
 from config.abstract import StandardModel
 from kardex.choices import ESTADO_CIVIL
@@ -66,20 +65,12 @@ class Paciente(StandardModel):
         verbose_name_plural = 'Pacientes'
 
     def save(self, *args, **kwargs):
-        if not self.codigo:
-            # Obtener el último código registrado para extraer el número mayor
-            ultimo_codigo = Paciente.objects.aggregate(max_codigo=Max('codigo'))['max_codigo']
+        is_new = self.pk is None  # Saber si es un nuevo registro
 
-            if ultimo_codigo:
-                # extraer la parte numérica, asumiendo formato "PAC-0000123"
-                try:
-                    numero_actual = int(ultimo_codigo.split('-')[1])
-                except (IndexError, ValueError):
-                    numero_actual = 0
-            else:
-                numero_actual = 0
-
-            nuevo_numero = numero_actual + 1
-            self.codigo = f"PAC-{nuevo_numero:07d}"  # rellena con ceros a la izquierda para 7 dígitos
-
+        # Primero guarda el objeto para que se genere el ID
         super().save(*args, **kwargs)
+
+        # Si es nuevo y no tenía código, ahora lo generamos usando el ID
+        if is_new and not self.codigo:
+            self.codigo = f"PAC-{self.pk:07d}"
+            super().save(update_fields=["codigo"])  # Solo actualiza el campo código
