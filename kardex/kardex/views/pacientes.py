@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils.dateformat import format as django_format
 from django.views.decorators.http import require_GET
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView, FormView
@@ -404,8 +405,10 @@ def buscar_paciente_por_ficha(request):
 
 
 def _serialize_paciente(paciente: Paciente, ficha: Ficha):
-    fecha_nac = paciente.fecha_nacimiento.isoformat() if paciente.fecha_nacimiento else None
-    fecha_fallecimiento = paciente.fecha_fallecimiento.isoformat() if paciente.fecha_fallecimiento else None
+    fecha_nac = django_format(paciente.fecha_nacimiento, 'd/m/Y') if paciente.fecha_nacimiento else None
+    fecha_fallecimiento = django_format(paciente.fecha_fallecimiento, 'd/m/Y') if paciente.fecha_fallecimiento else None
+
+    print(fecha_nac)
 
     pac_created = getattr(paciente, 'created_at', None)
     pac_updated = getattr(paciente, 'updated_at', None)

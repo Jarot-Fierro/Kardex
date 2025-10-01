@@ -615,6 +615,8 @@
                 form.addEventListener('submit', onSubmit);
             }
         });
+        // Expose rules applier for other scripts (e.g., AJAX fill)
+        window._pacienteApplyRules = applyRules;
     })();
 </script>
 <script>
@@ -708,14 +710,23 @@
             const ocupacion = document.getElementById('ocupacion_paciente');
             if (ocupacion) ocupacion.value = p.ocupacion || '';
 
+            const direccion = document.getElementById('direccion_paciente');
+            if (direccion) direccion.value = p.direccion || '';
+
+            const telefono1 = document.getElementById('numero_telefono1_paciente');
+            if (telefono1) telefono1.value = p.numero_telefono1 || '';
+
+            const telefono2 = document.getElementById('numero_telefono2_paciente');
+            if (telefono2) telefono2.value = p.numero_telefono2 || '';
+
             const fechaFallecimiento = document.getElementById('fecha_fallecimiento_paciente');
             if (fechaFallecimiento) fechaFallecimiento.value = isoToDMY(p.fecha_fallecimiento);
 
             const comuna = document.getElementById('comuna_paciente');
-            if (comuna) comuna.value = p.comuna || '';
+            if (comuna) { comuna.value = p.comuna || ''; comuna.dispatchEvent(new Event('change')); }
 
             const prevision = document.getElementById('prevision_paciente');
-            if (prevision) prevision.value = p.prevision || '';
+            if (prevision) { prevision.value = p.prevision || ''; prevision.dispatchEvent(new Event('change')); }
 
             const usarRutMadre = document.getElementById('usar_rut_madre_como_responsable_paciente');
             if (usarRutMadre) usarRutMadre.checked = !!p.usar_rut_madre_como_responsable;
@@ -767,6 +778,8 @@
             } finally {
                 lockForm(false);
                 enableAllInputs();
+                // Ensure rules are applied after programmatic changes from AJAX
+                if (window._pacienteApplyRules) { window._pacienteApplyRules(); }
             }
         }
 
