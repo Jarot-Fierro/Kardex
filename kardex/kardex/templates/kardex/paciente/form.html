@@ -85,7 +85,7 @@
                 <div class="ficha-header d-flex justify-content-between align-items-center">
                     <span>N° FICHA:
                         <input type="text" value='{{ ficha.numero_ficha|stringformat:"04d" }}' name="ficha"
-                               class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
+                               class="form-control" placeholder="N° Ficha" id="id_numero_ficha" disabled>
                     </span>
                     <div class="text-muted small">
                         Fecha de creación: {{ ficha.created_at|date:"d/m/Y" }}<br>
@@ -95,7 +95,7 @@
             </div>
             <div class="col-md-3 text-md-end">
                 <input type="text" value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
-                       placeholder="Código" id="id_código">
+                       placeholder="Código" id="id_código" disabled>
             </div>
 
             <div class="col-md-3 text-md-end">

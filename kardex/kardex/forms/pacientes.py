@@ -209,7 +209,7 @@ class FormPaciente(forms.ModelForm):
             format='%d/%m/%Y'
         ),
         input_formats=['%d/%m/%Y'],
-        required=True
+        required=False
     )
 
     ocupacion = forms.CharField(
