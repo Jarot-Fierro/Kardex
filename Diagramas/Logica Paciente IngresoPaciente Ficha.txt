@@ -1,0 +1,85 @@
+✅ Prompt para Junie:
+
+Estoy trabajando en un sistema de registro de pacientes en Django y necesito que me ayudes a implementar una lógica de creación encadenada entre tres modelos: Paciente, IngresoPaciente y Ficha.
+
+🔁 Lógica que quiero implementar
+
+Cuando un usuario logueado crea un nuevo Paciente, el sistema debe realizar lo siguiente automáticamente, sin que el usuario intervenga:
+
+1. Paciente
+
+El usuario ingresa al formulario de creación de Paciente.
+
+El campo usuario (FK a User) se debe asignar automáticamente al usuario logueado, y no se debe mostrar en el formulario.
+
+Una vez creado el Paciente, se pasa al siguiente paso automáticamente.
+
+2. IngresoPaciente
+
+Se debe crear un registro automáticamente en IngresoPaciente después de que se crea un Paciente.
+
+Campos que se deben completar automáticamente:
+
+paciente_id: el paciente recién creado.
+
+establecimiento_id: el establecimiento del usuario logueado (el usuario tiene un campo FK llamado establecimiento).
+
+Restricciones:
+
+Un paciente puede tener máximo 5 ingresos en IngresoPaciente.
+
+Cada ingreso debe ser en un establecimiento diferente.
+
+Validar que no se cree un nuevo ingreso si ya existe uno para ese paciente en el mismo establecimiento.
+
+3. Ficha
+
+Luego de crear el IngresoPaciente, se debe crear automáticamente un registro en Ficha.
+
+Campos:
+
+num_ficha: debe generarse en base al id del registro de Ficha, con ceros a la izquierda (por ejemplo: "0001", "0145", "0023").
+
+Recomendación: usar un campo IntegerField para guardar el número, y aplicar el formateo visualmente (con stringformat o lógica en template).
+
+profesional_id: debe seleccionarse manualmente en el formulario (es el único campo interactivo).
+
+usuario_id: asignar automáticamente al usuario logueado.
+
+ingreso_paciente_id: enlazar con el IngresoPaciente recién creado.
+
+🔄 Relación entre modelos:
+
+Paciente → IngresoPaciente: relación 1 a N.
+
+Un paciente puede tener hasta 5 ingresos, uno por cada hospital.
+
+IngresoPaciente → Ficha: relación 1 a 1.
+
+Cada ingreso tiene una ficha única.
+
+El campo establecimiento está en el modelo User, por lo que al momento de crear IngresoPaciente se puede obtener con request.user.establecimiento.
+
+🧩 Requisitos técnicos:
+
+Esta lógica puede implementarse en una vista basada en clases (CreateView) o mediante señales (post_save) si lo prefieres.
+
+Se debe validar:
+
+Que no se exceda el límite de 5 ingresos por paciente.
+
+Que no se repita un establecimiento para el mismo paciente en IngresoPaciente.
+
+Que solo se cree una ficha por ingreso.
+
+No se deben mostrar en el template los campos automáticos (usuario, establecimiento, ingreso_paciente, etc.).
+
+Por favor, genera el código Django necesario para implementar esta lógica, incluyendo:
+
+Modelos (si necesitas ajustarlos),
+
+Señales o lógica de vistas,
+
+Validaciones correspondientes,
+
+Y si es necesario, lógica para formatear num_ficha.

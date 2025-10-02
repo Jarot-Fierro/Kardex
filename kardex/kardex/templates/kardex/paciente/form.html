@@ -85,13 +85,13 @@
                 <div class="ficha-header d-flex justify-content-between align-items-center">
                     <span>N° FICHA:
                         <input type="text" value='{{ ficha.numero_ficha|stringformat:"04d" }}' name="ficha"
-                            class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
+                               class="form-control" placeholder="N° Ficha" id="id_numero_ficha">
                     </span>
                     <div class="text-muted small">
                         <div>
-                            Fecha creación: <span id="ficha_created_at_text">
+                            F. creación: <span id="ficha_created_at_text">
                                 {{ ficha.created_at|date:"d/m/Y"|default:"-" }}</span><br>
-                            Fecha modificación: <span id="ficha_updated_at_text">
+                            F. modificación: <span id="ficha_updated_at_text">
                                 {{ ficha.updated_at|date:"d/m/Y"|default:"-" }}</span>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
             </div>
             <div class="col-md-3 text-md-end">
                 <input type="text" value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
-                    placeholder="Código" id="id_código">
+                       placeholder="Código" id="id_código">
             </div>
 
             <div class="col-md-3 text-md-end">
@@ -491,9 +491,9 @@
             if (!rn && !ext && fal) {
                 // Fallecido solo
                 setEnabled([el.fecha_fallecimiento]);
-                setDisabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre, el.ocupacion, el.nombre_pareja], true);
+                setDisabled([el.nie, el.pasaporte, el.rut_resp_temp, el.usar_rut_madre], true);
                 setRequired([el.fecha_fallecimiento], true);
-                setRequired([el.rut_resp_temp, el.rut], false);
+                setRequired([el.rut], true);
             }
 
             if (rn && !ext && !fal) {
@@ -688,7 +688,7 @@
             if (campoNombre) campoNombre.value = p.nombre || '';
             if (campoApPat) campoApPat.value = p.apellido_paterno || '';
             if (campoApMat) campoApMat.value = p.apellido_materno || '';
-            if (campoFechaNac) campoFechaNac.value = isoToDMY(p.fecha_nacimiento);
+            if (campoFechaNac) campoFechaNac.value = p.fecha_nacimiento;
             if (inputNumFicha) inputNumFicha.value = p.numero_ficha || '';
 
             // Nuevos campos
@@ -700,6 +700,9 @@
 
             const rutMadre = document.getElementById('id_rut_madre');
             if (rutMadre) rutMadre.value = p.rut_madre || '';
+
+            const FechaNacimiento = document.getElementById('id_fecha_nacimiento');
+            if (FechaNacimiento) FechaNacimiento.value = p.fecha_nacimiento || '';
 
             const responsableTemp = document.getElementById('rut_responsable_temporal_paciente');
             if (responsableTemp) responsableTemp.value = p.rut_responsable_temporal || '';
@@ -720,7 +723,7 @@
             if (telefono2) telefono2.value = p.numero_telefono2 || '';
 
             const fechaFallecimiento = document.getElementById('fecha_fallecimiento_paciente');
-            if (fechaFallecimiento) fechaFallecimiento.value = isoToDMY(p.fecha_fallecimiento);
+            if (fechaFallecimiento) fechaFallecimiento.value = p.fecha_fallecimiento || '';
 
             const comuna = document.getElementById('comuna_paciente');
             if (comuna) { comuna.value = p.comuna || ''; comuna.dispatchEvent(new Event('change')); }
