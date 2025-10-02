@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.dateformat import format as django_format
 from django.views.decorators.http import require_GET
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -407,7 +407,7 @@ def buscar_paciente_por_rut(request):
                             status=404)
 
     paciente = ficha.ingreso_paciente.paciente
-    return JsonResponse({'success': True, 'paciente': _serialize_paciente(paciente, ficha)})
+    return JsonResponse({'success': True, 'paciente': _serialize_paciente(request, paciente, ficha)})
 
 
 @login_required
@@ -431,7 +431,7 @@ def buscar_paciente_por_codigo(request):
                             status=404)
 
     paciente = ficha.ingreso_paciente.paciente
-    return JsonResponse({'success': True, 'paciente': _serialize_paciente(paciente, ficha)})
+    return JsonResponse({'success': True, 'paciente': _serialize_paciente(request, paciente, ficha)})
 
 
 @login_required
@@ -458,10 +458,10 @@ def buscar_paciente_por_ficha(request):
         return JsonResponse({'success': False, 'error': 'No se encontró ficha en su establecimiento.'}, status=404)
 
     paciente = ficha.ingreso_paciente.paciente
-    return JsonResponse({'success': True, 'paciente': _serialize_paciente(paciente, ficha)})
+    return JsonResponse({'success': True, 'paciente': _serialize_paciente(request, paciente, ficha)})
 
 
-def _serialize_paciente(paciente: Paciente, ficha: Ficha):
+def _serialize_paciente(request, paciente: Paciente, ficha: Ficha):
     fecha_nac = django_format(paciente.fecha_nacimiento, 'd/m/Y') if paciente.fecha_nacimiento else None
     fecha_fallecimiento = django_format(paciente.fecha_fallecimiento, 'd/m/Y') if paciente.fecha_fallecimiento else None
 
@@ -474,6 +474,10 @@ def _serialize_paciente(paciente: Paciente, ficha: Ficha):
 
     # Try to expose ingreso ID for convenience
     ingreso = getattr(ficha, 'ingreso_paciente', None) if ficha else None
+
+    # Build dynamic PDF URLs (relative and absolute)
+    pdf_rel = reverse('kardex:pdf_ficha', kwargs={'ficha_id': ficha.id}) if ficha else None
+    pdf_abs = request.build_absolute_uri(pdf_rel) if ficha and pdf_rel else None
 
     return {
         'id': paciente.id,
@@ -519,6 +523,10 @@ def _serialize_paciente(paciente: Paciente, ficha: Ficha):
         'numero_ficha': str(ficha.numero_ficha).zfill(4) if ficha else None,
         'ficha_id': ficha.id if ficha else None,
         'ingreso_id': ingreso.id if ingreso else None,
+
+        # URLs listas para usar
+        'pdf_ficha_url': pdf_rel,
+        'pdf_ficha_absolute': pdf_abs,
 
         # Fechas de tracking
         'paciente_created_at': pac_created.isoformat() if pac_created else None,

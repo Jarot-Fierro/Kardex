@@ -141,9 +141,9 @@
         <tbody>
         <tr>
             <td colspan="2">
-                <strong>{{ ficha.ingreso_paciente.establecimiento.nombre }}</strong>
+                <strong>{{ ficha.ingreso_paciente.establecimiento.nombre|default:"-" }}</strong>
                 <h3>
-                    <strong>R.U.T: {{ ficha.ingreso_paciente.paciente.rut }}</strong>
+                    <strong>R.U.T: {{ ficha.ingreso_paciente.paciente.rut|default:"-" }}</strong>
                 </h3>
             </td>
             <td colspan="2">

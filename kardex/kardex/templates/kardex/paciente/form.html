@@ -79,6 +79,7 @@
         {{ form.non_field_errors }}
         <input type="hidden" name="action" id="form_action_hidden" value="{{ action|default:'add' }}">
         <input type="hidden" name="paciente_id" id="paciente_id_hidden" value="{{ paciente.id|default:'' }}">
+        <input type="hidden" name="ficha_id" id="ficha_id_hidden" value="{{ ficha.id|default:'' }}">
 
         <!-- Encabezado de la ficha -->
         <div class="row align-items-center mb-2">
@@ -105,11 +106,7 @@
 
             <div class="col-md-3 text-md-end">
                 <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
-                    <a class="btn btn-outline-secondary btn-sm w-50"
-                       href="{% url 'kardex:pdf_paciente' paciente_id=paciente.id %}" target="_blank"
-                       rel="noopener noreferrer">
-                        Carátula
-                    </a>
+                    <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank" aria-disabled="true" rel="noopener noreferrer">Carátula</a>
                     <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 2</button>
                 </div>
             </div>
@@ -693,6 +690,27 @@
             if (hiddenId) hiddenId.value = p.id || '';
             const hiddenAction = document.getElementById('form_action_hidden');
             if (hiddenAction && p.id) hiddenAction.value = 'edit';
+
+            // Update ficha hidden and Carátula URL from server-provided URL
+            const hiddenFichaId = document.getElementById('ficha_id_hidden');
+            if (hiddenFichaId) hiddenFichaId.value = p.ficha_id || '';
+            const btnCaratula = document.getElementById('btn-caratula');
+            if (btnCaratula) {
+                if (p && p.pdf_ficha_url) {
+                    btnCaratula.href = p.pdf_ficha_url;
+                    btnCaratula.classList.remove('disabled');
+                    btnCaratula.setAttribute('aria-disabled', 'false');
+                } else if (p && p.ficha_id) {
+                    // Fallback: build relative URL if only ficha_id is available
+                    btnCaratula.href = `/kardex/pdfs/ficha/${p.ficha_id}/`;
+                    btnCaratula.classList.remove('disabled');
+                    btnCaratula.setAttribute('aria-disabled', 'false');
+                } else {
+                    btnCaratula.href = '#';
+                    btnCaratula.classList.add('disabled');
+                    btnCaratula.setAttribute('aria-disabled', 'true');
+                }
+            }
 
             if (inputRut) inputRut.value = p.rut || '';
             if (inputCodigo) inputCodigo.value = p.codigo || '';
