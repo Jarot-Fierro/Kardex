@@ -105,8 +105,11 @@
 
             <div class="col-md-3 text-md-end">
                 <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
-                    <a class="btn btn-outline-secondary btn-sm w-50" href="{% url 'kardex:pdf_prueba' %}">
-                        Imprimir Etiqueta 1</a>
+                    <a class="btn btn-outline-secondary btn-sm w-50"
+                       href="{% url 'kardex:pdf_paciente' paciente_id=paciente.id %}" target="_blank"
+                       rel="noopener noreferrer">
+                        Carátula
+                    </a>
                     <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 2</button>
                 </div>
             </div>

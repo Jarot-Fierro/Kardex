@@ -103,4 +103,6 @@ urlpatterns = [
     path('servicios-clinicos/<int:pk>/eliminar/', ServicioClinicoDeleteView.as_view(), name='servicio_clinico_delete'),
     path('servicios-clinicos/<int:pk>/detalle/', ServicioClinicoDetailView.as_view(), name='servicio_clinico_detail'),
     path('pdf/', pdf_index, name='pdf_prueba'),
+    path('pdfs/paciente/<int:paciente_id>/', pdf_index, name='pdf_paciente'),
+    path('pdfs/ficha/<int:ficha_id>/', pdf_index, name='pdf_ficha'),
 ]

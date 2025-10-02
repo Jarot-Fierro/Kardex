@@ -3,17 +3,33 @@ from io import BytesIO
 
 import barcode
 from barcode.writer import ImageWriter
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
+from kardex.models import Ficha
 from kardex.models import Paciente
 
 
-def pdf_index(request, paciente_id):
-    paciente = get_object_or_404(Paciente, id=paciente_id)
-    codigo_barras_base64 = generar_barcode_base64(paciente.codigo)
+def pdf_index(request, ficha_id=None, paciente_id=None):
+    ficha = None
+    ingreso = None
+
+    if ficha_id is not None:
+        ficha = get_object_or_404(Ficha, id=ficha_id)
+        ingreso = ficha.ingreso_paciente
+        paciente = ingreso.paciente
+    elif paciente_id is not None:
+        paciente = get_object_or_404(Paciente, id=paciente_id)
+    else:
+        # Si no se proporciona ningún ID, retornar 404
+        raise Http404("Se requiere ficha_id o paciente_id")
+
+    codigo_barras_base64 = generar_barcode_base64((paciente.codigo or ""))
 
     context = {
         'paciente': paciente,
+        'ficha': ficha,
+        'ingreso': ingreso,
         'codigo_barras_base64': codigo_barras_base64
     }
 
@@ -31,7 +47,3 @@ def generar_barcode_base64(codigo_paciente: str) -> str:
 
     base64_img = base64.b64encode(buffer.getvalue()).decode('utf-8')
     return f"data:image/png;base64,{base64_img}"
-
-
-def pdf_index(request):
-    return render(request, 'pdfs/formato_caratula.html')
