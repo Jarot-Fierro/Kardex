@@ -7,6 +7,7 @@ from kardex.views.ingreso_paciente import *
 from kardex.views.movimiento_ficha import *
 from kardex.views.pacientes import *
 from kardex.views.pais import *
+from kardex.views.pdfs import pdf_index
 from kardex.views.prevision import *
 from kardex.views.profesion import *
 from kardex.views.profesionales import *
@@ -63,7 +64,7 @@ urlpatterns = [
     path('pacientes/extranjeros/', PacienteExtranjeroListView.as_view(), name='paciente_extranjero_list'),
     path('pacientes/fallecidos/', PacienteFallecidoListView.as_view(), name='paciente_fallecido_list'),
     path('pacientes/por-fecha/', PacientePorFechaListView.as_view(), name='paciente_por_fecha_list'),
-        path('pacientes/por-fecha/form/', PacienteFechaFormView.as_view(), name='paciente_fecha_form'),
+    path('pacientes/por-fecha/form/', PacienteFechaFormView.as_view(), name='paciente_fecha_form'),
     path('pacientes/crear/', PacienteCreateView.as_view(), name='paciente_create'),
     path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
     path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),
@@ -101,4 +102,5 @@ urlpatterns = [
     path('servicios-clinicos/<int:pk>/editar/', ServicioClinicoUpdateView.as_view(), name='servicio_clinico_update'),
     path('servicios-clinicos/<int:pk>/eliminar/', ServicioClinicoDeleteView.as_view(), name='servicio_clinico_delete'),
     path('servicios-clinicos/<int:pk>/detalle/', ServicioClinicoDetailView.as_view(), name='servicio_clinico_detail'),
+    path('pdf/', pdf_index, name='pdf_prueba'),
 ]

@@ -77,7 +77,8 @@
     <form method="post" novalidate>
         {% csrf_token %}
         {{ form.non_field_errors }}
-        <input type="hidden" name="action" value="{{ action|default:'add' }}">
+        <input type="hidden" name="action" id="form_action_hidden" value="{{ action|default:'add' }}">
+        <input type="hidden" name="paciente_id" id="paciente_id_hidden" value="{{ paciente.id|default:'' }}">
 
         <!-- Encabezado de la ficha -->
         <div class="row align-items-center mb-2">
@@ -104,7 +105,8 @@
 
             <div class="col-md-3 text-md-end">
                 <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
-                    <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 1</button>
+                    <a class="btn btn-outline-secondary btn-sm w-50" href="{% url 'kardex:pdf_prueba' %}">
+                        Imprimir Etiqueta 1</a>
                     <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 2</button>
                 </div>
             </div>
@@ -682,6 +684,12 @@
 
         function fillForm(p) {
             if (!p) return;
+
+            // Set hidden paciente id and switch form action to edit
+            const hiddenId = document.getElementById('paciente_id_hidden');
+            if (hiddenId) hiddenId.value = p.id || '';
+            const hiddenAction = document.getElementById('form_action_hidden');
+            if (hiddenAction && p.id) hiddenAction.value = 'edit';
 
             if (inputRut) inputRut.value = p.rut || '';
             if (inputCodigo) inputCodigo.value = p.codigo || '';

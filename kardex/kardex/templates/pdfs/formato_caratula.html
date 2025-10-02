@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha Paciente</title>
+    <!-- Bootstrap 4 CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Calibri, sans-serif;
+            padding: 20px;
+        }
+
+        .numero-ficha {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .barcode img {
+            max-height: 60px;
+        }
+
+        .fecha-tabla {
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 14px;
+        }
+
+        .fecha-tabla table {
+            margin: 0;
+            width: 100%;
+        }
+
+        .fecha-tabla td {
+            text-align: center;
+            padding: 6px 12px;
+            border-bottom: 1px solid #000000;
+        }
+
+        .fecha-tabla tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Estilos personalizados para la tabla grande */
+        .custom-table {
+            width: 100%;
+            border: 1px solid #000;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .custom-table td {
+            border: 1px solid #000;
+            padding: 12px;
+            vertical-align: top;
+        }
+
+        .custom-table strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .custom-table p {
+            margin: 0;
+        }
+
+        /* Bordes redondeados solo en las esquinas externas */
+        .custom-table tr:first-child td:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .custom-table tr:first-child td:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        .custom-table tr:last-child td:first-child {
+            border-bottom-left-radius: 8px;
+        }
+
+        .custom-table tr:last-child td:last-child {
+            border-bottom-right-radius: 8px;
+        }
+        @media print {
+        .no-print {
+                display: none !important;
+            }
+        .row.print-row-fix {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .row.print-row-fix > [class*="col-"] {
+            flex: 0 0 33.333% !important;
+            max-width: 33.333% !important;
+        }
+
+        .barcode img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="row align-items-center print-row-fix">
+        <div class="col-md-4">
+            <div class="numero-ficha">172.842</div>
+        </div>
+
+        <div class="col-md-4 text-center barcode">
+            <img src="{{ codigo_barras_base64 }}" alt="Código de barras">
+        </div>
+
+        <div class="col-md-4 text-right">
+            <div class="fecha-tabla d-inline-block">
+                <table class="table table-sm mb-0">
+                    <tr>
+                        <td><strong>Fecha Creación</strong></td>
+                    </tr>
+                    <tr>
+                        <td>13/10/2016</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Tabla con bordes negros y esquinas redondeadas -->
+    <table class="custom-table">
+        <tbody>
+        <tr>
+            <td colspan="2">
+                <strong>Hospital de Curanilahue</strong>
+                <h3>
+                    <strong>R.U.T: 16.707.185-6</strong>
+                </h3>
+            </td>
+            <td colspan="2">
+                <h3>
+                    <strong>Ficha: 123</strong>
+                </h3>
+                <strong>Pasaporte: 123</strong>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Apellido Paterno, Apellido Materno, Nombres</strong>
+                <h3>
+                    <strong>VEGA PEREIRA LUIS</strong>
+                </h3>
+            </td>
+            <td>
+                <strong>Sexo</strong>
+                <p>Masculino</p>
+            </td>
+            <td>
+                <strong>Estado Civil</strong>
+                <p>Casado</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Fecha de Nacimiento</strong>
+                <p>23/01/1987</p>
+            </td>
+            <td colspan="2">
+                <strong>Fecha de Fallecimiento</strong>
+                <p>23/01/1987</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Dirección</strong>
+                <p>18 DE SEPTIEMBRE SAN JOSE DE COLICO CHUE, Curanilahue</p>
+            </td>
+            <td>
+                <strong>N° Teléfono 1</strong>
+                <p>932266720</p>
+            </td>
+            <td>
+                <strong>N° Teléfono 2</strong>
+                <p>932266720</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Nombre Social</strong>
+                <p>Juanito</p>
+            </td>
+            <td>
+                <strong>Nombre Madre</strong>
+                <p>Juanita</p>
+            </td>
+            <td>
+                <strong>Nombre Padre</strong>
+                <p>Juanito</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Nombre del Cónyuge</strong>
+                <p>Nombre</p>
+            </td>
+            <td colspan="2">
+                <strong>Previsión</strong>
+                <p>Fonasa A</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Representante Legal</strong>
+                <p>Nombre</p>
+            </td>
+            <td colspan="2">
+                <strong>Ocupación</strong>
+                <p>Informático</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-right my-3">
+        <button class="btn btn-outline-secondary no-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    </div>
+</div>
+
+</body>
+
+</html>

@@ -94,6 +94,18 @@ class PacienteCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         print("[DEBUG] POST iniciado")
+        # Detect if this should be treated as an update (AJAX prefilled existing paciente)
+        paciente_id = (request.POST.get('paciente_id') or '').strip()
+        instance = None
+        if paciente_id:
+            try:
+                instance = Paciente.objects.get(pk=paciente_id)
+                self.object = instance  # Make get_form bind to instance
+                print(f"[DEBUG] Modo edición detectado (ID: {paciente_id})")
+            except Paciente.DoesNotExist:
+                print(f"[WARN] paciente_id {paciente_id} no existe. Continuando como creación.")
+                instance = None
+
         form = self.get_form()
         if form.is_valid():
             print("[DEBUG] Formulario válido")
@@ -104,6 +116,7 @@ class PacienteCreateView(CreateView):
             try:
                 with transaction.atomic():
                     paciente = form.save(commit=False)
+                    # Asignar usuario siempre
                     paciente.usuario = request.user
 
                     try:
@@ -116,28 +129,45 @@ class PacienteCreateView(CreateView):
 
                     establecimiento = getattr(user, 'establecimiento', None)
                     if not establecimiento:
-                        messages.warning(request, 'Paciente creado, pero usuario sin establecimiento.')
+                        messages.warning(request, 'El usuario no tiene un establecimiento asociado.')
                     else:
                         ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
-                        print(f"[DEBUG] Ingresos actuales: {ingresos_qs.count()}")
-                        if ingresos_qs.count() >= 5:
+                        count_ingresos = ingresos_qs.count()
+                        print(f"[DEBUG] Ingresos actuales: {count_ingresos}")
+                        ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
+
+                        if count_ingresos >= 5 and not ingreso_existente:
+                            # Si ya alcanzó el máximo y además no existe uno en este establecimiento, no crear otro
                             messages.warning(request, 'Máximo de ingresos alcanzado.')
-                        elif ingresos_qs.filter(establecimiento=establecimiento).exists():
-                            messages.warning(request, 'Ya existe ingreso en este establecimiento.')
                         else:
-                            ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
-                            print(f"[DEBUG] Ingreso creado: ID {ingreso.pk}")
-
-                            ficha, created = Ficha.objects.get_or_create(
-                                ingreso_paciente=ingreso,
-                                defaults={'usuario': user}
-                            )
-                            if created:
-                                messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                            if ingreso_existente:
+                                # Ya existe ingreso en el establecimiento actual
+                                # En edición queremos asegurar la existencia de ficha
+                                ficha, created = Ficha.objects.get_or_create(
+                                    ingreso_paciente=ingreso_existente,
+                                    defaults={'usuario': user}
+                                )
+                                if created:
+                                    messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                                else:
+                                    messages.info(request, 'Ficha ya existente para este ingreso.')
                             else:
-                                messages.info(request, 'Ficha ya existente.')
+                                # No existe ingreso en este establecimiento: crear respetando el tope
+                                ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
+                                print(f"[DEBUG] Ingreso creado: ID {ingreso.pk}")
+                                ficha, created = Ficha.objects.get_or_create(
+                                    ingreso_paciente=ingreso,
+                                    defaults={'usuario': user}
+                                )
+                                if created:
+                                    messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                                else:
+                                    messages.info(request, 'Ficha ya existente.')
 
-                    messages.success(request, 'Paciente creado correctamente')
+                    if instance:
+                        messages.success(request, 'Paciente actualizado correctamente')
+                    else:
+                        messages.success(request, 'Paciente creado correctamente')
                     return redirect(self.success_url)
 
             except Exception as e:
@@ -148,7 +178,7 @@ class PacienteCreateView(CreateView):
 
         print("[DEBUG] Formulario inválido:", form.errors)
         messages.error(request, 'Hay errores en el formulario')
-        self.object = None
+        self.object = instance
         return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
     def get_context_data(self, **kwargs):
@@ -174,7 +204,34 @@ class PacienteUpdateView(UpdateView):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid():
-            form.save()
+            paciente = form.save()
+            # Lógica de creación automática de IngresoPaciente y Ficha en modo edición
+            from kardex.models import IngresoPaciente, Ficha
+            user = request.user
+            establecimiento = getattr(user, 'establecimiento', None)
+            if not establecimiento:
+                messages.warning(request, 'El usuario no tiene un establecimiento asociado.')
+            else:
+                ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
+                ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
+                if ingreso_existente:
+                    ficha, created = Ficha.objects.get_or_create(
+                        ingreso_paciente=ingreso_existente,
+                        defaults={'usuario': user}
+                    )
+                    if created:
+                        messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                else:
+                    if ingresos_qs.count() >= 5:
+                        messages.warning(request, 'Máximo de ingresos alcanzado. No se creó un nuevo ingreso.')
+                    else:
+                        ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
+                        ficha, created = Ficha.objects.get_or_create(
+                            ingreso_paciente=ingreso,
+                            defaults={'usuario': user}
+                        )
+                        if created:
+                            messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
             messages.success(request, 'Paciente actualizado correctamente')
             return redirect(self.success_url)
         messages.error(request, 'Hay errores en el formulario')
@@ -415,7 +472,11 @@ def _serialize_paciente(paciente: Paciente, ficha: Ficha):
     fic_created = getattr(ficha, 'created_at', None) if ficha else None
     fic_updated = getattr(ficha, 'updated_at', None) if ficha else None
 
+    # Try to expose ingreso ID for convenience
+    ingreso = getattr(ficha, 'ingreso_paciente', None) if ficha else None
+
     return {
+        'id': paciente.id,
         # Identificación
         'rut': paciente.rut,
         'codigo': paciente.codigo,
@@ -456,6 +517,8 @@ def _serialize_paciente(paciente: Paciente, ficha: Ficha):
 
         # Ficha
         'numero_ficha': str(ficha.numero_ficha).zfill(4) if ficha else None,
+        'ficha_id': ficha.id if ficha else None,
+        'ingreso_id': ingreso.id if ingreso else None,
 
         # Fechas de tracking
         'paciente_created_at': pac_created.isoformat() if pac_created else None,
