@@ -14,7 +14,7 @@ class Ficha(StandardModel):
                                     verbose_name='Profesional')
 
     ingreso_paciente = models.ForeignKey('kardex.IngresoPaciente', on_delete=models.PROTECT, null=False,
-                                         unique=True, verbose_name='Paciente')
+                                         verbose_name='Paciente')
 
     def save(self, *args, **kwargs):
         creating = self.pk is None

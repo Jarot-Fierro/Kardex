@@ -5,11 +5,13 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.utils.dateformat import format as django_format
+from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_GET
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView, FormView
 
 from kardex.forms.pacientes import FormPaciente
+from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.mixin import DataTableMixin
 from kardex.models import Paciente, Ficha
 
@@ -310,9 +312,7 @@ class PacienteDeleteView(PermissionRequiredMixin, DeleteView):
         return context
 
 
-class PacienteRecienNacidoListView(PermissionRequiredMixin, PacienteListView):
-    permission_required = 'kardex.view_paciente'
-    raise_exception = True
+class PacienteRecienNacidoListView(PacienteListView):
 
     def get_base_queryset(self):
         return Paciente.objects.filter(recien_nacido=True)
@@ -326,8 +326,7 @@ class PacienteRecienNacidoListView(PermissionRequiredMixin, PacienteListView):
         return context
 
 
-class PacienteExtranjeroListView(PermissionRequiredMixin, PacienteListView):
-    permission_required = 'kardex.view_paciente'
+class PacienteExtranjeroListView(PacienteListView):
 
     def get_base_queryset(self):
         return Paciente.objects.filter(extranjero=True)
@@ -341,8 +340,7 @@ class PacienteExtranjeroListView(PermissionRequiredMixin, PacienteListView):
         return context
 
 
-class PacienteFallecidoListView(PermissionRequiredMixin, PacienteListView):
-    permission_required = 'kardex.view_paciente'
+class PacienteFallecidoListView(PacienteListView):
 
     def get_base_queryset(self):
         return Paciente.objects.filter(fallecido=True)
@@ -354,10 +352,6 @@ class PacienteFallecidoListView(PermissionRequiredMixin, PacienteListView):
             'list_url': reverse_lazy('kardex:paciente_fallecido_list'),
         })
         return context
-
-
-from kardex.forms.pacientes import PacienteFechaRangoForm
-from django.utils.dateparse import parse_date
 
 
 class PacienteFechaFormView(PermissionRequiredMixin, FormView):
@@ -381,8 +375,7 @@ class PacienteFechaFormView(PermissionRequiredMixin, FormView):
         return ctx
 
 
-class PacientePorFechaListView(PermissionRequiredMixin, PacienteListView):
-    permission_required = 'kardex.view_paciente'
+class PacientePorFechaListView(PacienteListView):
 
     def get_base_queryset(self):
         qs = Paciente.objects.all()
