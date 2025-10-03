@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,12 +11,19 @@ from kardex.models import Profesion
 MODULE_NAME = 'Profesiones'
 
 
-class ProfesionListView(DataTableMixin, TemplateView):
+class ProfesionListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/profesion/list.html'
     model = Profesion
     datatable_columns = ['ID', 'Nombre']
     datatable_order_fields = ['id', None, 'nombre']
     datatable_search_fields = ['nombre__icontains']
+
+    permission_required = 'kardex.view_profesion'
+    raise_exception = True
+
+    permission_view = 'kardex.view_profesion'
+    permission_update = 'kardex.change_profesion'
+    permission_delete = 'kardex.delete_profesion'
 
     url_detail = 'kardex:profesion_detail'
     url_update = 'kardex:profesion_update'
@@ -46,9 +54,11 @@ class ProfesionListView(DataTableMixin, TemplateView):
         return context
 
 
-class ProfesionDetailView(DetailView):
+class ProfesionDetailView(PermissionRequiredMixin, DetailView):
     model = Profesion
     template_name = 'kardex/profesion/detail.html'
+    permission_required = 'kardex.view_profesion'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -58,12 +68,13 @@ class ProfesionDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class ProfesionCreateView(CreateView):
+class ProfesionCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/profesion/form.html'
     model = Profesion
     form_class = FormProfesion
     success_url = reverse_lazy('kardex:profesion_list')
-    permission_required = 'add_profesion'
+    permission_required = 'kardex.add_profesion'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -87,12 +98,13 @@ class ProfesionCreateView(CreateView):
         return context
 
 
-class ProfesionUpdateView(UpdateView):
+class ProfesionUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/profesion/form.html'
     model = Profesion
     form_class = FormProfesion
     success_url = reverse_lazy('kardex:profesion_list')
-    permission_required = 'change_profesion'
+    permission_required = 'kardex.change_profesion'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -119,11 +131,13 @@ class ProfesionUpdateView(UpdateView):
         return context
 
 
-class ProfesionDeleteView(DeleteView):
+class ProfesionDeleteView(PermissionRequiredMixin, DeleteView):
     model = Profesion
     template_name = 'kardex/profesion/confirm_delete.html'
     success_url = reverse_lazy('kardex:profesion_list')
-    permission_required = 'delete_profesion'
+
+    permission_required = 'kardex.delete_profesion'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

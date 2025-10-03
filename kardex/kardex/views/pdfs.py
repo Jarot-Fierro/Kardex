@@ -3,6 +3,7 @@ from io import BytesIO
 
 import barcode
 from barcode.writer import ImageWriter
+from django.contrib.auth.decorators import permission_required
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
@@ -10,6 +11,7 @@ from kardex.models import Ficha
 from kardex.models import Paciente
 
 
+@permission_required('kardex.view_paciente', raise_exception=True)
 def pdf_index(request, ficha_id=None, paciente_id=None):
     ficha = None
     ingreso = None
@@ -36,6 +38,7 @@ def pdf_index(request, ficha_id=None, paciente_id=None):
     return render(request, 'pdfs/formato_caratula.html', context)
 
 
+@permission_required('kardex.view_paciente', raise_exception=True)
 def pdf_stickers(request, ficha_id=None, paciente_id=None):
     ficha = None
     ingreso = None

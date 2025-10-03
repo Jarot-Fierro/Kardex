@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.urls import path
 
 from kardex.views.comuna import *
@@ -109,3 +110,10 @@ urlpatterns = [
     path('pdfs/sticker/paciente/<int:paciente_id>/', pdf_stickers, name='pdf_stickers'),
     path('pdfs/stickers/ficha/<int:ficha_id>/', pdf_stickers, name='pdf_stickers_ficha'),
 ]
+
+
+def custom_permission_denied_view(request, exception):
+    return render(request, '403.html', status=403)
+
+
+handler403 = custom_permission_denied_view

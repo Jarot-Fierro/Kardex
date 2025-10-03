@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,12 +11,19 @@ from kardex.models import Pais
 MODULE_NAME = 'Paises'
 
 
-class PaisListView(DataTableMixin, TemplateView):
+class PaisListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/pais/list.html'
     model = Pais
     datatable_columns = ['ID', 'Nombre', 'Código']
     datatable_order_fields = ['id', None, 'nombre', 'cod_pais']
     datatable_search_fields = ['nombre__icontains', 'cod_pais__icontains']
+
+    permission_required = 'kardex.view_pais'
+    raise_exception = True
+
+    permission_view = 'kardex.view_pais'
+    permission_update = 'kardex.change_pais'
+    permission_delete = 'kardex.delete_pais'
 
     url_detail = 'kardex:pais_detail'
     url_update = 'kardex:pais_update'
@@ -47,9 +55,11 @@ class PaisListView(DataTableMixin, TemplateView):
         return context
 
 
-class PaisDetailView(DetailView):
+class PaisDetailView(PermissionRequiredMixin, DetailView):
     model = Pais
     template_name = 'kardex/pais/detail.html'
+    permission_required = 'kardex.view_pais'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         # Si es una solicitud AJAX, devolvemos solo el fragmento HTML
@@ -60,12 +70,13 @@ class PaisDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class PaisCreateView(CreateView):
+class PaisCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/pais/form.html'
     model = Pais
     form_class = FormPais
     success_url = reverse_lazy('kardex:pais_list')
-    permission_required = 'add_pais'
+    permission_required = 'kardex:add_pais'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -89,12 +100,13 @@ class PaisCreateView(CreateView):
         return context
 
 
-class PaisUpdateView(UpdateView):
+class PaisUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/pais/form.html'
     model = Pais
     form_class = FormPais
     success_url = reverse_lazy('kardex:pais_list')
-    permission_required = 'change_pais'
+    permission_required = 'kardex:change_pais'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -121,11 +133,12 @@ class PaisUpdateView(UpdateView):
         return context
 
 
-class PaisDeleteView(DeleteView):
+class PaisDeleteView(PermissionRequiredMixin, DeleteView):
     model = Pais
     template_name = 'kardex/pais/confirm_delete.html'
     success_url = reverse_lazy('kardex:pais_list')
-    permission_required = 'delete_pais'
+    permission_required = 'kardex:delete_pais'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

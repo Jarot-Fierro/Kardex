@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,7 +11,7 @@ from kardex.models import ServicioClinico
 MODULE_NAME = 'Servicios Clínicos'
 
 
-class ServicioClinicoListView(DataTableMixin, TemplateView):
+class ServicioClinicoListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/servicio_clinico/list.html'
     model = ServicioClinico
     datatable_columns = ['ID', 'Nombre', 'Horas', 'Jefe Área', 'Teléfono', 'Establecimiento']
@@ -18,6 +19,13 @@ class ServicioClinicoListView(DataTableMixin, TemplateView):
                               'establecimiento__nombre']
     datatable_search_fields = ['nombre__icontains', 'tiempo_horas__icontains', 'correo_jefe__icontains',
                                'telefono__icontains', 'establecimiento__nombre__icontains']
+
+    permission_required = 'kardex.view_servicio_clinico'
+    raise_exception = True
+
+    permission_view = 'kardex.view_servicio_clinico'
+    permission_update = 'kardex.change_servicio_clinico'
+    permission_delete = 'kardex.delete_servicio_clinico'
 
     url_detail = 'kardex:servicio_clinico_detail'
     url_update = 'kardex:servicio_clinico_update'
@@ -52,9 +60,11 @@ class ServicioClinicoListView(DataTableMixin, TemplateView):
         return context
 
 
-class ServicioClinicoDetailView(DetailView):
+class ServicioClinicoDetailView(PermissionRequiredMixin, DetailView):
     model = ServicioClinico
     template_name = 'kardex/servicio_clinico/detail.html'
+    permission_required = 'kardex.view_servicio_clinico'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -64,12 +74,13 @@ class ServicioClinicoDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class ServicioClinicoCreateView(CreateView):
+class ServicioClinicoCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/servicio_clinico/form.html'
     model = ServicioClinico
     form_class = FormServicioClinico
     success_url = reverse_lazy('kardex:servicio_clinico_list')
-    permission_required = 'add_servicioclinico'
+    permission_required = 'kardex.add_servicio_clinico'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -93,12 +104,13 @@ class ServicioClinicoCreateView(CreateView):
         return context
 
 
-class ServicioClinicoUpdateView(UpdateView):
+class ServicioClinicoUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/servicio_clinico/form.html'
     model = ServicioClinico
     form_class = FormServicioClinico
     success_url = reverse_lazy('kardex:servicio_clinico_list')
-    permission_required = 'change_servicioclinico'
+    permission_required = 'kardex.change_servicio_clinico'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -125,11 +137,12 @@ class ServicioClinicoUpdateView(UpdateView):
         return context
 
 
-class ServicioClinicoDeleteView(DeleteView):
+class ServicioClinicoDeleteView(PermissionRequiredMixin, DeleteView):
     model = ServicioClinico
     template_name = 'kardex/servicio_clinico/confirm_delete.html'
     success_url = reverse_lazy('kardex:servicio_clinico_list')
-    permission_required = 'delete_servicioclinico'
+    permission_required = 'kardex.delete_servicio_clinico'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

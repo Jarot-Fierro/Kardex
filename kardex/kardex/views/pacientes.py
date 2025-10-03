@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
@@ -15,7 +16,7 @@ from kardex.models import Paciente, Ficha
 MODULE_NAME = 'Pacientes'
 
 
-class PacienteListView(DataTableMixin, TemplateView):
+class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/paciente/list.html'
     model = Paciente
     datatable_columns = ['ID', 'RUT', 'Nombre', 'Sexo', 'Estado Civil', 'Comuna', 'Previsión']
@@ -37,6 +38,13 @@ class PacienteListView(DataTableMixin, TemplateView):
         'comuna__nombre__icontains',
         'prevision__nombre__icontains'
     ]
+
+    permission_view = 'kardex.view_paciente'
+    permission_update = 'kardex.change_paciente'
+    permission_delete = 'kardex.delete_paciente'
+
+    permission_required = 'kardex.view_paciente'
+    raise_exception = True
 
     url_detail = 'kardex:paciente_detail'
     url_update = 'kardex:paciente_update'
@@ -73,9 +81,11 @@ class PacienteListView(DataTableMixin, TemplateView):
         return context
 
 
-class PacienteDetailView(DetailView):
+class PacienteDetailView(PermissionRequiredMixin, DetailView):
     model = Paciente
     template_name = 'kardex/paciente/detail.html'
+    permission_required = 'kardex.view_paciente'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -85,12 +95,13 @@ class PacienteDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class PacienteCreateView(CreateView):
+class PacienteCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/paciente/form.html'
     model = Paciente
     form_class = FormPaciente
     success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'add_paciente'
+    permission_required = 'kardex.add_paciente'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         print("[DEBUG] POST iniciado")
@@ -153,7 +164,8 @@ class PacienteCreateView(CreateView):
                                     messages.info(request, 'Ficha ya existente para este ingreso.')
                             else:
                                 # No existe ingreso en este establecimiento: crear respetando el tope
-                                ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
+                                ingreso = IngresoPaciente.objects.create(paciente=paciente,
+                                                                         establecimiento=establecimiento)
                                 print(f"[DEBUG] Ingreso creado: ID {ingreso.pk}")
                                 ficha, created = Ficha.objects.get_or_create(
                                     ingreso_paciente=ingreso,
@@ -190,12 +202,13 @@ class PacienteCreateView(CreateView):
         return context
 
 
-class PacienteUpdateView(UpdateView):
+class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/paciente/form.html'
     model = Paciente
     form_class = FormPaciente
     success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'change_paciente'
+    permission_required = 'kardex.change_paciente'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -273,11 +286,12 @@ class PacienteUpdateView(UpdateView):
         return context
 
 
-class PacienteDeleteView(DeleteView):
+class PacienteDeleteView(PermissionRequiredMixin, DeleteView):
     model = Paciente
     template_name = 'kardex/paciente/confirm_delete.html'
     success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'delete_paciente'
+    permission_required = 'kardex.delete_paciente'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         try:
@@ -296,7 +310,10 @@ class PacienteDeleteView(DeleteView):
         return context
 
 
-class PacienteRecienNacidoListView(PacienteListView):
+class PacienteRecienNacidoListView(PermissionRequiredMixin, PacienteListView):
+    permission_required = 'kardex.view_paciente'
+    raise_exception = True
+
     def get_base_queryset(self):
         return Paciente.objects.filter(recien_nacido=True)
 
@@ -309,7 +326,9 @@ class PacienteRecienNacidoListView(PacienteListView):
         return context
 
 
-class PacienteExtranjeroListView(PacienteListView):
+class PacienteExtranjeroListView(PermissionRequiredMixin, PacienteListView):
+    permission_required = 'kardex.view_paciente'
+
     def get_base_queryset(self):
         return Paciente.objects.filter(extranjero=True)
 
@@ -322,7 +341,9 @@ class PacienteExtranjeroListView(PacienteListView):
         return context
 
 
-class PacienteFallecidoListView(PacienteListView):
+class PacienteFallecidoListView(PermissionRequiredMixin, PacienteListView):
+    permission_required = 'kardex.view_paciente'
+
     def get_base_queryset(self):
         return Paciente.objects.filter(fallecido=True)
 
@@ -339,9 +360,10 @@ from kardex.forms.pacientes import PacienteFechaRangoForm
 from django.utils.dateparse import parse_date
 
 
-class PacienteFechaFormView(FormView):
+class PacienteFechaFormView(PermissionRequiredMixin, FormView):
     template_name = 'kardex/paciente/fecha_rango_form.html'
     form_class = PacienteFechaRangoForm
+    permission_required = 'kardex.view_paciente'
 
     def get_success_url(self):
         return reverse_lazy('kardex:paciente_por_fecha_list')
@@ -359,7 +381,9 @@ class PacienteFechaFormView(FormView):
         return ctx
 
 
-class PacientePorFechaListView(PacienteListView):
+class PacientePorFechaListView(PermissionRequiredMixin, PacienteListView):
+    permission_required = 'kardex.view_paciente'
+
     def get_base_queryset(self):
         qs = Paciente.objects.all()
         fecha_inicio = self.request.GET.get('fecha_inicio')
@@ -529,7 +553,8 @@ def _serialize_paciente(request, paciente: Paciente, ficha: Ficha):
         'pdf_ficha_absolute': pdf_abs,
         # Stickers URLs
         'pdf_stickers_url': (reverse('kardex:pdf_stickers_ficha', kwargs={'ficha_id': ficha.id}) if ficha else None),
-        'pdf_stickers_absolute': (request.build_absolute_uri(reverse('kardex:pdf_stickers_ficha', kwargs={'ficha_id': ficha.id})) if ficha else None),
+        'pdf_stickers_absolute': (request.build_absolute_uri(
+            reverse('kardex:pdf_stickers_ficha', kwargs={'ficha_id': ficha.id})) if ficha else None),
 
         # Fechas de tracking
         'paciente_created_at': pac_created.isoformat() if pac_created else None,

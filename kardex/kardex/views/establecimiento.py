@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,13 +11,20 @@ from kardex.models import Establecimiento
 MODULE_NAME = 'Establecimientos'
 
 
-class EstablecimientoListView(DataTableMixin, TemplateView):
+class EstablecimientoListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/establecimiento/list.html'
     model = Establecimiento
     datatable_columns = ['ID', 'Nombre', 'Dirección', 'Teléfono', 'Comuna']
     datatable_order_fields = ['id', None, 'nombre', 'direccion', 'telefono', 'comuna__nombre']
     datatable_search_fields = ['nombre__icontains', 'direccion__icontains', 'telefono__icontains',
                                'comuna__nombre__icontains']
+
+    permission_required = 'kardex.view_establecimiento'
+    raise_exception = True
+
+    permission_view = 'kardex.view_establecimiento'
+    permission_update = 'kardex.change_establecimiento'
+    permission_delete = 'kardex.delete_establecimiento'
 
     url_detail = 'kardex:establecimiento_detail'
     url_update = 'kardex:establecimiento_update'
@@ -50,9 +58,11 @@ class EstablecimientoListView(DataTableMixin, TemplateView):
         return context
 
 
-class EstablecimientoDetailView(DetailView):
+class EstablecimientoDetailView(PermissionRequiredMixin, DetailView):
     model = Establecimiento
     template_name = 'kardex/establecimiento/detail.html'
+    permission_required = 'kardex.view_establecimiento'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         # Si es una solicitud AJAX, devolvemos solo el fragmento HTML
@@ -63,12 +73,12 @@ class EstablecimientoDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class EstablecimientoCreateView(CreateView):
+class EstablecimientoCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/establecimiento/form.html'
     model = Establecimiento
     form_class = FormEstablecimiento
     success_url = reverse_lazy('kardex:establecimiento_list')
-    permission_required = 'add_establecimiento'
+    permission_required = 'kardex:add_establecimiento'
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -92,12 +102,12 @@ class EstablecimientoCreateView(CreateView):
         return context
 
 
-class EstablecimientoUpdateView(UpdateView):
+class EstablecimientoUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/establecimiento/form.html'
     model = Establecimiento
     form_class = FormEstablecimiento
     success_url = reverse_lazy('kardex:establecimiento_list')
-    permission_required = 'change_establecimiento'
+    permission_required = 'kardex:change_establecimiento'
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -124,11 +134,11 @@ class EstablecimientoUpdateView(UpdateView):
         return context
 
 
-class EstablecimientoDeleteView(DeleteView):
+class EstablecimientoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Establecimiento
     template_name = 'kardex/establecimiento/confirm_delete.html'
     success_url = reverse_lazy('kardex:establecimiento_list')
-    permission_required = 'delete_establecimiento'
+    permission_required = 'kardex:delete_establecimiento'
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -9,14 +10,22 @@ from kardex.models import MovimientoFicha
 MODULE_NAME = 'Movimientos de Ficha'
 
 
-class MovimientoFichaListView(DataTableMixin, TemplateView):
+class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/movimiento_ficha/list.html'
     model = MovimientoFicha
     datatable_columns = ['ID', 'Ficha', 'Servicio Clínico', 'Estado', 'Fecha Movimiento']
-    datatable_order_fields = ['id', None, 'ficha__numero_ficha', 'servicio_clinico__nombre', 'estado_respuesta', 'fecha_mov']
+    datatable_order_fields = ['id', None, 'ficha__numero_ficha', 'servicio_clinico__nombre', 'estado_respuesta',
+                              'fecha_mov']
     datatable_search_fields = [
         'ficha__numero_ficha__icontains', 'servicio_clinico__nombre__icontains', 'estado_respuesta__icontains'
     ]
+
+    permission_required = 'kardex.view_movimiento_ficha'
+    raise_exception = True
+
+    permission_view = 'kardex.view_movimiento_ficha'
+    permission_update = 'kardex.change_movimiento_ficha'
+    permission_delete = 'kardex.delete_movimiento_ficha'
 
     url_detail = 'kardex:movimiento_ficha_detail'
     url_update = 'kardex:movimiento_ficha_update'
@@ -50,9 +59,12 @@ class MovimientoFichaListView(DataTableMixin, TemplateView):
         return context
 
 
-class MovimientoFichaDetailView(DetailView):
+class MovimientoFichaDetailView(PermissionRequiredMixin, DetailView):
     model = MovimientoFicha
     template_name = 'kardex/movimiento_ficha/detail.html'
+
+    permission_required = 'kardex.view_movimiento_ficha'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -62,12 +74,14 @@ class MovimientoFichaDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class MovimientoFichaCreateView(CreateView):
+class MovimientoFichaCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/movimiento_ficha/form.html'
     model = MovimientoFicha
     fields = '__all__'
     success_url = reverse_lazy('kardex:movimiento_ficha_list')
-    permission_required = 'add_movimientoficha'
+
+    permission_required = 'kardex.add_movimiento_ficha'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -91,12 +105,13 @@ class MovimientoFichaCreateView(CreateView):
         return context
 
 
-class MovimientoFichaUpdateView(UpdateView):
+class MovimientoFichaUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/movimiento_ficha/form.html'
     model = MovimientoFicha
     fields = '__all__'
     success_url = reverse_lazy('kardex:movimiento_ficha_list')
-    permission_required = 'change_movimientoficha'
+    permission_required = 'kardex:change_movimientoficha'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -123,11 +138,11 @@ class MovimientoFichaUpdateView(UpdateView):
         return context
 
 
-class MovimientoFichaDeleteView(DeleteView):
+class MovimientoFichaDeleteView(PermissionRequiredMixin, DeleteView):
     model = MovimientoFicha
     template_name = 'kardex/movimiento_ficha/confirm_delete.html'
     success_url = reverse_lazy('kardex:movimiento_ficha_list')
-    permission_required = 'delete_movimientoficha'
+    permission_required = 'kardex:delete_movimientoficha'
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

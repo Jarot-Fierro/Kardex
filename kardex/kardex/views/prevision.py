@@ -1,6 +1,7 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from django.views.generic import TemplateView
 
 from kardex.forms.prevision import FormPrevision
@@ -10,12 +11,19 @@ from kardex.models import Prevision
 MODULE_NAME = 'Previsiones'
 
 
-class PrevisionListView(DataTableMixin, TemplateView):
+class PrevisionListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/prevision/list.html'
     model = Prevision
     datatable_columns = ['ID', 'Nombre']
     datatable_order_fields = ['id', None, 'nombre']
     datatable_search_fields = ['nombre__icontains']
+
+    permission_required = 'kardex.view_prevision'
+    raise_exception = True
+
+    permission_view = 'kardex.view_prevision'
+    permission_update = 'kardex.change_prevision'
+    permission_delete = 'kardex.delete_prevision'
 
     url_detail = 'kardex:prevision_detail'
     url_update = 'kardex:prevision_update'
@@ -46,9 +54,11 @@ class PrevisionListView(DataTableMixin, TemplateView):
         return context
 
 
-class PrevisionDetailView(DetailView):
+class PrevisionDetailView(PermissionRequiredMixin, DetailView):
     model = Prevision
     template_name = 'kardex/prevision/detail.html'
+    permission_required = 'kardex.view_prevision'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -58,12 +68,13 @@ class PrevisionDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class PrevisionCreateView(CreateView):
+class PrevisionCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/prevision/form.html'
     model = Prevision
     form_class = FormPrevision
     success_url = reverse_lazy('kardex:prevision_list')
-    permission_required = 'add_prevision'
+    permission_required = 'kardex.add_prevision'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -87,12 +98,13 @@ class PrevisionCreateView(CreateView):
         return context
 
 
-class PrevisionUpdateView(UpdateView):
+class PrevisionUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/prevision/form.html'
     model = Prevision
     form_class = FormPrevision
     success_url = reverse_lazy('kardex:prevision_list')
-    permission_required = 'change_prevision'
+    permission_required = 'kardex.change_prevision'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -119,11 +131,12 @@ class PrevisionUpdateView(UpdateView):
         return context
 
 
-class PrevisionDeleteView(DeleteView):
+class PrevisionDeleteView(PermissionRequiredMixin, DeleteView):
     model = Prevision
     template_name = 'kardex/prevision/confirm_delete.html'
     success_url = reverse_lazy('kardex:prevision_list')
-    permission_required = 'delete_prevision'
+    permission_required = 'kardex.delete_prevision'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

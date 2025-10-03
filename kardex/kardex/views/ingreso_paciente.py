@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,7 +11,7 @@ from kardex.models import IngresoPaciente
 MODULE_NAME = 'Ingresos de Paciente'
 
 
-class IngresoPacienteListView(DataTableMixin, TemplateView):
+class IngresoPacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/ingreso_paciente/list.html'
     model = IngresoPaciente
     datatable_columns = ['ID', 'Paciente', 'Fecha Ingreso', 'Fecha Egreso', 'Estado Actual']
@@ -18,6 +19,13 @@ class IngresoPacienteListView(DataTableMixin, TemplateView):
     datatable_search_fields = [
         'paciente__rut__icontains', 'estado_actual__icontains'
     ]
+
+    permission_required = 'kardex.view_ingreso_paciente'
+    raise_exception = True
+
+    permission_view = 'kardex.view_ingreso_paciente'
+    permission_update = 'kardex.change_ingreso_paciente'
+    permission_delete = 'kardex.delete_ingreso_paciente'
 
     url_detail = 'kardex:ingreso_paciente_detail'
     url_update = 'kardex:ingreso_paciente_update'
@@ -51,9 +59,12 @@ class IngresoPacienteListView(DataTableMixin, TemplateView):
         return context
 
 
-class IngresoPacienteDetailView(DetailView):
+class IngresoPacienteDetailView(PermissionRequiredMixin, DetailView):
     model = IngresoPaciente
     template_name = 'kardex/ingreso_paciente/detail.html'
+
+    permission_required = 'kardex.view_ingreso_paciente'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -63,12 +74,14 @@ class IngresoPacienteDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class IngresoPacienteCreateView(CreateView):
+class IngresoPacienteCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/ingreso_paciente/form.html'
     model = IngresoPaciente
     form_class = FormIngresoPaciente
     success_url = reverse_lazy('kardex:ingreso_paciente_list')
-    permission_required = 'add_ingresopaciente'
+
+    permission_required = 'kardex.add_ingreso_paciente'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -92,12 +105,14 @@ class IngresoPacienteCreateView(CreateView):
         return context
 
 
-class IngresoPacienteUpdateView(UpdateView):
+class IngresoPacienteUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/ingreso_paciente/form.html'
     model = IngresoPaciente
     form_class = FormIngresoPaciente
     success_url = reverse_lazy('kardex:ingreso_paciente_list')
-    permission_required = 'change_ingresopaciente'
+
+    permission_required = 'kardex.change_ingreso_paciente'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -124,11 +139,13 @@ class IngresoPacienteUpdateView(UpdateView):
         return context
 
 
-class IngresoPacienteDeleteView(DeleteView):
+class IngresoPacienteDeleteView(PermissionRequiredMixin, DeleteView):
     model = IngresoPaciente
     template_name = 'kardex/ingreso_paciente/confirm_delete.html'
     success_url = reverse_lazy('kardex:ingreso_paciente_list')
-    permission_required = 'delete_ingresopaciente'
+
+    permission_required = 'kardex.delete_ingreso_paciente'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

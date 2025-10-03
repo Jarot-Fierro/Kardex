@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,15 +11,23 @@ from kardex.models import Profesional
 MODULE_NAME = 'Profesionales'
 
 
-class ProfesionalListView(DataTableMixin, TemplateView):
+class ProfesionalListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/profesional/list.html'
     model = Profesional
     datatable_columns = ['ID', 'RUT', 'Nombre', 'Correo', 'Teléfono', 'Profesión', 'Establecimiento']
-    datatable_order_fields = ['id', None, 'rut', 'nombres', 'correo', 'telefono', 'profesion__nombre', 'establecimiento__nombre']
+    datatable_order_fields = ['id', None, 'rut', 'nombres', 'correo', 'telefono', 'profesion__nombre',
+                              'establecimiento__nombre']
     datatable_search_fields = [
         'rut__icontains', 'nombres__icontains', 'correo__icontains', 'telefono__icontains',
         'profesion__nombre__icontains', 'establecimiento__nombre__icontains'
     ]
+
+    permission_required = 'kardex.view_profesionales'
+    raise_exception = True
+
+    permission_view = 'kardex.view_profesionales'
+    permission_update = 'kardex.change_profesionales'
+    permission_delete = 'kardex.delete_profesionales'
 
     url_detail = 'kardex:profesional_detail'
     url_update = 'kardex:profesional_update'
@@ -54,9 +63,11 @@ class ProfesionalListView(DataTableMixin, TemplateView):
         return context
 
 
-class ProfesionalDetailView(DetailView):
+class ProfesionalDetailView(PermissionRequiredMixin, DetailView):
     model = Profesional
     template_name = 'kardex/profesional/detail.html'
+    permission_required = 'kardex.view_profesionales'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -66,12 +77,13 @@ class ProfesionalDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class ProfesionalCreateView(CreateView):
+class ProfesionalCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/profesional/form.html'
     model = Profesional
     form_class = FormProfesional
     success_url = reverse_lazy('kardex:profesional_list')
-    permission_required = 'add_profesional'
+    permission_required = 'kardex.add_profesionales'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -95,12 +107,13 @@ class ProfesionalCreateView(CreateView):
         return context
 
 
-class ProfesionalUpdateView(UpdateView):
+class ProfesionalUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/profesional/form.html'
     model = Profesional
     form_class = FormProfesional
     success_url = reverse_lazy('kardex:profesional_list')
-    permission_required = 'change_profesional'
+    permission_required = 'kardex.change_profesionales'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -127,11 +140,12 @@ class ProfesionalUpdateView(UpdateView):
         return context
 
 
-class ProfesionalDeleteView(DeleteView):
+class ProfesionalDeleteView(PermissionRequiredMixin, DeleteView):
     model = Profesional
     template_name = 'kardex/profesional/confirm_delete.html'
     success_url = reverse_lazy('kardex:profesional_list')
-    permission_required = 'delete_profesional'
+    permission_required = 'kardex.delete_profesionales'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

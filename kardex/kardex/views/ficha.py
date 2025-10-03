@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,15 +11,23 @@ from kardex.models import Ficha
 MODULE_NAME = 'Fichas'
 
 
-class FichaListView(DataTableMixin, TemplateView):
+class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/ficha/list.html'
     model = Ficha
     datatable_columns = ['ID', 'Número', 'Profesional', 'Usuario', 'Paciente', 'Fecha Movimiento']
-    datatable_order_fields = ['id', None, 'numero_ficha', 'profesional__nombres', 'usuario__username', 'ingreso_paciente__paciente__rut', 'fecha_mov']
+    datatable_order_fields = ['id', None, 'numero_ficha', 'profesional__nombres', 'usuario__username',
+                              'ingreso_paciente__paciente__rut', 'fecha_mov']
     datatable_search_fields = [
         'numero_ficha__icontains', 'profesional__nombres__icontains', 'usuario__username__icontains',
         'ingreso_paciente__paciente__rut__icontains'
     ]
+
+    permission_required = 'kardex.view_ficha'
+    raise_exception = True
+
+    permission_view = 'kardex.view_ficha'
+    permission_update = 'kardex.change_ficha'
+    permission_delete = 'kardex.delete_ficha'
 
     url_detail = 'kardex:ficha_detail'
     url_update = 'kardex:ficha_update'
@@ -53,9 +62,12 @@ class FichaListView(DataTableMixin, TemplateView):
         return context
 
 
-class FichaDetailView(DetailView):
+class FichaDetailView(PermissionRequiredMixin, DetailView):
     model = Ficha
     template_name = 'kardex/ficha/detail.html'
+
+    permission_required = 'kardex.view_ficha'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -65,12 +77,14 @@ class FichaDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class FichaCreateView(CreateView):
+class FichaCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/ficha/form.html'
     model = Ficha
     form_class = FormFicha
     success_url = reverse_lazy('kardex:ficha_list')
-    permission_required = 'add_ficha'
+
+    permission_required = 'kardex:add_ficha'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -94,12 +108,13 @@ class FichaCreateView(CreateView):
         return context
 
 
-class FichaUpdateView(UpdateView):
+class FichaUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/ficha/form.html'
     model = Ficha
     form_class = FormFicha
     success_url = reverse_lazy('kardex:ficha_list')
-    permission_required = 'change_ficha'
+    permission_required = 'kardex.change_ficha'
+    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -126,11 +141,13 @@ class FichaUpdateView(UpdateView):
         return context
 
 
-class FichaDeleteView(DeleteView):
+class FichaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Ficha
     template_name = 'kardex/ficha/confirm_delete.html'
     success_url = reverse_lazy('kardex:ficha_list')
-    permission_required = 'delete_ficha'
+    
+    permission_required = 'kardex.delete_ficha'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

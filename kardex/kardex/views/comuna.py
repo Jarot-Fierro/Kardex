@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
@@ -10,12 +11,19 @@ from kardex.models import Comuna
 MODULE_NAME = 'Comunas'
 
 
-class ComunaListView(DataTableMixin, TemplateView):
+class ComunaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/comuna/list.html'
     model = Comuna
     datatable_columns = ['ID', 'Nombre', 'Código']
     datatable_order_fields = ['id', None, 'nombre', 'codigo']
     datatable_search_fields = ['nombre__icontains', 'codigo__icontains']
+
+    permission_required = 'kardex.view_comuna'
+    raise_exception = True
+
+    permission_view = 'kardex.view_comuna'
+    permission_update = 'kardex.change_comuna'
+    permission_delete = 'kardex.delete_comuna'
 
     url_detail = 'kardex:comuna_detail'
     url_update = 'kardex:comuna_update'
@@ -47,9 +55,11 @@ class ComunaListView(DataTableMixin, TemplateView):
         return context
 
 
-class ComunaDetailView(DetailView):
+class ComunaDetailView(PermissionRequiredMixin, DetailView):
     model = Comuna
     template_name = 'kardex/comuna/detail.html'
+    permission_required = 'kardex.view_comuna'
+    raise_exception = True
 
     def render_to_response(self, context, **response_kwargs):
         # Si es una solicitud AJAX, devolvemos solo el fragmento HTML
@@ -60,12 +70,13 @@ class ComunaDetailView(DetailView):
         return super().render_to_response(context, **response_kwargs)
 
 
-class ComunaCreateView(CreateView):
+class ComunaCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/comuna/form.html'
     model = Comuna
     form_class = FormComuna
     success_url = reverse_lazy('kardex:comuna_list')
-    permission_required = 'add_comuna'
+    permission_required = 'kardex.add_comuna'
+    raise_exception = True
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -89,12 +100,12 @@ class ComunaCreateView(CreateView):
         return context
 
 
-class ComunaUpdateView(UpdateView):
+class ComunaUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/comuna/form.html'
     model = Comuna
     form_class = FormComuna
     success_url = reverse_lazy('kardex:comuna_list')
-    permission_required = 'change_comuna'
+    permission_required = 'kardex:change_comuna'
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -121,11 +132,11 @@ class ComunaUpdateView(UpdateView):
         return context
 
 
-class ComunaDeleteView(DeleteView):
+class ComunaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Comuna
     template_name = 'kardex/comuna/confirm_delete.html'
     success_url = reverse_lazy('kardex:comuna_list')
-    permission_required = 'delete_comuna'
+    permission_required = 'kardex:delete_comuna'
 
     def post(self, request, *args, **kwargs):
         from django.contrib import messages

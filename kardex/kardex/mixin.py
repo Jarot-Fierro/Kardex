@@ -13,6 +13,10 @@ class DataTableMixin:
     url_update = None
     url_delete = None
 
+    permission_view = None
+    permission_update = None
+    permission_delete = None
+
     def get_base_queryset(self):
         return self.model.objects.all()
 
@@ -25,17 +29,33 @@ class DataTableMixin:
 
     def get_actions(self, obj):
         """
-        Devuelve el HTML de los botones de acciones.
-        Puede ser sobreescrito si quieres customizar.
+        Devuelve el HTML de los botones de acciones, según permisos definidos en la clase hija.
         """
-        return f"""
-            <a href="{reverse_lazy(f'{self.url_detail}', kwargs={'pk': obj.pk})}"
-               class="btn p-1 btn-sm btn-secondary view-btn" title="Ver detalle"><i class="fas fa-search"></i></a>
-            <a href="{reverse_lazy(f'{self.url_update}', kwargs={'pk': obj.pk})}"
-               class="btn p-1 btn-sm btn-info"><i class="fas fa-edit"></i></a>
-            <a href="{reverse_lazy(f'{self.url_delete}', kwargs={'pk': obj.pk})}"
-               class="btn p-1 btn-sm btn-danger"><i class="fas fa-trash"></i></a>
-        """
+        user = self.request.user
+        actions = []
+
+        if self.permission_view and user.has_perm(self.permission_view):
+            actions.append(f"""
+                <a href="{reverse_lazy(f'{self.url_detail}', kwargs={'pk': obj.pk})}"
+                   class="btn p-1 btn-sm btn-secondary view-btn" title="Ver detalle">
+                   <i class="fas fa-search"></i></a>
+            """)
+
+        if self.permission_update and user.has_perm(self.permission_update):
+            actions.append(f"""
+                <a href="{reverse_lazy(f'{self.url_update}', kwargs={'pk': obj.pk})}"
+                   class="btn p-1 btn-sm btn-info" title="Editar">
+                   <i class="fas fa-edit"></i></a>
+            """)
+
+        if self.permission_delete and user.has_perm(self.permission_delete):
+            actions.append(f"""
+                <a href="{reverse_lazy(f'{self.url_delete}', kwargs={'pk': obj.pk})}"
+                   class="btn p-1 btn-sm btn-danger" title="Eliminar">
+                   <i class="fas fa-trash"></i></a>
+            """)
+
+        return ''.join(actions)
 
     def filter_queryset(self, qs, search_value):
         """
