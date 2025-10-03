@@ -18,7 +18,25 @@ class DataTableMixin:
     permission_delete = None
 
     def get_base_queryset(self):
-        return self.model.objects.all()
+        qs = self.model.objects.all()
+        # Auto-filtro por establecimiento si el middleware adjuntó request.establecimiento
+        try:
+            establecimiento = getattr(self.request, 'establecimiento', None)
+        except Exception:
+            establecimiento = None
+        if establecimiento is None:
+            return qs
+        model_name = self.model.__name__ if self.model else ''
+        # Filtrar para modelos que se relacionan con pacientes por establecimiento
+        if model_name == 'Paciente':
+            # Pacientes que tengan al menos un ingreso en el establecimiento del usuario
+            return qs.filter(ingresopaciente__establecimiento=establecimiento).distinct()
+        if model_name == 'Ficha':
+            return qs.filter(ingreso_paciente__establecimiento=establecimiento)
+        if model_name == 'IngresoPaciente':
+            return qs.filter(establecimiento=establecimiento)
+        # Para otros modelos no se aplica filtro aquí por defecto
+        return qs
 
     def render_row(self, obj):
         return {

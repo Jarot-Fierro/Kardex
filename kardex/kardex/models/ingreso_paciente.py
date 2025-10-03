@@ -11,7 +11,7 @@ class IngresoPaciente(StandardModel):
                                         verbose_name='Establecimiento')
 
     def __str__(self):
-        return self.paciente.rut
+        return self.paciente.codigo
 
     class Meta:
         verbose_name = 'Ingreso de Paciente'
