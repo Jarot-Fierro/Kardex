@@ -527,6 +527,9 @@ def _serialize_paciente(request, paciente: Paciente, ficha: Ficha):
         # URLs listas para usar
         'pdf_ficha_url': pdf_rel,
         'pdf_ficha_absolute': pdf_abs,
+        # Stickers URLs
+        'pdf_stickers_url': (reverse('kardex:pdf_stickers_ficha', kwargs={'ficha_id': ficha.id}) if ficha else None),
+        'pdf_stickers_absolute': (request.build_absolute_uri(reverse('kardex:pdf_stickers_ficha', kwargs={'ficha_id': ficha.id})) if ficha else None),
 
         # Fechas de tracking
         'paciente_created_at': pac_created.isoformat() if pac_created else None,

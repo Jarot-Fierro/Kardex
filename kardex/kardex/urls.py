@@ -7,7 +7,7 @@ from kardex.views.ingreso_paciente import *
 from kardex.views.movimiento_ficha import *
 from kardex.views.pacientes import *
 from kardex.views.pais import *
-from kardex.views.pdfs import pdf_index
+from kardex.views.pdfs import pdf_index, pdf_stickers
 from kardex.views.prevision import *
 from kardex.views.profesion import *
 from kardex.views.profesionales import *
@@ -105,4 +105,7 @@ urlpatterns = [
     path('pdf/', pdf_index, name='pdf_prueba'),
     path('pdfs/paciente/<int:paciente_id>/', pdf_index, name='pdf_paciente'),
     path('pdfs/ficha/<int:ficha_id>/', pdf_index, name='pdf_ficha'),
+
+    path('pdfs/sticker/paciente/<int:paciente_id>/', pdf_stickers, name='pdf_stickers'),
+    path('pdfs/stickers/ficha/<int:ficha_id>/', pdf_stickers, name='pdf_stickers_ficha'),
 ]

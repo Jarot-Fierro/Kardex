@@ -22,7 +22,7 @@ def pdf_index(request, ficha_id=None, paciente_id=None):
         paciente = get_object_or_404(Paciente, id=paciente_id)
     else:
         # Si no se proporciona ningún ID, retornar 404
-        raise Http404("Se requiere ficha_id o paciente_id")
+        raise Http404("Se requiere ficha")
 
     codigo_barras_base64 = generar_barcode_base64((paciente.codigo or ""))
 
@@ -36,13 +36,42 @@ def pdf_index(request, ficha_id=None, paciente_id=None):
     return render(request, 'pdfs/formato_caratula.html', context)
 
 
+def pdf_stickers(request, ficha_id=None, paciente_id=None):
+    ficha = None
+    ingreso = None
+
+    if ficha_id is not None:
+        ficha = get_object_or_404(Ficha, id=ficha_id)
+        ingreso = ficha.ingreso_paciente
+        paciente = ingreso.paciente
+    elif paciente_id is not None:
+        paciente = get_object_or_404(Paciente, id=paciente_id)
+    else:
+        # Si no se proporciona ningún ID, retornar 404
+        raise Http404("Se requiere ficha")
+
+    codigo_barras_base64 = generar_barcode_base64((paciente.codigo or ""))
+
+    context = {
+        'paciente': paciente,
+        'ficha': ficha,
+        'ingreso': ingreso,
+        'codigo_barras_base64': codigo_barras_base64,
+        'sticker_range': range(24)
+
+    }
+
+    return render(request, 'pdfs/formato_stickers.html', context)
+
+
 def generar_barcode_base64(codigo_paciente: str) -> str:
     buffer = BytesIO()
     codigo = barcode.get('code128', codigo_paciente, writer=ImageWriter())
     codigo.write(buffer, options={
         "module_height": 10.0,
         "font_size": 10,
-        "quiet_zone": 1
+        "quiet_zone": 1,
+        "write_text": False,
     })
 
     base64_img = base64.b64encode(buffer.getvalue()).decode('utf-8')

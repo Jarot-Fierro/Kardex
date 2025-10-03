@@ -106,8 +106,9 @@
 
             <div class="col-md-3 text-md-end">
                 <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
-                    <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank" aria-disabled="true" rel="noopener noreferrer">Carátula</a>
-                    <button class="btn btn-outline-secondary btn-sm w-50" type="button">Imprimir Etiqueta 2</button>
+                    <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank"
+                       aria-disabled="true" rel="noopener noreferrer">Carátula</a>
+                    <a id="btn-stickers" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank" aria-disabled="true" rel="noopener noreferrer">Stickers</a>
                 </div>
             </div>
 
@@ -709,6 +710,24 @@
                     btnCaratula.href = '#';
                     btnCaratula.classList.add('disabled');
                     btnCaratula.setAttribute('aria-disabled', 'true');
+                }
+            }
+
+            // Update Stickers button
+            const btnStickers = document.getElementById('btn-stickers');
+            if (btnStickers) {
+                if (p && p.pdf_stickers_url) {
+                    btnStickers.href = p.pdf_stickers_url;
+                    btnStickers.classList.remove('disabled');
+                    btnStickers.setAttribute('aria-disabled', 'false');
+                } else if (p && p.ficha_id) {
+                    btnStickers.href = `/kardex/pdfs/stickers/ficha/${p.ficha_id}/`;
+                    btnStickers.classList.remove('disabled');
+                    btnStickers.setAttribute('aria-disabled', 'false');
+                } else {
+                    btnStickers.href = '#';
+                    btnStickers.classList.add('disabled');
+                    btnStickers.setAttribute('aria-disabled', 'true');
                 }
             }
 
