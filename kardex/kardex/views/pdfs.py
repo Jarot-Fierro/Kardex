@@ -22,11 +22,24 @@ def pdf_index(request, ficha_id=None, paciente_id=None):
         paciente = ingreso.paciente
     elif paciente_id is not None:
         paciente = get_object_or_404(Paciente, id=paciente_id)
+        # Obtener la ficha asociada al ingreso del establecimiento del usuario logueado
+        establecimiento = getattr(request.user, 'establecimiento', None)
+        if establecimiento is None:
+            raise Http404("El usuario no tiene un establecimiento asociado")
+        ficha = Ficha.objects.filter(
+            ingreso_paciente__paciente=paciente,
+            ingreso_paciente__establecimiento=establecimiento
+        ).first()
+        if ficha is None:
+            raise Http404("El paciente no tiene una ficha asociada para el establecimiento del usuario")
+        ingreso = ficha.ingreso_paciente
     else:
         # Si no se proporciona ningún ID, retornar 404
         raise Http404("Se requiere ficha")
 
-    codigo_barras_base64 = generar_barcode_base64((paciente.codigo or ""))
+    # Generar código de barras basado en el número de ficha (zero-padded a 4 dígitos)
+    numero_ficha_str = str(ficha.numero_ficha or '').zfill(4)
+    codigo_barras_base64 = generar_barcode_base64(numero_ficha_str)
 
     context = {
         'paciente': paciente,
@@ -49,11 +62,24 @@ def pdf_stickers(request, ficha_id=None, paciente_id=None):
         paciente = ingreso.paciente
     elif paciente_id is not None:
         paciente = get_object_or_404(Paciente, id=paciente_id)
+        # Obtener la ficha asociada al ingreso del establecimiento del usuario logueado
+        establecimiento = getattr(request.user, 'establecimiento', None)
+        if establecimiento is None:
+            raise Http404("El usuario no tiene un establecimiento asociado")
+        ficha = Ficha.objects.filter(
+            ingreso_paciente__paciente=paciente,
+            ingreso_paciente__establecimiento=establecimiento
+        ).first()
+        if ficha is None:
+            raise Http404("El paciente no tiene una ficha asociada para el establecimiento del usuario")
+        ingreso = ficha.ingreso_paciente
     else:
         # Si no se proporciona ningún ID, retornar 404
         raise Http404("Se requiere ficha")
 
-    codigo_barras_base64 = generar_barcode_base64((paciente.codigo or ""))
+    # Generar código de barras basado en el número de ficha (zero-padded a 4 dígitos)
+    numero_ficha_str = str(ficha.numero_ficha or '').zfill(4)
+    codigo_barras_base64 = generar_barcode_base64(numero_ficha_str)
 
     context = {
         'paciente': paciente,
