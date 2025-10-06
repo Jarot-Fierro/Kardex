@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from config.abstract import StandardModel
 
@@ -15,6 +16,8 @@ class Ficha(StandardModel):
 
     ingreso_paciente = models.ForeignKey('kardex.IngresoPaciente', on_delete=models.PROTECT, null=False,
                                          verbose_name='Paciente')
+
+    history = HistoricalRecords()
 
     def save(self, *args, **kwargs):
         creating = self.pk is None

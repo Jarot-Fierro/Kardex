@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from config.abstract import StandardModel
 from kardex.choices import ESTADO_CIVIL
@@ -56,6 +57,8 @@ class Paciente(StandardModel):
 
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.SET_NULL, null=True, blank=True,
                                 verbose_name='Usuario')
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.rut} - {self.nombre} {self.apellido_paterno} {self.apellido_materno}"

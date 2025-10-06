@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from config.abstract import StandardModel
 
@@ -8,6 +9,7 @@ class Establecimiento(StandardModel):
     direccion = models.CharField(max_length=200, verbose_name='Dirección')
     telefono = models.CharField(max_length=15, verbose_name='Teléfono')
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.PROTECT, null=False, verbose_name='Comuna')
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.nombre

@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from config.abstract import StandardModel
 from kardex.choices import ESTADO_RESPUESTA
@@ -22,6 +23,8 @@ class MovimientoFicha(StandardModel):
                               verbose_name='Ficha')
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', null=True, blank=True, on_delete=models.PROTECT,
                                 verbose_name='Usuario')
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"Movimiento de Ficha #{self.ficha.id if self.ficha else 'N/A'}"
