@@ -77,9 +77,9 @@
                     <a id="dropdownSubMenu3" href="#" data-toggle="dropdown" aria-haspopup="true"
                        aria-expanded="false" class="nav-link dropdown-toggle">Movimiento Ficha</a>
                     <ul aria-labelledby="dropdownSubMenu3" class="dropdown-menu border-0 shadow">
-                        <li><a href="{% url 'kardex:pais_list' %}" class="dropdown-item">Entrada
+                        <li><a href="{% url 'kardex:recepcion_ficha' %}" class="dropdown-item">Entrada
                             fichas</a></li>
-                        <li><a href="{% url 'kardex:pais_list' %}" class="dropdown-item">Salida
+                        <li><a href="{% url 'kardex:salida_ficha' %}" class="dropdown-item">Salida
                             fichas</a></li>
                         <li><a href="#" class="dropdown-item">Traspaso entre servicios clinicos y/o
                             profesionales</a></li>
@@ -94,7 +94,13 @@
             <li class="nav-item dropdown">
                 <a id="dropdownUserMenu" href="#" data-toggle="dropdown" aria-haspopup="true"
                    aria-expanded="false" class="nav-link dropdown-toggle">
-                    <i class="fas fa-user"></i>
+                    {% if request.user.is_superuser %}
+                    <span class="badge badge-danger">Administrador</span>
+                    {% else %}
+                    <span class="badge badge-success">{{ request.user.first_name|default:request.user.username }}</span>
+                    {% endif %}
+
+                    <i class="fas fa-user ml-1"></i>
                 </a>
                 <ul aria-labelledby="dropdownUserMenu" class="dropdown-menu dropdown-menu-right border-0 shadow">
                     <li><a href="#" class="dropdown-item"><i class="fas fa-id-badge mr-2"></i> Perfil</a></li>

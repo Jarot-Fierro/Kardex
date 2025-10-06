@@ -85,12 +85,19 @@ class MovimientoFichaCreateView(PermissionRequiredMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if form.is_valid():
-            form.save()
+            obj = form.save()
+            if is_ajax:
+                from django.http import JsonResponse
+                return JsonResponse({'success': True, 'message': 'Movimiento de ficha creado correctamente', 'redirect_url': str(self.success_url)})
             from django.contrib import messages
             from django.shortcuts import redirect
             messages.success(request, 'Movimiento de ficha creado correctamente')
             return redirect(self.success_url)
+        if is_ajax:
+            from django.http import JsonResponse
+            return JsonResponse({'success': False, 'error': 'Hay errores en el formulario'}, status=400)
         from django.contrib import messages
         messages.error(request, 'Hay errores en el formulario')
         self.object = None
@@ -119,12 +126,19 @@ class MovimientoFichaUpdateView(PermissionRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if form.is_valid():
-            form.save()
+            obj = form.save()
+            if is_ajax:
+                from django.http import JsonResponse
+                return JsonResponse({'success': True, 'message': 'Movimiento de ficha actualizado correctamente', 'redirect_url': str(self.success_url)})
             from django.contrib import messages
             from django.shortcuts import redirect
             messages.success(request, 'Movimiento de ficha actualizado correctamente')
             return redirect(self.success_url)
+        if is_ajax:
+            from django.http import JsonResponse
+            return JsonResponse({'success': False, 'error': 'Hay errores en el formulario'}, status=400)
         from django.contrib import messages
         messages.error(request, 'Hay errores en el formulario')
         return self.form_invalid(form)

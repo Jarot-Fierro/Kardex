@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recepción de Fichas{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Registro de Recepción de Ficha</h3>
+      </div>
+      <div class="card-body">
+        <form id="form-recepcion" class="form" onsubmit="return false;">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>RUT</label>
+              <input type="text" class="form-control" id="rut" placeholder="Ingrese RUT">
+            </div>
+            <div class="form-group col-md-3">
+              <label>N° Ficha</label>
+              <input type="text" class="form-control" id="ficha" placeholder="Ingrese N° Ficha">
+            </div>
+            <div class="form-group col-md-6">
+              <label>Nombres</label>
+              <input type="text" class="form-control" id="nombres" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>Servicio Clínico</label>
+              <select class="form-control" id="servicio_clinico">
+                <option value="">Seleccione...</option>
+                {% for sc in servicio_clinicos %}
+                  <option value="{{ sc.id }}">{{ sc.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Profesional</label>
+              <select class="form-control" id="profesional">
+                <option value="{{ request.user.id }}" selected>{{ request.user.username }}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Fecha de entrada</label>
+              <input type="datetime-local" class="form-control" id="fecha">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>Observación</label>
+              <textarea id="observacion" class="form-control" rows="2"></textarea>
+            </div>
+          </div>
+          <button type="button" id="btn-guardar" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Movimientos (establecimiento actual)</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="tabla-mov" class="table table-striped table-hover table-sm" style="width:100%">
+            <thead>
+            <tr>
+              {% for c in view.datatable_columns %}
+                <th>{{ c }}</th>
+              {% endfor %}
+              <th></th>
+            </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'adminlte3/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'adminlte3/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte3/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'js/movimientos/autocompletar_ficha.js' %}"></script>
+<script>
+  $(function(){
+    // init datatable
+    const table = $('#tabla-mov').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: window.location.href,
+        data: { datatable: 1 },
+        dataSrc: 'data'
+      },
+      columns: [
+        {% for c in view.datatable_columns %}{ data: '{{ c }}' },{% endfor %}
+        { data: 'actions', orderable: false, searchable: false },
+      ]
+    });
+
+    // Guardar
+    $('#btn-guardar').on('click', function(){
+      $.post(window.location.href, {
+        action: 'recepcion',
+        rut: $('#rut').val(),
+        ficha: $('#ficha').val(),
+        servicio_clinico: $('#servicio_clinico').val(),
+        profesional: $('#profesional').val(),
+        fecha: $('#fecha').val().replace('T',' '),
+        observacion: $('#observacion').val(),
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      }).done(function(resp){
+        if(resp.ok){
+          toastr.success('Recepción registrada');
+          table.ajax.reload(null, false);
+        } else {
+          toastr.error(resp.error || 'Error al registrar');
+        }
+      }).fail(function(xhr){
+        const msg = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'Error de comunicación';
+        toastr.error(msg);
+      });
+    });
+
+    // Autocompletar por RUT / Ficha
+    initAutocompletarFicha('#rut', '#ficha', '#nombres');
+    initAutocompletarFichaByFicha('#ficha', '#rut', '#nombres');
+  });
+</script>
+{% endblock %}

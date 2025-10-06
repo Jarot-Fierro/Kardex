@@ -13,6 +13,8 @@ from kardex.views.prevision import *
 from kardex.views.profesion import *
 from kardex.views.profesionales import *
 from kardex.views.servicio_clinico import *
+from kardex.views.movimiento_fichas import RecepcionFichaView, SalidaFichaView
+from kardex.views.api.movimiento_ficha_lookup import movimiento_ficha_lookup
 
 app_name = 'kardex'
 
@@ -109,6 +111,13 @@ urlpatterns = [
 
     path('pdfs/sticker/paciente/<int:paciente_id>/', pdf_stickers, name='pdf_stickers'),
     path('pdfs/stickers/ficha/<int:ficha_id>/', pdf_stickers, name='pdf_stickers_ficha'),
+
+    # Nuevas vistas de movimientos (Recepción y Salida)
+    path('movimientos/recepcion/', RecepcionFichaView.as_view(), name='recepcion_ficha'),
+    path('movimientos/salida/', SalidaFichaView.as_view(), name='salida_ficha'),
+
+    # API de autocompletado para movimientos de ficha
+    path('api/movimiento-ficha-lookup/', movimiento_ficha_lookup, name='api_movimiento_ficha_lookup'),
 ]
 
 
