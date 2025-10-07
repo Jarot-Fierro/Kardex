@@ -20,6 +20,16 @@ class Profesional(StandardModel):
     def __str__(self):
         return self.nombres
 
+    def save(self, *args, **kwargs):
+        if self.rut:
+            self.rut = self.rut.lower()
+        if self.nombres:
+            self.nombres = self.nombres.upper()
+        if self.correo:
+            self.correo = self.correo.lower()
+
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Profesional'
         verbose_name_plural = 'Profesionales'

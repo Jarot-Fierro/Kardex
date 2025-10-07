@@ -14,6 +14,11 @@ class Establecimiento(StandardModel):
     def __str__(self):
         return self.nombre
 
+    def save(self, *args, **kwargs):
+        if self.nombre:
+            self.nombre = self.nombre.upper()
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Establecimiento'
         verbose_name_plural = 'Establecimientos'

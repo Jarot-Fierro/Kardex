@@ -12,6 +12,11 @@ class Profesion(StandardModel):
     def __str__(self):
         return self.nombre
 
+    def save(self, *args, **kwargs):
+        if self.nombre:
+            self.nombre = self.nombre.upper()
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Profesion'
         verbose_name_plural = 'Profesiones'

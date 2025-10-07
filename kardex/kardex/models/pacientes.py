@@ -70,6 +70,17 @@ class Paciente(StandardModel):
     def save(self, *args, **kwargs):
         is_new = self.pk is None  # Saber si es un nuevo registro
 
+        # Recorrer todos los campos del modelo
+        for field in self._meta.get_fields():
+            # Solo nos interesa CharField y TextField
+            if isinstance(field, (models.CharField, models.TextField)):
+                value = getattr(self, field.name, None)
+                if value:
+                    if field.name == 'rut':
+                        setattr(self, field.name, value.lower())
+                    else:
+                        setattr(self, field.name, value.upper())
+
         # Primero guarda el objeto para que se genere el ID
         super().save(*args, **kwargs)
 

@@ -18,6 +18,15 @@ class ServicioClinico(StandardModel):
     def __str__(self):
         return self.nombre
 
+    def save(self, *args, **kwargs):
+        if self.nombre:
+            self.nombre = self.nombre.upper()
+
+        if self.correo_jefe:
+            self.correo_jefe = self.correo_jefe.lower()
+            
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Servicio Clínico'
         verbose_name_plural = 'Servicios Clínicos'
