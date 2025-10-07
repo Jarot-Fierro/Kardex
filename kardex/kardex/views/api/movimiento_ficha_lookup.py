@@ -36,6 +36,7 @@ def movimiento_ficha_lookup(request):
                 'rut': p.rut,
                 'nombre_completo': f"{p.nombre} {p.apellido_paterno} {p.apellido_materno}".strip(),
                 'numero_ficha': ficha.numero_ficha if ficha else None,
+                'ficha_id': ficha.id if ficha else None,
             })
     elif nf:
         fichas = Ficha.objects.filter(
@@ -46,8 +47,10 @@ def movimiento_ficha_lookup(request):
             p = f.ingreso_paciente.paciente if f.ingreso_paciente else None
             results.append({
                 'rut': getattr(p, 'rut', None),
-                'nombre_completo': (f"{getattr(p, 'nombre', '')} {getattr(p, 'apellido_paterno', '')} {getattr(p, 'apellido_materno', '')}").strip() if p else None,
+                'nombre_completo': (
+                    f"{getattr(p, 'nombre', '')} {getattr(p, 'apellido_paterno', '')} {getattr(p, 'apellido_materno', '')}").strip() if p else None,
                 'numero_ficha': f.numero_ficha,
+                'ficha_id': f.id,
             })
 
     return JsonResponse({'ok': True, 'results': results})

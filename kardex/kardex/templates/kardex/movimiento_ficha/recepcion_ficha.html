@@ -14,47 +14,19 @@
                 <form id="form-recepcion" class="form" onsubmit="return false;">
                     <div class="form-row">
                         <div class="form-group col-md-3">
-                            <label>RUT</label>
-                            <input type="text" class="form-control" id="rut" placeholder="Ingrese RUT">
+                            <label for="rut_mov">RUT</label>
+                            <input type="text" id="rut_mov" class="form-control" placeholder="Ingrese RUT">
                         </div>
                         <div class="form-group col-md-3">
-                            <label>N° Ficha</label>
-                            <input type="text" class="form-control" id="ficha" placeholder="Ingrese N° Ficha">
+                            <label for="ficha_mov">N° Ficha</label>
+                            <input type="text" id="ficha_mov" class="form-control" placeholder="Ingrese N° ficha">
                         </div>
                         <div class="form-group col-md-6">
-                            <label>Nombres</label>
-                            <input type="text" class="form-control" id="nombres" readonly>
+                            <label for="nombre_mov">Nombre</label>
+                            <input type="text" id="nombre_mov" class="form-control" placeholder="Nombre del paciente" readonly>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label>Servicio Clínico</label>
-                            <select class="form-control" id="servicio_clinico">
-                                <option value="">Seleccione...</option>
-                                {% for sc in servicio_clinicos %}
-                                <option value="{{ sc.id }}">{{ sc.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label>Profesional</label>
-                            <select class="form-control" id="profesional">
-                                <option value="{{ request.user.id }}" selected>{{ request.user.username }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label>Fecha de entrada</label>
-                            <input type="datetime-local" class="form-control" id="fecha">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label>Observación</label>
-                            <textarea id="observacion" class="form-control" rows="2"></textarea>
-                        </div>
-                    </div>
-                    <button type="button" id="btn-guardar" class="btn btn-primary"><i class="fas fa-save"></i> Guardar
-                    </button>
+                    <button type="button" id="btn-guardar" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
                 </form>
             </div>
         </div>
@@ -65,7 +37,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Movimientos (establecimiento actual)</h3>
+                <h3 class="card-title">Movimientos</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -85,54 +57,126 @@
     </div>
 </div>
 
-<script src="{% static 'adminlte3/plugins/jquery/jquery.min.js' %}"></script>
-<script src="{% static 'adminlte3/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-<script src="{% static 'adminlte3/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-<script src="{% static 'js/movimientos/autocompletar_ficha.js' %}"></script>
+
 <script>
-    $(function(){
-      // init datatable
-      const table = $('#tabla-mov').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-          url: window.location.href,
-          data: { datatable: 1 },
-          dataSrc: 'data'
-        },
-        columns: [
-          {% for c in view.datatable_columns %}{ data: '{{ c }}' },{% endfor %}
-          { data: 'actions', orderable: false, searchable: false },
-        ]
-      });
+    (function () {
+        function q(id) { return document.getElementById(id); }
+        function selAll(selector) { return Array.prototype.slice.call(document.querySelectorAll(selector)); }
+        const urlLookup = '{% url "kardex:api_movimiento_ficha_lookup" %}';
 
-      // Guardar
-      $('#btn-guardar').on('click', function(){
-        $.post(window.location.href, {
-          action: 'recepcion',
-          rut: $('#rut').val(),
-          ficha: $('#ficha').val(),
-          servicio_clinico: $('#servicio_clinico').val(),
-          profesional: $('#profesional').val(),
-          fecha: $('#fecha').val().replace('T',' '),
-          observacion: $('#observacion').val(),
-          csrfmiddlewaretoken: '{{ csrf_token }}'
-        }).done(function(resp){
-          if(resp.ok){
-            toastr.success('Recepción registrada');
-            table.ajax.reload(null, false);
-          } else {
-            toastr.error(resp.error || 'Error al registrar');
-          }
-        }).fail(function(xhr){
-          const msg = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'Error de comunicación';
-          toastr.error(msg);
-        });
-      });
+        // Campos mínimos para movimientos de fichas
+        const inputRut = q('rut_mov');
+        const inputNumFicha = q('ficha_mov');
+        const campoNombre = q('nombre_mov');
+        // Spans para fechas dinámicas
+        const spanPacCreated = q('paciente_created_at_text');
+        const spanPacUpdated = q('paciente_updated_at_text');
+        const spanFichaCreated = q('ficha_created_at_text');
+        const spanFichaUpdated = q('ficha_updated_at_text');
 
-      // Autocompletar por RUT / Ficha
-      initAutocompletarFicha('#rut', '#ficha', '#nombres');
-      initAutocompletarFichaByFicha('#ficha', '#rut', '#nombres');
-    });
+        function lockForm(lock) {
+            const form = document.querySelector('form');
+            if (!form) return;
+            const elems = form.querySelectorAll('input, select, textarea, button');
+            elems.forEach(el => {
+                if (lock) { el.setAttribute('data-prev-disabled', el.disabled ? '1' : '0'); el.disabled = true; }
+                else { /* no-op on unlock here; we will force-enable below */ el.removeAttribute('data-prev-disabled'); }
+            });
+        }
+        function enableAllInputs() {
+            const form = document.querySelector('form');
+            if (!form) return;
+            form.querySelectorAll('input, select, textarea, button').forEach(el => { el.disabled = false; });
+        }
+
+        function isoToDMY(iso) {
+            // iso expected YYYY-MM-DD
+            if (!iso) return '';
+            const p = iso.split('-');
+            if (p.length !== 3) return iso;
+            return `${p[2]}/${p[1]}/${p[0]}`;
+        }
+        function isoToDMYHM(iso) {
+            // expects ISO datetime or date; returns dd/mm/yyyy HH:MM
+            if (!iso) return '';
+            try {
+                const d = new Date(iso);
+                if (isNaN(d.getTime())) return iso;
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                const hh = String(d.getHours()).padStart(2, '0');
+                const mi = String(d.getMinutes()).padStart(2, '0');
+                return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
+            } catch (e) {
+                return iso;
+            }
+        }
+
+        function fillForm(p) {
+            // p is an item from results with rut, nombre_completo, numero_ficha
+            if (!p) return;
+
+            if (inputRut) inputRut.value = p.rut || '';
+            if (inputNumFicha) inputNumFicha.value = p.numero_ficha || '';
+            if (campoNombre) {
+                campoNombre.value = p.nombre_completo || '';
+                try { campoNombre.readOnly = true; } catch (e) {}
+            }
+
+            // No se usan otros campos en movimientos; sólo mostramos nombre.
+        }
+
+
+
+        async function doLookup(params) {
+            const url = new URL(urlLookup, window.location.origin);
+            Object.keys(params || {}).forEach(k => {
+                if (params[k]) url.searchParams.set(k, params[k]);
+            });
+            try {
+                lockForm(true);
+                const resp = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                const data = await resp.json();
+                if (data && data.ok && Array.isArray(data.results) && data.results.length > 0) {
+                    fillForm(data.results[0]);
+                } else {
+                    const msg = (data && (data.error || data.message)) || 'No se encontró el paciente/ficha.';
+                    alert(msg);
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Ocurrió un error realizando la búsqueda.');
+            } finally {
+                lockForm(false);
+                enableAllInputs();
+            }
+        }
+
+        function attach() {
+            if (inputRut) {
+                inputRut.addEventListener('blur', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doLookup({ rut: v });
+                });
+                inputRut.addEventListener('change', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doLookup({ rut: v });
+                });
+            }
+            if (inputNumFicha) {
+                inputNumFicha.addEventListener('blur', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doLookup({ ficha: v });
+                });
+                inputNumFicha.addEventListener('change', function () {
+                    const v = (this.value || '').trim();
+                    if (v) doLookup({ ficha: v });
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', attach);
+    })();
 </script>
 {% endblock %}

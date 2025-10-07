@@ -1,21 +1,9 @@
 from django import forms
 
-from kardex.choices import ESTADO_RESPUESTA
-from kardex.models import MovimientoFicha, Establecimiento, Ficha
-from usuarios.models import UsuarioPersonalizado
+from kardex.models import MovimientoFicha, Ficha, ServicioClinico
 
 
 class FormEntradaFicha(forms.ModelForm):
-    fecha_mov = forms.DateTimeField(
-        label='Fecha de Movimiento',
-        widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_mov_ficha',
-            'class': 'form-control',
-            'type': 'datetime-local'
-        }),
-        required=True
-    )
-
     fecha_entrada = forms.DateTimeField(
         label='Fecha de Entrada',
         widget=forms.DateTimeInput(attrs={
@@ -23,6 +11,18 @@ class FormEntradaFicha(forms.ModelForm):
             'class': 'form-control',
             'type': 'datetime-local'
         }),
+        required=True
+    )
+
+    servicio_clinico = forms.ModelChoiceField(
+        label='Servicio Clínico',
+        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'servicio_clinico_ficha',
+                'class': 'form-control select2'
+            }
+        ),
         required=True
     )
 
@@ -37,59 +37,13 @@ class FormEntradaFicha(forms.ModelForm):
         required=False
     )
 
-    usuario_entrada = forms.CharField(
-        label='Usuario que Recibe',
-        widget=forms.TextInput(attrs={
-            'id': 'usuario_entrada_ficha',
-            'class': 'form-control',
-            'placeholder': 'Nombre del usuario que recibe'
-        }),
-        required=True
-    )
-
-    estado_respuesta = forms.ChoiceField(
-        label='Estado',
-        choices=ESTADO_RESPUESTA,
-        widget=forms.Select(
-            attrs={
-                'id': 'estado2_ficha',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
-    establecimiento = forms.ModelChoiceField(
-        label='Establecimiento',
-        queryset=Establecimiento.objects.filter(status='ACTIVE'),
-        widget=forms.Select(
-            attrs={
-                'id': 'establecimiento_ficha',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
     ficha = forms.ModelChoiceField(
         label='Ficha',
         queryset=Ficha.objects.all(),
         widget=forms.Select(
             attrs={
                 'id': 'ficha_movimiento',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
-    usuario = forms.ModelChoiceField(
-        label='Usuario Login',
-        queryset=UsuarioPersonalizado.objects.all(),
-        widget=forms.Select(
-            attrs={
-                'id': 'usuario_ficha',
-                'class': 'form-control'
+                'class': 'form-control select2'
             }
         ),
         required=True
@@ -98,25 +52,33 @@ class FormEntradaFicha(forms.ModelForm):
     class Meta:
         model = MovimientoFicha
         fields = [
-            'fecha_mov',
             'fecha_entrada',
             'observacion_entrada',
-            'usuario_entrada',
-            'estado_respuesta',
-            'establecimiento',
             'ficha',
-            'usuario',
         ]
 
 
 class FormSalidaFicha(forms.ModelForm):
-    fecha_mov = forms.DateTimeField(
-        label='Fecha de Movimiento',
-        widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_mov_ficha',
-            'class': 'form-control',
-            'type': 'datetime-local'
-        }),
+    ficha = forms.ModelChoiceField(
+        label='Ficha',
+        queryset=Ficha.objects.all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'ficha_movimiento',
+                'class': 'form-control select2'
+            }
+        ),
+        required=True
+    )
+    servicio_clinico = forms.ModelChoiceField(
+        label='Servicio Clínico',
+        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'servicio_clinico_ficha',
+                'class': 'form-control select2'
+            }
+        ),
         required=True
     )
 
@@ -141,73 +103,42 @@ class FormSalidaFicha(forms.ModelForm):
         required=False
     )
 
-    usuario_entrega = forms.CharField(
-        label='Usuario que Entrega',
-        widget=forms.TextInput(attrs={
-            'id': 'usuario_entrega_ficha',
-            'class': 'form-control',
-            'placeholder': 'Nombre del usuario que entrega'
-        }),
-        required=True
-    )
-
-    estado_respuesta = forms.ChoiceField(
-        label='Estado',
-        choices=ESTADO_RESPUESTA,
-        widget=forms.Select(
-            attrs={
-                'id': 'estado2_ficha',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
-    establecimiento = forms.ModelChoiceField(
-        label='Establecimiento',
-        queryset=Establecimiento.objects.filter(status='ACTIVE'),
-        widget=forms.Select(
-            attrs={
-                'id': 'establecimiento_ficha',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
-    ficha = forms.ModelChoiceField(
-        label='Ficha',
-        queryset=Ficha.objects.all(),
-        widget=forms.Select(
-            attrs={
-                'id': 'ficha',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
-    usuario = forms.ModelChoiceField(
-        label='Usuario Login',
-        queryset=UsuarioPersonalizado.objects.all(),
-        widget=forms.Select(
-            attrs={
-                'id': 'usuario_ficha',
-                'class': 'form-control'
-            }
-        ),
-        required=True
-    )
-
     class Meta:
         model = MovimientoFicha
         fields = [
-            'fecha_mov',
+            'ficha',
             'fecha_salida',
             'observacion_salida',
-            'usuario_entrega',
-            'estado_respuesta',
-            'establecimiento',
-            'ficha',
-            'usuario',
         ]
+
+
+class RangoFechaPacienteForm(forms.Form):
+    fecha_inicio = forms.DateField(
+        label="Fecha Hora Inicio",
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control'
+        }),
+        required=False
+    )
+    fecha_fin = forms.DateField(
+        label="Fecha Hora Término",
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control'
+        }),
+        required=False
+    )
+    servicio_clinico = forms.ModelChoiceField(
+        label="Servicio Clínico",
+        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    profesional = forms.ModelChoiceField(
+        label="Profesional",
+        queryset=None,  # To be set in the view
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
