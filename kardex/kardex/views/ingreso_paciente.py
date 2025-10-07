@@ -14,10 +14,11 @@ MODULE_NAME = 'Ingresos de Paciente'
 class IngresoPacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/ingreso_paciente/list.html'
     model = IngresoPaciente
-    datatable_columns = ['ID', 'Paciente', 'Fecha Ingreso', 'Fecha Egreso', 'Estado Actual']
-    datatable_order_fields = ['id', None, 'paciente__rut', 'fecha_ingreso', 'fecha_egreso', 'estado_actual']
+    datatable_columns = ['ID', 'Paciente', 'Establecimiento', 'Fecha Ingreso']
+    # El orden debe mapear 1:1 con las columnas visibles
+    datatable_order_fields = ['id', 'paciente__rut', 'establecimiento__nombre', 'created_at']
     datatable_search_fields = [
-        'paciente__rut__icontains', 'estado_actual__icontains'
+        'paciente__rut__icontains'
     ]
 
     permission_required = 'kardex.view_ingreso_paciente'
@@ -31,13 +32,25 @@ class IngresoPacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateV
     url_update = 'kardex:ingreso_paciente_update'
     url_delete = 'kardex:ingreso_paciente_delete'
 
+    def get_base_queryset(self):
+        if self.request.user.is_superuser:
+            return self.model.objects.all()
+        # Asegura filtrar por el establecimiento del usuario logueado
+        qs = super().get_base_queryset()
+        user = getattr(self, 'request', None).user if hasattr(self, 'request') else None
+        est = getattr(self.request, 'establecimiento', None)
+        if not est and user is not None:
+            est = getattr(user, 'establecimiento', None)
+        if est:
+            qs = qs.filter(establecimiento=est)
+        return qs
+
     def render_row(self, obj):
         return {
             'ID': obj.id,
             'Paciente': getattr(obj.paciente, 'rut', '') or '',
-            'Fecha Ingreso': obj.fecha_ingreso.strftime('%Y-%m-%d') if obj.fecha_ingreso else '',
-            'Fecha Egreso': obj.fecha_egreso.strftime('%Y-%m-%d') if obj.fecha_egreso else '',
-            'Estado Actual': (obj.estado_actual or ''),
+            'Establecimiento': getattr(obj.establecimiento, 'nombre', '') or '',
+            'Fecha Ingreso': obj.created_at.strftime('%Y-%m-%d') if obj.created_at else '',
         }
 
     def get(self, request, *args, **kwargs):
