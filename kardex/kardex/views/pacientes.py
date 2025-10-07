@@ -482,8 +482,6 @@ def _serialize_paciente(request, paciente: Paciente, ficha: Ficha):
     fecha_nac = django_format(paciente.fecha_nacimiento, 'd/m/Y') if paciente.fecha_nacimiento else None
     fecha_fallecimiento = django_format(paciente.fecha_fallecimiento, 'd/m/Y') if paciente.fecha_fallecimiento else None
 
-    print(fecha_nac)
-
     pac_created = getattr(paciente, 'created_at', None)
     pac_updated = getattr(paciente, 'updated_at', None)
     fic_created = getattr(ficha, 'created_at', None) if ficha else None

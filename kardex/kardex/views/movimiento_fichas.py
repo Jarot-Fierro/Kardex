@@ -118,7 +118,7 @@ class _BaseMovimientoFichaView(LoginRequiredMixin, DataTableMixin, TemplateView)
 
 
 class RecepcionFichaView(_BaseMovimientoFichaView):
-    template_name = 'movimientos/recepcion_ficha.html'
+    template_name = 'kardex/movimiento_ficha/recepcion_ficha.html'
     datatable_columns = ['RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Fecha de salida',
                          'Estado']
     datatable_order_fields = ['ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
@@ -149,7 +149,7 @@ class RecepcionFichaView(_BaseMovimientoFichaView):
 
 
 class SalidaFichaView(_BaseMovimientoFichaView):
-    template_name = 'movimientos/salida_ficha.html'
+    template_name = 'kardex/movimiento_ficha/salida_ficha.html'
     datatable_columns = ['RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Observación salida',
                          'Fecha/hora salida', 'Fecha entrada', 'Estado']
     datatable_order_fields = ['ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
