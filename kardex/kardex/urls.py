@@ -6,8 +6,7 @@ from kardex.views.comuna import *
 from kardex.views.establecimiento import *
 from kardex.views.ficha import *
 from kardex.views.ingreso_paciente import *
-from kardex.views.movimiento_ficha import *
-from kardex.views.movimiento_fichas import RecepcionFichaView, SalidaFichaView
+from kardex.views.movimiento_fichas import *
 from kardex.views.pacientes import *
 from kardex.views.pais import *
 from kardex.views.pdfs import pdf_index, pdf_stickers

@@ -1,14 +1,19 @@
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.contrib.messages import add_message, SUCCESS
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import FormView
+from django.views.generic import FormView, UpdateView
+from django.views.generic.base import View
 
-from usuarios.forms import CustomLoginForm
+from .forms import CustomLoginForm, UsuarioPersonalizadoChangeForm, ChangePasswordLoggedUserForm
+from .models import UsuarioPersonalizado
 
 
 @method_decorator(sensitive_post_parameters('password'), name='dispatch')
@@ -51,98 +56,59 @@ class LogoutViewCustom(LogoutView):
         add_message(self.request, SUCCESS, 'Se cerró la sesión correctamente.', extra_tags='auth_success')
         return response
 
-# class UserProfileView(LoginRequiredMixin, View):
-#     template_name = 'user_profile.html'
-#
-#     def get(self, request, *args, **kwargs):
-#         user = request.user
-#
-#         try:
-#             perfil = user.perfiluser
-#         except PerfilUser.DoesNotExist:
-#             perfil = None
-#
-#         usuarios = User.objects.all().select_related('perfiluser').order_by('-date_joined')[:5]
-#
-#         context = {
-#             'users': user,
-#             'perfil': perfil,
-#             'list_user': usuarios
-#         }
-#         return render(request, self.template_name, context)
 
-#
-# class UserCreateView(CreateView):
-#     model = User
-#     form_class = FormUsuario
-#     template_name = 'user_form.html'
-#     success_url = reverse_lazy('user_profile')
-#     success_message = "Usuario creado exitosamente."
-#
-#     def form_valid(self, form):
-#         print("✅ form_valid ejecutado")
-#         user = form.save(commit=False)
-#
-#         password = form.cleaned_data.get('password')
-#         if password:
-#             user.set_password(password)
-#             print("🔐 Contraseña seteada")
-#
-#         user.save()
-#         print("👤 Usuario guardado:", user)
-#
-#         PerfilUser.objects.get_or_create(user=user)
-#         messages.success(self.request, self.success_message)
-#
-#         return super().form_valid(form)
-#
-#     def form_invalid(self, form):
-#         print("❌ Formulario inválido")
-#         print(form.errors)
-#         return super().form_invalid(form)
-#
-#
-# class UserUpdateView(View):
-#     template_name = 'components/form.html'
-#
-#     def get(self, request, pk):
-#         user = get_object_or_404(User, pk=pk)
-#         form = FormUsuario(instance=user)
-#         return render(request, self.template_name, {'form': form, 'id': pk})
-#
-#     def post(self, request, pk):
-#         user = get_object_or_404(User, pk=pk)
-#         form = FormUsuario(request.POST, instance=user)
-#
-#         if form.is_valid():
-#             user = form.save(commit=False)
-#
-#             password = form.cleaned_data.get('password')
-#             if password:
-#                 user.set_password(password)
-#
-#             user.save()
-#             messages.success(request, 'Usuario actualizado correctamente.')
-#             return redirect('users:user_profile')
-#         return render(request, self.template_name, {'form': form, 'id': pk})
-#
-#
-# class UserUpdatePasswordView(View):
-#     template_name = 'components/form_password.html'
-#
-#     def get(self, request, pk):
-#         user = get_object_or_404(User, pk=pk)
-#         form = FormUpdatePasswordUser()
-#         return render(request, self.template_name, {'form': form, 'id': pk})
-#
-#     def post(self, request, pk):
-#         user = get_object_or_404(User, pk=pk)
-#
-#         form = FormUpdatePasswordUser(request.POST, instance=user)
-#
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Contraseña actualizada correctamente.')
-#             return redirect('users:user_profile')
-#
-#         return render(request, self.template_name, {'form': form, 'id': pk})
+class UserUpdateView(View):
+    template_name = 'components/form.html'
+
+    def get(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        form = UsuarioPersonalizadoChangeForm(instance=user)
+        return render(request, self.template_name, {'form': form, 'id': pk})
+
+    def post(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        form = UsuarioPersonalizadoChangeForm(request.POST, instance=user)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+
+            password = form.cleaned_data.get('password')
+            if password:
+                user.set_password(password)
+
+            user.save()
+            messages.success(request, 'Usuario actualizado correctamente.')
+            return redirect('users:user_profile')
+        return render(request, self.template_name, {'form': form, 'id': pk})
+
+
+class PerfilUsuarioView(LoginRequiredMixin, UpdateView):
+    template_name = 'usuarios/perfil.html'
+    model = UsuarioPersonalizado
+    form_class = UsuarioPersonalizadoChangeForm
+    success_url = reverse_lazy('usuarios:perfil')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        add_message(self.request, SUCCESS, 'Perfil actualizado correctamente.')
+        return response
+
+
+class CambiarPasswordView(LoginRequiredMixin, FormView):
+    template_name = 'usuarios/cambiar_password.html'
+    form_class = ChangePasswordLoggedUserForm
+    success_url = reverse_lazy('usuarios:perfil')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = form.save()
+        update_session_auth_hash(self.request, user)
+        add_message(self.request, SUCCESS, 'Contraseña actualizada correctamente.')
+        return super().form_valid(form)

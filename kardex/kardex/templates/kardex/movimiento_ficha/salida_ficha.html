@@ -13,7 +13,24 @@
                 </div>
                 <div class="card-body">
                     <form id="form-filtros" class="form" method="get">
-                        <!--                        FORMULARIO DE FILTROS-->
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="id_hora_inicio">{{ filter_form.hora_inicio.label }}</label>
+                                {{ filter_form.hora_inicio }}
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="id_hora_termino">{{ filter_form.hora_termino.label }}</label>
+                                {{ filter_form.hora_termino }}
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="id_servicio_clinico">{{ filter_form.servicio_clinico.label }}</label>
+                                {{ filter_form.servicio_clinico }}
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="id_profesional">{{ filter_form.profesional.label }}</label>
+                                {{ filter_form.profesional }}
+                            </div>
+                        </div>
                         <button class="btn btn-secondary" type="submit"><i class="fas fa-filter"></i> Aplicar filtros
                         </button>
                     </form>
@@ -29,22 +46,81 @@
                     <h3 class="card-title">Registrar Salida de Ficha</h3>
                 </div>
                 <div class="card-body">
-                    <form id="form-salida" class="form" onsubmit="return false;">
+                    <form method="post" id="form-salida" class="form" novalidate>
+                        {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label for="rut_mov">RUT</label>
                                 <input type="text" id="rut_mov" class="form-control" placeholder="Ingrese RUT">
                             </div>
                             <div class="form-group col-md-3">
-                                <label for="ficha_mov">N° Ficha</label>
-                                <input type="text" id="ficha_mov" class="form-control" placeholder="Ingrese N° ficha">
+                                    {{ form.ficha }}
+                                    <label class="form-check-label" for="ficha_ficha">
+                                        {{ form.ficha.label }}
+                                    </label>
+                                    {% for error in form.ficha.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
                             </div>
+
                             <div class="form-group col-md-6">
                                 <label for="nombre_mov">Nombre</label>
-                                <input type="text" id="nombre_mov" class="form-control" placeholder="Nombre del paciente" readonly>
+                                <input type="text" id="nombre_mov" class="form-control"
+                                       placeholder="Nombre del paciente" readonly>
                             </div>
                         </div>
-                        <button type="button" id="btn-registrar-salida" class="btn btn-primary"><i class="fas fa-save"></i> Registrar salida</button>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-check mt-2">
+                                    {{ form.fecha_salida }}
+                                    <label class="form-check-label" for="fecha_salida_ficha">
+                                        {{ form.fecha_salida.label }}
+                                    </label>
+                                    {% for error in form.fecha_salida.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mt-2">
+                                    {{ form.servicio_clinico }}
+                                    <label class="form-check-label" for="servicio_clinico_ficha">
+                                        {{ form.servicio_clinico.label }}
+                                    </label>
+                                    {% for error in form.servicio_clinico.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mt-2">
+                                    {{ form.profesional }}
+                                    <label class="form-check-label" for="profesional_movimiento">
+                                        {{ form.profesional.label }}
+                                    </label>
+                                    {% for error in form.profesional.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <div class="form-check mt-2">
+                                    {{ form.observacion_salida }}
+                                    <label class="form-check-label" for="observacion_salida_ficha">
+                                        {{ form.observacion_salida.label }}
+                                    </label>
+                                    {% for error in form.observacion_salida.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" id="btn-registrar-salida" class="btn btn-primary"><i
+                                class="fas fa-save"></i> Registrar salida
+                        </button>
                     </form>
                 </div>
             </div>

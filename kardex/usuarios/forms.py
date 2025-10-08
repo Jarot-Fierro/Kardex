@@ -1,26 +1,40 @@
-from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.core.exceptions import ValidationError
 
-from .models import UsuarioPersonalizado
+from kardex.models import Establecimiento
 
 # from config.validation_forms import validate_email
 
 User = get_user_model()
 
+from django import forms
 
-class UsuarioPersonalizadoCreationForm(UserCreationForm):
+
+class UsuarioPersonalizadoChangeForm(forms.ModelForm):
     class Meta:
-        model = UsuarioPersonalizado
-        fields = ('username', 'email', 'rut', 'tipo_perfil', 'establecimiento')
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'tipo_perfil', 'establecimiento']
+        labels = {
+            'first_name': 'Nombres',
+            'last_name': 'Apellidos',
+            'email': 'Correo electrónico',
+            'username': 'RUT',
+            'tipo_perfil': 'Tipo de perfil',
+            'establecimiento': 'Establecimiento',
+        }
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo@correo.com'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '12.345.678-9'}),
+            'tipo_perfil': forms.Select(attrs={'id': 'usuario_tipo_perfil', 'class': 'form-control select2'}),
+            'establecimiento': forms.Select(attrs={'id': 'usuario_establecimiento', 'class': 'form-control select2'}),
+        }
 
-
-class UsuarioPersonalizadoChangeForm(UserChangeForm):
-    class Meta:
-        model = UsuarioPersonalizado
-        fields = ('username', 'email', 'rut', 'tipo_perfil', 'establecimiento')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Limitar establecimientos activos únicamente
+        self.fields['establecimiento'].queryset = Establecimiento.objects.filter(status="ACTIVE")
 
 
 class CustomLoginForm(forms.Form):
@@ -66,23 +80,32 @@ class CustomLoginForm(forms.Form):
         return self.get_user()
 
 
-class FormUpdatePasswordUser(forms.ModelForm):
-    password = forms.CharField(
+class ChangePasswordLoggedUserForm(forms.ModelForm):
+    current_password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese la contraseña'
+            'placeholder': 'Contraseña actual'
+        }),
+        required=True,
+        label='Contraseña actual'
+    )
+
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nueva contraseña'
         }),
         required=True,
         label='Nueva contraseña'
     )
 
-    confirm_password = forms.CharField(
+    new_password2 = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Confirme la contraseña'
+            'placeholder': 'Confirmar nueva contraseña'
         }),
         required=True,
-        label='Confirmar contraseña'
+        label='Confirmar nueva contraseña'
     )
 
     class Meta:
@@ -91,108 +114,24 @@ class FormUpdatePasswordUser(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm = cleaned_data.get('confirm_password')
+        current_password = cleaned_data.get('current_password')
+        password1 = cleaned_data.get('new_password1')
+        password2 = cleaned_data.get('new_password2')
 
-        if password and confirm and password != confirm:
-            self.add_error('confirm_password', 'Las contraseñas no coinciden.')
+        user = self.instance
+        if not user.check_password(current_password or ''):
+            self.add_error('current_password', 'La contraseña actual es incorrecta.')
+
+        if password1 and password2 and password1 != password2:
+            self.add_error('new_password2', 'Las contraseñas no coinciden.')
+
+        return cleaned_data
 
     def save(self, commit=True):
         user = self.instance
-        password = self.cleaned_data.get('password')
+        password = self.cleaned_data.get('new_password1')
         if password:
             user.set_password(password)
         if commit:
             user.save()
         return user
-
-
-class FormUsuario(forms.ModelForm):
-    first_name = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Nombre'
-        }),
-        required=False
-    )
-
-    last_name = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Apellido'
-        }),
-        required=False
-    )
-
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'ejemplo@correo.com'
-        }),
-        required=True
-    )
-
-    username = forms.CharField(
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Nombre de usuario único'
-        }),
-        required=True
-    )
-
-    is_active = forms.ChoiceField(
-        choices=[
-            (True, 'Activo'),
-            (False, 'Inactivo')
-        ],
-        widget=forms.Select(attrs={
-            'class': 'form-select'
-        }),
-        required=True
-    )
-    is_staff = forms.ChoiceField(
-        choices=[
-            (True, 'Está en el equipo'),
-            (False, 'Sin permisos')
-        ],
-        widget=forms.Select(attrs={
-            'class': 'form-select'
-        }),
-        required=True
-    )
-    is_superuser = forms.ChoiceField(
-        choices=[
-            (True, 'Administrador'),
-            (False, 'Sin permisos')
-        ],
-        widget=forms.Select(attrs={
-            'class': 'form-select'
-        }),
-        required=True
-    )
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'is_active',
-                  'is_staff', 'is_superuser']
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if self.instance.pk:
-            # Si estamos editando, evitar que se choque con otro
-            if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
-                raise ValidationError('Este nombre de usuario ya existe.')
-        else:
-            if User.objects.filter(username=username).exists():
-                raise ValidationError('Este nombre de usuario ya está registrado.')
-        return username
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if self.instance.pk:
-            if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
-                raise ValidationError('Este correo ya está en uso.')
-        else:
-            if User.objects.filter(email=email).exists():
-                raise ValidationError('Este correo ya está registrado.')
-        return email

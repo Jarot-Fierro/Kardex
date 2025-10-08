@@ -23,6 +23,8 @@ class MovimientoFicha(StandardModel):
                               verbose_name='Ficha')
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', null=True, blank=True, on_delete=models.PROTECT,
                                 verbose_name='Usuario')
+    profesional = models.ForeignKey('kardex.Profesional', null=True, blank=True, on_delete=models.PROTECT,
+                                    verbose_name='Profesional')
 
     history = HistoricalRecords()
 

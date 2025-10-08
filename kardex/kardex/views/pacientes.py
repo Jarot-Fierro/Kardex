@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
@@ -13,7 +14,8 @@ from django.views.generic import TemplateView, FormView
 from kardex.forms.pacientes import FormPaciente
 from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.mixin import DataTableMixin
-from kardex.models import Paciente, Ficha
+from kardex.models import IngresoPaciente, Ficha
+from kardex.models import Paciente
 
 MODULE_NAME = 'Pacientes'
 
@@ -37,6 +39,8 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
         'nombre__icontains',
         'apellido_paterno__icontains',
         'apellido_materno__icontains',
+        'sexo__icontains',
+        'estado_civil__icontains',
         'comuna__nombre__icontains',
         'prevision__nombre__icontains'
     ]
@@ -56,8 +60,8 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
         nombre_completo = f"{(obj.nombre or '').upper()} {(obj.apellido_paterno or '').upper()} {(obj.apellido_materno or '').upper()}".strip()
         return {
             'ID': obj.id,
-            'RUT': obj.rut,
-            'Nombre': nombre_completo,
+            'RUT': obj.rut or 'Sin RUT',
+            'Nombre': nombre_completo or 'Sin Nombre',
             'Sexo': obj.sexo or '',
             'Estado Civil': obj.estado_civil or '',
             'Comuna': (getattr(obj.comuna, 'nombre', '') or '').upper(),
@@ -121,9 +125,6 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
 
         form = self.get_form()
         if form.is_valid():
-            print("[DEBUG] Formulario válido")
-            from django.db import transaction
-            from kardex.models import IngresoPaciente, Ficha
             user = request.user
 
             try:
@@ -190,7 +191,6 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
                 self.object = None
                 return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
-        print("[DEBUG] Formulario inválido:", form.errors)
         messages.error(request, 'Hay errores en el formulario')
         self.object = instance
         return self.render_to_response(self.get_context_data(form=form, open_modal=True))

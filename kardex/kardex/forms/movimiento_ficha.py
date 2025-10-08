@@ -1,6 +1,6 @@
 from django import forms
 
-from kardex.models import MovimientoFicha, Ficha, ServicioClinico
+from kardex.models import MovimientoFicha, Ficha, ServicioClinico, Profesional
 
 
 class FormEntradaFicha(forms.ModelForm):
@@ -48,13 +48,27 @@ class FormEntradaFicha(forms.ModelForm):
         ),
         required=True
     )
+    profesional = forms.ModelChoiceField(
+        label='Profesional',
+        empty_label="Seleccione un Profesional",
+        queryset=Profesional.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'profesional_movimiento',
+                'class': 'form-control select2'
+            }
+        ),
+        required=True
+    )
 
     class Meta:
         model = MovimientoFicha
         fields = [
             'fecha_entrada',
+            'servicio_clinico',
             'observacion_entrada',
             'ficha',
+            'profesional',
         ]
 
 
@@ -64,7 +78,7 @@ class FormSalidaFicha(forms.ModelForm):
         queryset=Ficha.objects.all(),
         widget=forms.Select(
             attrs={
-                'id': 'ficha_movimiento',
+                'id': 'ficha_mov',
                 'class': 'form-control select2'
             }
         ),
@@ -102,29 +116,43 @@ class FormSalidaFicha(forms.ModelForm):
         }),
         required=False
     )
+    profesional = forms.ModelChoiceField(
+        label='Profesional',
+        empty_label="Seleccione un Profesional",
+        queryset=Profesional.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'profesional_movimiento',
+                'class': 'form-control select2'
+            }
+        ),
+        required=True
+    )
 
     class Meta:
         model = MovimientoFicha
         fields = [
             'ficha',
             'fecha_salida',
+            'servicio_clinico',
             'observacion_salida',
+            'profesional',
         ]
 
 
-class RangoFechaPacienteForm(forms.Form):
-    fecha_inicio = forms.DateField(
-        label="Fecha Hora Inicio",
-        widget=forms.DateInput(attrs={
-            'type': 'date',
+class FiltroSalidaFichaForm(forms.Form):
+    hora_inicio = forms.DateTimeField(
+        label="Hora inicio",
+        widget=forms.DateTimeInput(attrs={
+            'type': 'datetime-local',
             'class': 'form-control'
         }),
         required=False
     )
-    fecha_fin = forms.DateField(
-        label="Fecha Hora Término",
-        widget=forms.DateInput(attrs={
-            'type': 'date',
+    hora_termino = forms.DateTimeField(
+        label="Hora término",
+        widget=forms.DateTimeInput(attrs={
+            'type': 'datetime-local',
             'class': 'form-control'
         }),
         required=False
@@ -132,13 +160,13 @@ class RangoFechaPacienteForm(forms.Form):
     servicio_clinico = forms.ModelChoiceField(
         label="Servicio Clínico",
         queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
         required=False
     )
 
     profesional = forms.ModelChoiceField(
-        label="Profesional",
-        queryset=None,  # To be set in the view
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        label="Profesional asignado",
+        queryset=Profesional.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
         required=False
     )
