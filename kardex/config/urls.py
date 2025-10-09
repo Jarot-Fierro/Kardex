@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from kardex.views.api.movimiento_ficha import router
+from kardex.views.api.pacientes import router
 from kardex.views.home import HomeDashboardView
 
 urlpatterns = [
