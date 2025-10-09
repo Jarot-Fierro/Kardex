@@ -14,6 +14,18 @@ class FormEntradaFicha(forms.ModelForm):
         required=True
     )
 
+    rut = forms.CharField(
+        label='RUT',
+        required=True,
+        widget=forms.TextInput(attrs={'id': 'id_rut', 'class': 'form-control'})
+    )
+
+    nombre = forms.CharField(
+        label='Nombre del paciente',
+        required=True,
+        widget=forms.TextInput(attrs={'id': 'nombre_mov', 'class': 'form-control', 'readonly': 'readonly'})
+    )
+
     servicio_clinico = forms.ModelChoiceField(
         label='Servicio Clínico',
         queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
@@ -69,6 +81,8 @@ class FormEntradaFicha(forms.ModelForm):
             'observacion_entrada',
             'ficha',
             'profesional',
+            'rut',
+            'nombre',
         ]
 
 
@@ -83,6 +97,30 @@ class FormSalidaFicha(forms.ModelForm):
             }
         ),
         required=True
+    )
+
+    rut = forms.ChoiceField(
+        label='RUT',
+        required=True,
+        choices=[],
+        widget=forms.Select(
+            attrs={
+                'id': 'id_rut',
+                'class': 'form-control select2-ajax'
+            }
+        )
+    )
+
+    nombre = forms.CharField(
+        label='Nombre del paciente',
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'id': 'nombre_mov',
+                'class': 'form-control',
+                'readonly': 'readonly'
+            }
+        )
     )
     servicio_clinico = forms.ModelChoiceField(
         label='Servicio Clínico',
@@ -145,6 +183,15 @@ class FormSalidaFicha(forms.ModelForm):
         elif self.instance.pk:
             self.fields['ficha'].queryset = Ficha.objects.filter(pk=self.instance.ficha_id)
 
+        # --- RUT ---
+        if 'rut' in self.data:
+            rut_value = self.data.get('rut')
+            # Asumimos que rut_value es texto como "12345678-9"
+            self.fields['rut'].choices = [(rut_value, rut_value)]
+        elif self.instance.pk:
+            # Si estás editando, podrías mostrar el rut original si lo tienes
+            self.fields['rut'].choices = [(self.instance.ficha.paciente.rut, self.instance.ficha.paciente.rut)]
+
     class Meta:
         model = MovimientoFicha
         fields = [
@@ -153,6 +200,8 @@ class FormSalidaFicha(forms.ModelForm):
             'servicio_clinico',
             'observacion_salida',
             'profesional',
+            'rut',
+            'nombre',
         ]
 
 

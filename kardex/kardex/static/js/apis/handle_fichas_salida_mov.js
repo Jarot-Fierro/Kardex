@@ -15,10 +15,10 @@ function cargarDatosSalidaFicha(fichaId) {
 
 
             if (paciente.rut) {
-                const rutOption = new Option(paciente.rut, data.id, true, true);
+                const rutOption = new Option(paciente.rut, paciente.rut, true, true); // ✅ Usa el rut como value
                 $('#id_rut').empty().append(rutOption).trigger('change');
-
             }
+
         },
         error: function () {
             alert('Error al cargar los datos de la ficha.');

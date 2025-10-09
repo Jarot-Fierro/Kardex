@@ -50,8 +50,13 @@
                         {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label for="id_rut">RUT</label>
-                                <select id="id_rut" class="form-control" placeholder="Ingrese RUT"></select>
+                                <label class="form-check-label" for="ficha_rut">
+                                    {{ form.rut.label }}
+                                </label>
+                                {{ form.rut }}
+                                {% for error in form.rut.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="form-check-label" for="ficha_ficha">
@@ -63,9 +68,13 @@
                                 {% endfor %}
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="nombre_mov">Nombre</label>
-                                <input type="text" id="nombre_mov" class="form-control"
-                                       placeholder="Nombre del paciente" readonly>
+                                <label class="form-check-label" for="ficha_nombre">
+                                    {{ form.nombre.label }}
+                                </label>
+                                {{ form.nombre }}
+                                {% for error in form.nombre.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                                {% endfor %}
                             </div>
                         </div>
 
