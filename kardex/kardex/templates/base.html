@@ -251,16 +251,6 @@
     });
     </script>
 
-<!--    INICIALIZAR SELECT2 CON CLASE SELECT2-->
-    <script>
-      $(document).ready(function () {
-        $('.select2').select2({
-            theme: 'bootstrap4',
-            width: '100%'
-        });
-      });
-    </script>
-
 
 <!--    SCRIPT DE RUT PARA INPUTMASK-->
     <script>
@@ -323,8 +313,6 @@
       });
     </script>
 
-
-
 <!--    SCRIPT PARA VER DETALLES DE UN REGISTRO, ES UN MODAL-->
     <script>
       // Delegated handler for detail view buttons
@@ -344,6 +332,9 @@
         });
       });
     </script>
+
+    {% block javascript %}
+    {% endblock%}
 
 </body>
 </html>

@@ -1,5 +1,4 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import routers
 from rest_framework import serializers
 from rest_framework import viewsets, filters
 
@@ -14,7 +13,6 @@ class PacienteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_establecimiento(self, obj):
-        # Devuelve solo el establecimiento del ingreso actual (del usuario)
         user = self.context['request'].user
         ingreso = IngresoPaciente.objects.filter(
             paciente=obj, establecimiento=user.establecimiento
@@ -37,7 +35,3 @@ class PacienteViewSet(viewsets.ReadOnlyModelViewSet):
         ).values_list('paciente_id', flat=True)
 
         return Paciente.objects.filter(id__in=ingresos).order_by('id')
-
-
-router = routers.DefaultRouter()
-router.register(r'ingreso-paciente', PacienteViewSet)

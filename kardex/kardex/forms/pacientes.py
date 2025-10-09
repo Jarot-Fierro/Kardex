@@ -7,12 +7,11 @@ from usuarios.models import UsuarioPersonalizado
 class FormPaciente(forms.ModelForm):
     rut = forms.CharField(
         label='R.U.T.',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control id_rut',
-            'placeholder': 'Ingrese el RUT',
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control select2-ajax id_rut',
             'id': 'id_rut'
-        }),
-        required=False
+        })
     )
 
     nombre = forms.CharField(

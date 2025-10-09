@@ -75,17 +75,18 @@ class FormEntradaFicha(forms.ModelForm):
 class FormSalidaFicha(forms.ModelForm):
     ficha = forms.ModelChoiceField(
         label='Ficha',
-        queryset=Ficha.objects.all(),
+        queryset=Ficha.objects.none(),
         widget=forms.Select(
             attrs={
-                'id': 'ficha_mov',
-                'class': 'form-control select2'
+                'id': 'id_ficha',
+                'class': 'form-control select2-ajax'
             }
         ),
         required=True
     )
     servicio_clinico = forms.ModelChoiceField(
         label='Servicio Clínico',
+        empty_label="Selecciona un Servicio Clínico",
         queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
         widget=forms.Select(
             attrs={
@@ -128,6 +129,21 @@ class FormSalidaFicha(forms.ModelForm):
         ),
         required=True
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Si el formulario viene con un valor ya seleccionado en POST (como ocurre con Select2 AJAX)
+        if 'ficha' in self.data:
+            try:
+                ficha_id = int(self.data.get('ficha'))
+                self.fields['ficha'].queryset = Ficha.objects.filter(id=ficha_id)
+            except (ValueError, TypeError):
+                pass  # Si por alguna razón el ID no es válido, dejamos el queryset vacío
+
+        # Si estamos editando una instancia existente
+        elif self.instance.pk:
+            self.fields['ficha'].queryset = Ficha.objects.filter(pk=self.instance.ficha_id)
 
     class Meta:
         model = MovimientoFicha
