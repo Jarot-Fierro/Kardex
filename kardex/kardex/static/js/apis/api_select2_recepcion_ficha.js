@@ -14,11 +14,25 @@ $(function () {
         return { search: params.term };
       },
       processResults: function (data) {
-        const results = (data.results || []).map(item => ({ id: item.id, text: item.text }));
+        const results = (data.results || []).map(item => {
+          const paciente = (item.ficha && item.ficha.ingreso_paciente && item.ficha.ingreso_paciente.paciente) || {};
+          const rut = paciente.rut || '';
+          const nombre = `${paciente.nombre || ''} ${paciente.apellido_paterno || ''} ${paciente.apellido_materno || ''}`.trim();
+          return {
+            id: item.id,  // ID del movimiento (se usa para cargar detalles)
+            text: `${rut} - ${nombre}`
+          };
+        });
         return { results };
       }
     },
     minimumInputLength: 1
+  });
+
+  // Cuando se selecciona un resultado, cargar y rellenar el formulario
+  $rut.on('select2:select', function (e) {
+    const movId = e.params.data.id;
+    if (movId) llenarPorMovimiento(movId);
   });
 
   function llenarPorMovimiento(movId) {
@@ -26,64 +40,34 @@ $(function () {
       url: `/api/recepcion-ficha/${movId}/`,
       method: 'GET',
       success: function (data) {
-        const p = data.paciente || {};
+        console.log('Datos recibidos en llenarPorMovimiento:', data);
+
         const f = data.ficha || {};
-        // Nombre completo en el input del formulario
+        const p = (f.ingreso_paciente && f.ingreso_paciente.paciente) || {};
+
         const nombreCompleto = `${p.nombre || ''} ${p.apellido_paterno || ''} ${p.apellido_materno || ''}`.trim();
         $('#nombre_mov').val(nombreCompleto);
-        // Sincronizar select2 RUT
+
         if (p.rut) {
-          const opt = new Option(p.rut, data.movimiento.id, true, true);
-          $rut.empty().append(opt).trigger('change');
+          const optRut = new Option(p.rut, movId, true, true);
+          $('#id_rut').empty().append(optRut).trigger('change');
+          console.log('Opción RUT agregada y seleccionada:', p.rut);
         }
-        // Sincronizar Ficha si existe un select
-        const $ficha = $('#ficha_movimiento, #id_ficha');
-        if ($ficha.length && f.id && f.numero_ficha) {
-          const optF = new Option(f.numero_ficha, f.id, true, true);
-          $ficha.empty().append(optF).trigger('change');
+
+        if (f.numero_ficha && f.id) {
+          const optFicha = new Option(f.numero_ficha, f.id, true, true);
+          $('#id_ficha').empty().append(optFicha).trigger('change');
+          console.log('Opción Ficha agregada y seleccionada:', f.numero_ficha);
         }
+
+        if (data.servicio_clinico) $('#servicio_clinico_ficha').val(data.servicio_clinico).trigger('change');
+        if (data.profesional) $('#profesional_movimiento').val(data.profesional).trigger('change');
+        if (typeof data.observacion_entrada !== 'undefined') $('#observacion_entrada_ficha').val(data.observacion_entrada || '');
       },
-      error: function () {
-        Swal.fire('Error', 'No se pudo cargar la información del movimiento.', 'error');
+      error: function (err) {
+        console.error('Error en AJAX:', err);
       }
     });
   }
-
-  $rut.on('select2:select', function (e) {
-    const movId = e.params.data.id;
-    llenarPorMovimiento(movId);
-  });
-
-  // Guardado por AJAX
-  $('#btn-guardar').on('click', function () {
-    const selected = $rut.select2('data');
-    if (!selected || !selected.length) {
-      Swal.fire('Información', 'Debe seleccionar un RUT con movimiento pendiente.', 'info');
-      return;
-    }
-    const movId = selected[0].id;
-    const fechaEntrada = $('#fecha_entrada_ficha').val();
-    const obs = $('#observacion_entrada_ficha').val();
-    $.ajax({
-      url: `/api/recepcion-ficha/${movId}/mark_received/`,
-      method: 'POST',
-      data: {
-        fecha_entrada: fechaEntrada,
-        observacion_entrada: obs,
-        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
-      },
-      headers: { 'X-Requested-With': 'XMLHttpRequest' },
-      success: function (resp) {
-        if (resp && resp.ok) {
-          Swal.fire('Éxito', 'Recepción registrada correctamente.', 'success');
-          try { $('#Table').DataTable().ajax.reload(null, false); } catch (e) {}
-        } else {
-          Swal.fire('Error', (resp && resp.error) || 'No se pudo registrar la recepción.', 'error');
-        }
-      },
-      error: function () {
-        Swal.fire('Error', 'No se pudo registrar la recepción.', 'error');
-      }
-    });
-  });
 });
+

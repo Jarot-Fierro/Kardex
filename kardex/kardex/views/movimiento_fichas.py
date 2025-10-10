@@ -1,134 +1,26 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.utils import timezone
+from django.utils.timezone import now
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView
 
-from kardex.forms.movimiento_ficha import FormEntradaFicha, FormSalidaFicha, FiltroSalidaFichaForm
+from kardex.forms.movimiento_ficha import FormEntradaFicha, FiltroSalidaFichaForm
+from kardex.forms.movimiento_ficha import FormSalidaFicha
 from kardex.mixin import DataTableMixin
 from kardex.models import MovimientoFicha
-from kardex.models import Paciente, Ficha, ServicioClinico, Profesional
+from kardex.models import Profesional
 
 
-class _BaseMovimientoFichaView(LoginRequiredMixin, DataTableMixin, TemplateView):
+class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixin, TemplateView):
+    template_name = 'kardex/movimiento_ficha/recepcion_ficha.html'
     model = MovimientoFicha
 
-    # DataTable defaults (can be customized by subclasses)
-    datatable_columns = []
-    datatable_order_fields = []
-    datatable_search_fields = []
-
-    def get_base_queryset(self):
-        qs = super().get_base_queryset()
-        # Ensure filtering by establishment of the logged-in user
-        establecimiento = getattr(self.request.user, 'establecimiento', None)
-        if establecimiento is not None:
-            qs = qs.filter(ficha__ingreso_paciente__establecimiento=establecimiento)
-        return qs.select_related('ficha', 'ficha__ingreso_paciente', 'ficha__ingreso_paciente__paciente',
-                                 'servicio_clinico', 'usuario')
-
-    def get(self, request, *args, **kwargs):
-        # Datatable AJAX
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('datatable'):
-            return self.get_datatable_response(request)
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        from kardex.models import ServicioClinico
-        ctx['servicio_clinicos'] = ServicioClinico.objects.all().order_by('nombre')
-        return ctx
-
-    # Helpers for creating MovimientoFicha from POST
-    def _resolve_ficha_from_inputs(self, rut: str, numero_ficha: str):
-        establecimiento = getattr(self.request.user, 'establecimiento', None)
-        if not establecimiento:
-            return None
-        paciente = None
-        if rut:
-            paciente = Paciente.objects.filter(
-                ingresopaciente__establecimiento=establecimiento,
-                rut__iexact=rut
-            ).distinct().first()
-        ficha = None
-        if numero_ficha:
-            ficha = Ficha.objects.filter(
-                ingreso_paciente__establecimiento=establecimiento,
-                numero_ficha=numero_ficha
-            ).select_related('ingreso_paciente__paciente').first()
-        if not ficha and paciente:
-            # If ficha not provided, try to find ficha by paciente within establecimiento
-            ficha = Ficha.objects.filter(
-                ingreso_paciente__establecimiento=establecimiento,
-                ingreso_paciente__paciente=paciente
-            ).first()
-        return ficha
-
-    def post(self, request, *args, **kwargs):
-        # Minimal handler to create a movement entry
-        action = request.POST.get('action')  # 'recepcion' or 'salida'
-        rut = (request.POST.get('rut') or '').strip()
-        numero_ficha = (request.POST.get('ficha') or '').strip()
-        servicio_id = request.POST.get('servicio_clinico')
-        profesional_id = request.POST.get('profesional')  # optional; if empty use current user
-        fecha_str = request.POST.get('fecha')  # ISO or "YYYY-MM-DD HH:MM"
-        observacion = request.POST.get('observacion')
-
-        ficha = self._resolve_ficha_from_inputs(rut, numero_ficha)
-        if not ficha:
-            return JsonResponse({'ok': False, 'error': 'No se pudo resolver la ficha para el RUT/N° entregado.'},
-                                status=400)
-
-        servicio = None
-        if servicio_id:
-            servicio = get_object_or_404(ServicioClinico, id=servicio_id)
-
-        usuario = request.user if getattr(request.user, 'is_authenticated', False) else None
-
-        # Parse fecha
-        fecha_val = None
-        if fecha_str:
-            try:
-                # Try parse using timezone-aware now as fallback
-                # Let Django parse common formats automatically via fromisoformat when available
-                try:
-                    from datetime import datetime
-                    fecha_val = datetime.fromisoformat(fecha_str)
-                except Exception:
-                    # Fallback to input like 'YYYY-MM-DD HH:MM'
-
-                    fecha_val = datetime.strptime(fecha_str, '%Y-%m-%d %H:%M')
-            except Exception:
-                fecha_val = timezone.now()
-        else:
-            fecha_val = timezone.now()
-
-        mov = MovimientoFicha(
-            ficha=ficha,
-            servicio_clinico=servicio,
-            usuario=usuario,
-            observacion_salida=observacion if action == 'salida' else None,
-            observacion_entrada=observacion if action == 'recepcion' else None,
-            fecha_mov=fecha_val,
-        )
-        if action == 'salida':
-            mov.fecha_salida = fecha_val
-        elif action == 'recepcion':
-            mov.fecha_entrada = fecha_val
-        mov.save()
-        return JsonResponse({'ok': True, 'id': mov.id})
-
-
-class RecepcionFichaView(_BaseMovimientoFichaView, FormView):
-    template_name = 'kardex/movimiento_ficha/recepcion_ficha.html'
-    form_class = FormEntradaFicha
-    success_url = reverse_lazy('kardex:recepcion_ficha')
+    permission_required = 'kardex.view_movimientoficha'
+    raise_exception = True
 
     datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Fecha de salida',
                          'Estado']
@@ -145,34 +37,56 @@ class RecepcionFichaView(_BaseMovimientoFichaView, FormView):
         'usuario__username__icontains',
     ]
 
-    # Keep DataTable GET behavior from base; route POST to FormView
-    def post(self, request, *args, **kwargs):
-        return FormView.post(self, request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        # Soporte para AJAX DataTable
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('datatable'):
+            return self.get_datatable_response(request)
+        return super().get(request, *args, **kwargs)
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        try:
-            est = getattr(self.request.user, 'establecimiento', None)
-            if est and 'profesional' in form.fields:
-                form.fields['profesional'].queryset = Profesional.objects.filter(establecimiento=est)
-        except Exception:
-            pass
-        return form
+    def post(self, request, *args, **kwargs):
+        form = FormEntradaFicha(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.usuario = request.user
+            if hasattr(obj, 'fecha_entrada'):
+                obj.fecha_entrada = obj.fecha_entrada or now()
+            if hasattr(obj, 'fecha_mov'):
+                obj.fecha_mov = obj.fecha_entrada or now()
+            obj.save()
+            messages.success(request, 'Recepción registrada correctamente.')
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'ok': True, 'id': obj.id})
+            return self.get(request, *args, **kwargs)
+        else:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'ok': False, 'errors': form.errors}, status=400)
+            messages.error(request, 'El formulario contiene errores. Por favor, verifique los campos.')
+            context = self.get_context_data(form=form)
+            return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        form = kwargs.get('form') or self.get_form()
-        ctx['form'] = form
-        # Habilitar DataTable y columnas
-        ctx['datatable_enabled'] = True
-        ctx['datatable_order'] = [[0, 'asc']]
-        ctx['columns'] = self.datatable_columns
-        return ctx
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Recepción de Fichas',
+            'list_url': reverse_lazy('kardex:recepcion_ficha'),
+            'datatable_enabled': True,
+            'datatable_order': [[0, 'asc']],
+            'columns': self.datatable_columns,
+            'form': kwargs.get('form') or FormEntradaFicha(),
+        })
+        return context
 
     def get_base_queryset(self):
-        qs = super().get_base_queryset()
-        # Mostrar sólo pendientes de recepción para el establecimiento
-        return qs.filter(fecha_salida__isnull=False, fecha_entrada__isnull=True)
+        establecimiento = getattr(self.request.user, 'establecimiento', None)
+        return MovimientoFicha.objects.filter(
+            fecha_salida__isnull=False,
+            fecha_entrada__isnull=True,
+            ficha__ingreso_paciente__establecimiento=establecimiento
+        ).select_related(
+            'ficha__ingreso_paciente__paciente',
+            'servicio_clinico',
+            'usuario'
+        )
 
     def render_row(self, obj):
         pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
@@ -188,53 +102,24 @@ class RecepcionFichaView(_BaseMovimientoFichaView, FormView):
             'Estado': obj.estado_respuesta,
         }
 
-    def form_valid(self, form):
-        obj = form.save(commit=False)
-        # asegurar usuario actual como ejecutor si el modelo lo soporta
-        if hasattr(obj, 'usuario') and getattr(self.request, 'user', None):
-            obj.usuario = self.request.user
-        # si el modelo tiene fecha_mov, podemos alinearla con fecha_entrada
-        if hasattr(obj, 'fecha_mov') and hasattr(obj, 'fecha_entrada') and obj.fecha_entrada:
-            obj.fecha_mov = obj.fecha_entrada
-        obj.save()
-        messages.success(self.request, 'Recepción registrada correctamente.')
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'ok': True, 'id': obj.id})
-        return super().form_valid(form)
 
-    def form_invalid(self, form):
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'errors': form.errors}, status=400)
-        messages.error(self.request, 'El formulario contiene errores. Por favor, verifique los campos.')
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
-
-    def render_row(self, obj):
-        pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
-        nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
-        return {
-            'RUT': getattr(pac, 'rut', '') if pac else '',
-            'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
-            'Nombre completo': nombre.strip(),
-            'Servicio Clínico': getattr(obj.servicio_clinico, 'nombre', ''),
-            'Profesional': getattr(obj.usuario, 'username', ''),
-            'Fecha de salida': obj.fecha_salida.strftime('%Y-%m-%d %H:%M') if obj.fecha_salida else '',
-            'Estado': obj.estado_respuesta,
-        }
-
-
-class SalidaFichaView(_BaseMovimientoFichaView, FormView):
+class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/movimiento_ficha/salida_ficha.html'
-    form_class = FormSalidaFicha
-    success_url = reverse_lazy('kardex:salida_ficha')
+    model = MovimientoFicha
+    permission_required = 'kardex.view_movimientoficha'
+    raise_exception = True
 
-    datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional',
-                         'Observación salida',
-                         'Fecha/hora salida', 'Fecha entrada', 'Estado']
-    datatable_order_fields = ['id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
-                              'ficha__ingreso_paciente__paciente__apellido_paterno',
-                              'servicio_clinico__nombre', 'usuario__username',
-                              'observacion_salida', 'fecha_salida', 'fecha_entrada', 'estado_respuesta']
+    datatable_columns = [
+        'ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico',
+        'Profesional', 'Observación salida', 'Fecha/hora salida',
+        'Fecha entrada', 'Estado'
+    ]
+    datatable_order_fields = [
+        'id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
+        'ficha__ingreso_paciente__paciente__apellido_paterno',
+        'servicio_clinico__nombre', 'usuario__username',
+        'observacion_salida', 'fecha_salida', 'fecha_entrada', 'estado_respuesta'
+    ]
     datatable_search_fields = [
         'ficha__ingreso_paciente__paciente__rut__icontains',
         'ficha__numero_ficha__icontains',
@@ -246,62 +131,67 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
         'observacion_salida__icontains',
     ]
 
-    # Keep DataTable GET behavior from base; route POST to FormView
-    def post(self, request, *args, **kwargs):
-        return FormView.post(self, request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        # Si es llamada AJAX para DataTable
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('datatable'):
+            return self.get_datatable_response(request)
+        return super().get(request, *args, **kwargs)
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        try:
-            est = getattr(self.request.user, 'establecimiento', None)
-            if est and 'profesional' in form.fields:
-                form.fields['profesional'].queryset = Profesional.objects.filter(establecimiento=est)
-        except Exception:
-            pass
-        return form
+    def post(self, request, *args, **kwargs):
+        form = FormSalidaFicha(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.usuario = request.user
+            obj.fecha_mov = obj.fecha_salida or timezone.now()
+            obj.save()
+            messages.success(request, 'Salida registrada correctamente.')
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'ok': True, 'id': obj.id})
+            return self.get(request, *args, **kwargs)
+        else:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'ok': False, 'errors': form.errors}, status=400)
+            messages.error(request, 'El formulario contiene errores.')
+            context = self.get_context_data(form=form)
+            return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        form = kwargs.get('form') or self.get_form()
-        # Filtro
+        context = super().get_context_data(**kwargs)
+
+        establecimiento = getattr(self.request.user, 'establecimiento', None)
+
+        # Formulario principal
+        form = kwargs.get('form') or FormSalidaFicha()
+        if establecimiento and 'profesional' in form.fields:
+            form.fields['profesional'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
+
+        # Formulario de filtro
         filter_form = FiltroSalidaFichaForm(self.request.GET or None)
-        try:
-            est = getattr(self.request.user, 'establecimiento', None)
-            if est and 'profesional' in filter_form.fields:
-                filter_form.fields['profesional'].queryset = Profesional.objects.filter(establecimiento=est)
-        except Exception:
-            pass
-        ctx['form'] = form
-        ctx['filter_form'] = filter_form
-        # Habilitar DataTable en base.html y definir columnas
-        ctx['datatable_enabled'] = True
-        ctx['datatable_order'] = [[0, 'asc']]
-        ctx['columns'] = self.datatable_columns
-        return ctx
+        if establecimiento and 'profesional' in filter_form.fields:
+            filter_form.fields['profesional'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
 
-    def form_valid(self, form):
-        obj = form.save(commit=False)
-        if hasattr(obj, 'usuario') and getattr(self.request, 'user', None):
-            obj.usuario = self.request.user
-        if hasattr(obj, 'fecha_mov') and hasattr(obj, 'fecha_salida') and obj.fecha_salida:
-            obj.fecha_mov = obj.fecha_salida
-        obj.save()
-        messages.success(self.request, 'Salida registrada correctamente.')
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'ok': True, 'id': obj.id})
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        print(form.errors)
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'errors': form.errors}, status=400)
-        messages.error(self.request, 'El formulario contiene errores. Por favor, verifique los campos.')
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
+        context.update({
+            'title': 'Salida de Fichas',
+            'form': form,
+            'filter_form': filter_form,
+            'list_url': reverse_lazy('kardex:salida_ficha'),
+            'datatable_enabled': True,
+            'datatable_order': [[0, 'asc']],
+            'columns': self.datatable_columns,
+        })
+        return context
 
     def get_base_queryset(self):
-        qs = super().get_base_queryset()
-        # Apply filters from GET: date range, servicio clinico, profesional
+        qs = MovimientoFicha.objects.filter(
+            fecha_salida__isnull=False,
+            fecha_entrada__isnull=True,
+        ).select_related(
+            'ficha__ingreso_paciente__paciente',
+            'servicio_clinico',
+            'usuario'
+        )
+
+        # Filtros desde filter_form
         inicio = self.request.GET.get('hora_inicio')
         termino = self.request.GET.get('hora_termino')
         servicio_id = self.request.GET.get('servicio_clinico')
@@ -324,8 +214,8 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
         if servicio_id:
             qs = qs.filter(servicio_clinico_id=servicio_id)
         if profesional_id:
-            # profesional en movimiento es el usuario que realiza? en el modelo se guarda usuario
             qs = qs.filter(usuario_id=profesional_id)
+
         return qs
 
     def render_row(self, obj):
@@ -333,7 +223,7 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
         nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
         return {
             'ID': obj.id,
-            'RUT': getattr(pac, 'rut', '') if pac else 'Sin Rut',
+            'RUT': getattr(pac, 'rut', '') if pac else '',
             'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
             'Nombre completo': nombre.strip(),
             'Servicio Clínico': getattr(obj.servicio_clinico, 'nombre', ''),

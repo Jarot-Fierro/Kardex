@@ -5,7 +5,7 @@ from kardex.models import MovimientoFicha, Ficha, ServicioClinico, Profesional
 
 class FormEntradaFicha(forms.ModelForm):
     fecha_entrada = forms.DateTimeField(
-        label='Fecha de Entrada',
+        label='Fecha de Recepción',
         widget=forms.DateTimeInput(attrs={
             'id': 'fecha_entrada_ficha',
             'class': 'form-control',
@@ -30,11 +30,12 @@ class FormEntradaFicha(forms.ModelForm):
     servicio_clinico = forms.ModelChoiceField(
         label='Servicio Clínico',
         queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        empty_label="Seleccione un Servicio Clínico",
         widget=forms.Select(
             attrs={
                 'id': 'servicio_clinico_ficha',
                 'class': 'form-control select2',
-                'readonly': 'readonly'
+                'disabled': 'disabled'
             }
         ),
         required=True
@@ -53,12 +54,13 @@ class FormEntradaFicha(forms.ModelForm):
 
     ficha = forms.ModelChoiceField(
         label='Ficha',
+        empty_label="Seleccione una Ficha",
         queryset=Ficha.objects.none(),
         widget=forms.Select(
             attrs={
                 'id': 'id_ficha',
                 'class': 'form-control select2',
-                'readonly': 'readonly'
+                'disabled': 'disabled'
             }
         ),
         required=True
@@ -70,7 +72,8 @@ class FormEntradaFicha(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 'id': 'profesional_movimiento',
-                'class': 'form-control select2'
+                'class': 'form-control select2',
+                'disabled': 'disabled'
             }
         ),
         required=True
