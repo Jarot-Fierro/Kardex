@@ -130,9 +130,9 @@ class RecepcionFichaView(_BaseMovimientoFichaView, FormView):
     form_class = FormEntradaFicha
     success_url = reverse_lazy('kardex:recepcion_ficha')
 
-    datatable_columns = ['RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Fecha de salida',
+    datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Fecha de salida',
                          'Estado']
-    datatable_order_fields = ['ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
+    datatable_order_fields = ['id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
                               'ficha__ingreso_paciente__paciente__apellido_paterno',
                               'servicio_clinico__nombre', 'usuario__username', 'fecha_salida', 'estado_respuesta']
     datatable_search_fields = [
@@ -163,7 +163,30 @@ class RecepcionFichaView(_BaseMovimientoFichaView, FormView):
         ctx = super().get_context_data(**kwargs)
         form = kwargs.get('form') or self.get_form()
         ctx['form'] = form
+        # Habilitar DataTable y columnas
+        ctx['datatable_enabled'] = True
+        ctx['datatable_order'] = [[0, 'asc']]
+        ctx['columns'] = self.datatable_columns
         return ctx
+
+    def get_base_queryset(self):
+        qs = super().get_base_queryset()
+        # Mostrar sólo pendientes de recepción para el establecimiento
+        return qs.filter(fecha_salida__isnull=False, fecha_entrada__isnull=True)
+
+    def render_row(self, obj):
+        pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
+        nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
+        return {
+            'ID': obj.id,
+            'RUT': getattr(pac, 'rut', '') if pac else '',
+            'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
+            'Nombre completo': nombre.strip(),
+            'Servicio Clínico': getattr(obj.servicio_clinico, 'nombre', ''),
+            'Profesional': getattr(obj.usuario, 'username', ''),
+            'Fecha de salida': obj.fecha_salida.strftime('%Y-%m-%d %H:%M') if obj.fecha_salida else '',
+            'Estado': obj.estado_respuesta,
+        }
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -205,7 +228,8 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
     form_class = FormSalidaFicha
     success_url = reverse_lazy('kardex:salida_ficha')
 
-    datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Observación salida',
+    datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional',
+                         'Observación salida',
                          'Fecha/hora salida', 'Fecha entrada', 'Estado']
     datatable_order_fields = ['id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
                               'ficha__ingreso_paciente__paciente__apellido_paterno',

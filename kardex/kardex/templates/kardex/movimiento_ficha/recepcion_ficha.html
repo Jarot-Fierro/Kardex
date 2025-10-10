@@ -12,23 +12,74 @@
                     <h3 class="card-title">Registro de Recepción de Ficha</h3>
                 </div>
                 <div class="card-body">
-                    <form id="form-recepcion" class="form" onsubmit="return false;">
+                    <form id="form-recepcion" class="form" method="post" novalidate>
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label for="rut_mov">RUT</label>
-                                <input type="text" id="rut_mov" class="form-control" placeholder="Ingrese RUT">
+                                <label class="form-check-label">{{ form.rut.label }}</label>
+                                {{ form.rut }}
+                                {% for error in form.rut.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <div class="form-group col-md-3">
-                                <label for="ficha_mov">N° Ficha</label>
-                                <input type="text" id="ficha_mov" class="form-control" placeholder="Ingrese N° ficha">
+                                <label class="form-check-label">{{ form.ficha.label }}</label>
+                                {{ form.ficha }}
+                                {% for error in form.ficha.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                                {% endfor %}
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="nombre_mov">Nombre</label>
-                                <input type="text" id="nombre_mov" class="form-control"
-                                       placeholder="Nombre del paciente" readonly>
+                                <label class="form-check-label">{{ form.nombre.label }}</label>
+                                {{ form.nombre }}
+                                {% for error in form.nombre.errors %}
+                                <span class="text-danger small d-block">{{ error }}</span>
+                                {% endfor %}
                             </div>
                         </div>
-                        <button type="button" id="btn-guardar" class="btn btn-primary"><i class="fas fa-save"></i>
+
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <label class="form-check-label">{{ form.fecha_entrada.label }}</label>
+                                    {{ form.fecha_entrada }}
+                                    {% for error in form.fecha_entrada.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <label class="form-check-label">{{ form.servicio_clinico.label }}</label>
+                                    {{ form.servicio_clinico }}
+                                    {% for error in form.servicio_clinico.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <label class="form-check-label">{{ form.profesional.label }}</label>
+                                    {{ form.profesional }}
+                                    {% for error in form.profesional.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <label class="form-check-label">{{ form.observacion_entrada.label }}</label>
+                                    {{ form.observacion_entrada }}
+                                    {% for error in form.observacion_entrada.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="btn-guardar" class="btn btn-primary mt-3"><i class="fas fa-save"></i>
                             Guardar
                         </button>
                     </form>
@@ -65,4 +116,9 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/apis/api_select2_recepcion_ficha.js' %}"></script>
+<script src="{% static 'js/config_select2.js' %}"></script>
 {% endblock %}

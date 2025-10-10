@@ -14,10 +14,11 @@ class FormEntradaFicha(forms.ModelForm):
         required=True
     )
 
-    rut = forms.CharField(
+    rut = forms.ChoiceField(
         label='RUT',
         required=False,
-        widget=forms.TextInput(attrs={'id': 'id_rut', 'class': 'form-control'})
+        choices=[],
+        widget=forms.Select(attrs={'id': 'id_rut', 'class': 'form-control select2-ajax'})
     )
 
     nombre = forms.CharField(
@@ -32,7 +33,8 @@ class FormEntradaFicha(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 'id': 'servicio_clinico_ficha',
-                'class': 'form-control select2'
+                'class': 'form-control select2',
+                'readonly': 'readonly'
             }
         ),
         required=True
@@ -51,11 +53,12 @@ class FormEntradaFicha(forms.ModelForm):
 
     ficha = forms.ModelChoiceField(
         label='Ficha',
-        queryset=Ficha.objects.all(),
+        queryset=Ficha.objects.none(),
         widget=forms.Select(
             attrs={
-                'id': 'ficha_movimiento',
-                'class': 'form-control select2'
+                'id': 'id_ficha',
+                'class': 'form-control select2',
+                'readonly': 'readonly'
             }
         ),
         required=True
