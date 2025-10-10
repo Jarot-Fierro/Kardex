@@ -18,13 +18,21 @@ class FormEntradaFicha(forms.ModelForm):
         label='RUT',
         required=False,
         choices=[],
-        widget=forms.Select(attrs={'id': 'id_rut', 'class': 'form-control select2-ajax'})
+        widget=forms.Select(attrs={
+            'id': 'id_rut',
+            'class': 'form-control select2-ajax',
+            'readonly': 'readonly'
+        })
     )
 
     nombre = forms.CharField(
         label='Nombre del paciente',
         required=True,
-        widget=forms.TextInput(attrs={'id': 'nombre_mov', 'class': 'form-control', 'readonly': 'readonly'})
+        widget=forms.TextInput(attrs={
+            'id': 'nombre_mov',
+            'class': 'form-control',
+            'readonly': 'readonly'
+        })
     )
 
     servicio_clinico = forms.ModelChoiceField(
@@ -35,7 +43,7 @@ class FormEntradaFicha(forms.ModelForm):
             attrs={
                 'id': 'servicio_clinico_ficha',
                 'class': 'form-control select2',
-                'disabled': 'disabled'
+                'readonly': 'readonly'
             }
         ),
         required=True
@@ -60,7 +68,7 @@ class FormEntradaFicha(forms.ModelForm):
             attrs={
                 'id': 'id_ficha',
                 'class': 'form-control select2',
-                'disabled': 'disabled'
+                'readonly': 'readonly'
             }
         ),
         required=True
@@ -73,11 +81,38 @@ class FormEntradaFicha(forms.ModelForm):
             attrs={
                 'id': 'profesional_movimiento',
                 'class': 'form-control select2',
-                'disabled': 'disabled'
+
             }
         ),
         required=True
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        data = args[0] if args else None
+
+        if data:
+            ficha_id = data.get('ficha')
+            if ficha_id and ficha_id.isdigit():
+                from kardex.models import Ficha
+                try:
+                    ficha = Ficha.objects.get(pk=ficha_id)
+                    self.fields['ficha'].queryset = Ficha.objects.filter(pk=ficha.pk)
+                except Ficha.DoesNotExist:
+                    pass
+
+            rut_id = data.get('rut')
+            if rut_id and rut_id.isdigit():
+                from kardex.models import MovimientoFicha
+                try:
+                    mov = MovimientoFicha.objects.get(pk=rut_id)
+                    self.fields['rut'].choices = [
+                        (mov.pk,
+                         f"{mov.ficha.ingreso_paciente.paciente.rut} - {mov.ficha.ingreso_paciente.paciente.nombre}")
+                    ]
+                except MovimientoFicha.DoesNotExist:
+                    pass
 
     class Meta:
         model = MovimientoFicha

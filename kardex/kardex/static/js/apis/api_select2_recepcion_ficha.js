@@ -20,7 +20,7 @@ $(function () {
           const nombre = `${paciente.nombre || ''} ${paciente.apellido_paterno || ''} ${paciente.apellido_materno || ''}`.trim();
           return {
             id: item.id,  // ID del movimiento (se usa para cargar detalles)
-            text: `${rut} - ${nombre}`
+            text: `${rut}`
           };
         });
         return { results };
