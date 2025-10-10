@@ -24,6 +24,6 @@ TIPO_PERFIL = [
 ]
 
 ESTADO_RESPUESTA = [
-    ('ENTREGA', 'Entrgado'),
+    ('ENTREGA', 'Entregado'),
     ('RECIBIDO', 'Recibido')
 ]

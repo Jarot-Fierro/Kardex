@@ -184,10 +184,7 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         return context
 
     def get_base_queryset(self):
-        qs = MovimientoFicha.objects.filter(
-            fecha_salida__isnull=False,
-            fecha_entrada__isnull=True,
-        ).select_related(
+        qs = MovimientoFicha.objects.filter(estado_respuesta='EN ESPERA').select_related(
             'ficha__ingreso_paciente__paciente',
             'servicio_clinico',
             'usuario'
