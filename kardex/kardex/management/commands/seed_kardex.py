@@ -8,8 +8,8 @@ from .seed_mantenedores import (
     seed_servicios_clinicos,
     seed_profesiones,
 )
-from .seed_profesionales import generate_profesionales
 from .seed_pacientes import generate_pacientes_e_ingresos
+from .seed_profesionales import generate_profesionales
 from .utils import get_or_create_seed_user
 
 
@@ -20,8 +20,8 @@ class Command(BaseCommand):
     )
 
     def add_arguments(self, parser):
-        parser.add_argument('--profesionales', type=int, default=6000)
-        parser.add_argument('--pacientes', type=int, default=6000)
+        parser.add_argument('--profesionales', type=int, default=300)
+        parser.add_argument('--pacientes', type=int, default=300)
         parser.add_argument('--dry-run', action='store_true', default=False)
 
     def handle(self, *args, **options):

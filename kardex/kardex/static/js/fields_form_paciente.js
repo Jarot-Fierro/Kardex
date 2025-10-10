@@ -84,7 +84,7 @@
             if (!rn && ext && !fal) {
                 // Extranjero solo
                 setEnabled([el.nie, el.pasaporte]);
-                setDisabled([el.rut_resp_temp, el.usar_rut_madre, el.ocupacion, el.fecha_fallecimiento], true);
+                setDisabled([el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento], true);
                 setRequired([el.nie, el.pasaporte], false);
                 setRequired([el.rut], false);
             }

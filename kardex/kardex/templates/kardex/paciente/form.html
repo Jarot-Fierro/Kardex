@@ -40,6 +40,7 @@
                 <select value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
                         placeholder="Código" id="id_codigo">
                 </select>
+                <input type="hidden" id="codigo_inicial" value="{{ paciente.codigo }}">
             </div>
 
             <div class="col-md-3 text-md-end">
@@ -128,6 +129,8 @@
                             {{ form.rut.label }}
                         </label>
                         {{ form.rut }}
+                        <!--  Primera consulta con Edición-->
+                        <input type="hidden" id="rut_inicial" value="{{ paciente.rut|default:'' }}">
                         {% for error in form.rut.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
@@ -385,4 +388,5 @@
 <script src="{% static 'js/apis/api_select2_codigo.js' %}"></script>
 <script src="{% static 'js/apis/handle_fichas.js' %}"></script>
 <script src="{% static 'js/fields_form_paciente.js' %}"></script>
+<script src="{% static 'js/apis/api_select2_rut_inicial.js' %}"></script>
 {% endblock %}
