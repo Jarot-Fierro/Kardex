@@ -205,9 +205,9 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
     form_class = FormSalidaFicha
     success_url = reverse_lazy('kardex:salida_ficha')
 
-    datatable_columns = ['RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Observación salida',
+    datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Observación salida',
                          'Fecha/hora salida', 'Fecha entrada', 'Estado']
-    datatable_order_fields = ['ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
+    datatable_order_fields = ['id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
                               'ficha__ingreso_paciente__paciente__apellido_paterno',
                               'servicio_clinico__nombre', 'usuario__username',
                               'observacion_salida', 'fecha_salida', 'fecha_entrada', 'estado_respuesta']
@@ -249,6 +249,10 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
             pass
         ctx['form'] = form
         ctx['filter_form'] = filter_form
+        # Habilitar DataTable en base.html y definir columnas
+        ctx['datatable_enabled'] = True
+        ctx['datatable_order'] = [[0, 'asc']]
+        ctx['columns'] = self.datatable_columns
         return ctx
 
     def form_valid(self, form):
@@ -304,6 +308,7 @@ class SalidaFichaView(_BaseMovimientoFichaView, FormView):
         pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
         nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
         return {
+            'ID': obj.id,
             'RUT': getattr(pac, 'rut', '') if pac else 'Sin Rut',
             'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
             'Nombre completo': nombre.strip(),

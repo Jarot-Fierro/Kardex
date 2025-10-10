@@ -16,7 +16,7 @@ class FormEntradaFicha(forms.ModelForm):
 
     rut = forms.CharField(
         label='RUT',
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'id': 'id_rut', 'class': 'form-control'})
     )
 
@@ -101,7 +101,7 @@ class FormSalidaFicha(forms.ModelForm):
 
     rut = forms.ChoiceField(
         label='RUT',
-        required=True,
+        required=False,
         choices=[],
         widget=forms.Select(
             attrs={
