@@ -1,4 +1,5 @@
 ESTADO_CIVIL = [
+    ('NO INFORMADO', 'No Informado'),
     ('SOLTERO(A)', 'Soltero(a)'),
     ('CASADO(A)', 'Casado(a)'),
     ('DIVORCIADO(A)', 'Divorciado(a)'),

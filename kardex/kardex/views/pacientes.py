@@ -147,7 +147,6 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
                     else:
                         ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
                         count_ingresos = ingresos_qs.count()
-                        print(f"[DEBUG] Ingresos actuales: {count_ingresos}")
                         ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
 
                         if count_ingresos >= 5 and not ingreso_existente:
@@ -169,7 +168,6 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
                                 # No existe ingreso en este establecimiento: crear respetando el tope
                                 ingreso = IngresoPaciente.objects.create(paciente=paciente,
                                                                          establecimiento=establecimiento)
-                                print(f"[DEBUG] Ingreso creado: ID {ingreso.pk}")
                                 ficha, created = Ficha.objects.get_or_create(
                                     ingreso_paciente=ingreso,
                                     defaults={'usuario': user}
@@ -313,6 +311,27 @@ class PacienteDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class PacienteRecienNacidoListView(PacienteListView):
+    datatable_columns = ['ID', 'RUT', 'Nombre', 'Sexo', 'Rut Responsable', 'Comuna', 'Previsión']
+    datatable_order_fields = [
+        'id',
+        None,
+        None,
+        'sexo',
+        'rut_responsable_temporal',
+        'comuna__nombre',
+        'prevision__nombre'
+    ]
+
+    datatable_search_fields = [
+        'rut__icontains',
+        'nombre__icontains',
+        'apellido_paterno__icontains',
+        'apellido_materno__icontains',
+        'sexo__icontains',
+        'rut_responsable_temporal_icontains',
+        'comuna__nombre__icontains',
+        'prevision__nombre__icontains'
+    ]
 
     def get_base_queryset(self):
         return Paciente.objects.filter(recien_nacido=True)

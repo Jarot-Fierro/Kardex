@@ -9,7 +9,7 @@ class Paciente(StandardModel):
     # IDENTIFICACIÓN
     codigo = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Código')
     rut = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Rut')
-    nie = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='NIE')
+    nip = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='NIP')
     nombre = models.CharField(max_length=100, null=False, verbose_name='Nombre')
     rut_madre = models.CharField(max_length=100, null=True, blank=True, verbose_name='R.U.T. Madre')
     apellido_paterno = models.CharField(max_length=100, null=False, verbose_name='Apellido Paterno')
