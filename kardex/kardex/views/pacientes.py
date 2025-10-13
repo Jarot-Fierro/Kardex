@@ -382,6 +382,50 @@ class PacienteCreacionView(PermissionRequiredMixin, CreateView):
     permission_required = 'kardex.add_paciente'
     raise_exception = True
 
+    def form_valid(self, form):
+        user = self.request.user
+        try:
+            with transaction.atomic():
+                paciente = form.save(commit=False)
+                paciente.usuario = user
+                paciente.save()
+
+                establecimiento = getattr(user, 'establecimiento', None)
+                if not establecimiento:
+                    messages.warning(self.request, 'El usuario no tiene un establecimiento asociado.')
+                else:
+                    ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
+                    count_ingresos = ingresos_qs.count()
+                    ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
+
+                    if count_ingresos >= 5 and not ingreso_existente:
+                        messages.warning(self.request, 'Máximo de ingresos alcanzado.')
+                    else:
+                        if ingreso_existente:
+                            ficha, created = Ficha.objects.get_or_create(
+                                ingreso_paciente=ingreso_existente,
+                                defaults={'usuario': user}
+                            )
+                            if created:
+                                messages.success(self.request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                            else:
+                                messages.info(self.request, 'Ficha ya existente para este ingreso.')
+                        else:
+                            ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
+                            ficha, created = Ficha.objects.get_or_create(
+                                ingreso_paciente=ingreso,
+                                defaults={'usuario': user}
+                            )
+                            if created:
+                                messages.success(self.request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                            else:
+                                messages.info(self.request, 'Ficha ya existente.')
+                messages.success(self.request, 'Paciente creado correctamente')
+                return redirect(self.success_url)
+        except Exception as e:
+            messages.error(self.request, f'No se pudo completar la creación: {e}')
+            return self.form_invalid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Crear Paciente'

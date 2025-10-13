@@ -14,9 +14,9 @@ MODULE_NAME = 'Fichas'
 class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/ficha/list.html'
     model = Ficha
-    datatable_columns = ['ID', 'Número', 'Profesional', 'Usuario', 'Paciente', 'Fecha Movimiento']
-    datatable_order_fields = ['id', None, 'numero_ficha', 'profesional__nombres', 'usuario__username',
-                              'ingreso_paciente__paciente__rut', 'fecha_mov']
+    datatable_columns = ['ID', 'Número', 'Establecimiento', 'RUT', 'Código', 'Paciente', 'Fecha Creación']
+    datatable_order_fields = ['id', None, 'numero_ficha',
+                              'ingreso_paciente__paciente__rut', 'ingreso_paciente__paciente__codigo', 'created_at']
     datatable_search_fields = [
         'numero_ficha__icontains', 'profesional__nombres__icontains', 'usuario__username__icontains',
         'ingreso_paciente__paciente__rut__icontains'
@@ -26,21 +26,25 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     raise_exception = True
 
     permission_view = 'kardex.view_ficha'
-    permission_update = 'kardex.change_ficha'
-    permission_delete = 'kardex.delete_ficha'
 
     url_detail = 'kardex:ficha_detail'
     url_update = 'kardex:ficha_update'
     url_delete = 'kardex:ficha_delete'
 
     def render_row(self, obj):
+        pac = getattr(obj.ingreso_paciente, 'paciente', None)
+        est = getattr(obj.ingreso_paciente, 'establecimiento', None)
+        nombre_completo = ''
+        if pac:
+            nombre_completo = f"{(getattr(pac, 'nombre', '') or '').upper()} {(getattr(pac, 'apellido_paterno', '') or '').upper()} {(getattr(pac, 'apellido_materno', '') or '').upper()}".strip()
         return {
             'ID': obj.id,
             'Número': obj.numero_ficha,
-            'Profesional': (getattr(obj.profesional, 'nombres', '') or '').upper(),
-            'Usuario': getattr(obj.usuario, 'username', '') or '',
-            'Paciente': getattr(getattr(obj.ingreso_paciente, 'paciente', None), 'rut', '') or '',
-            'Fecha Movimiento': obj.fecha_mov.strftime('%Y-%m-%d') if obj.fecha_mov else '',
+            'Establecimiento': (getattr(est, 'nombre', '') or '').upper(),
+            'RUT': getattr(pac, 'rut', '') if pac else '',
+            'Código': getattr(pac, 'codigo', '') if pac else '',
+            'Paciente': nombre_completo,
+            'Fecha Creación': obj.created_at.strftime('%Y-%m-%d %H:%M') if getattr(obj, 'created_at', None) else '',
         }
 
     def get(self, request, *args, **kwargs):
@@ -60,6 +64,19 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
             'columns': self.datatable_columns,
         })
         return context
+
+    def get_base_queryset(self):
+        # Optimiza consultas y, si aplica la política del sistema, restringe por establecimiento del usuario
+        qs = Ficha.objects.select_related(
+            'ingreso_paciente__paciente',
+            'ingreso_paciente__establecimiento',
+        )
+        # Si la app en otras vistas filtra por establecimiento, puede activarse aquí:
+        user = getattr(self.request, 'user', None)
+        establecimiento = getattr(user, 'establecimiento', None) if user else None
+        if establecimiento:
+            qs = qs.filter(ingreso_paciente__establecimiento=establecimiento)
+        return qs
 
 
 class FichaDetailView(PermissionRequiredMixin, DetailView):
@@ -145,7 +162,7 @@ class FichaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Ficha
     template_name = 'kardex/ficha/confirm_delete.html'
     success_url = reverse_lazy('kardex:ficha_list')
-    
+
     permission_required = 'kardex.delete_ficha'
     raise_exception = True
 
