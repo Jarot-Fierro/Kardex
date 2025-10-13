@@ -8,8 +8,7 @@ class FormProfesional(forms.ModelForm):
     rut = forms.CharField(
         label='R.U.T.',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'id': 'id_rut',
+            'class': 'form-control id_rut',
             'placeholder': 'Ingrese el RUT del profesional',
         }),
         required=True
@@ -39,9 +38,8 @@ class FormProfesional(forms.ModelForm):
         label='Teléfono',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'id': 'telefono_personal',
             'placeholder': '+569 1234 5678',
-            'id': 'telefono_profesional'
+            'id': 'telefono_personal'
         }),
         required=True
     )
