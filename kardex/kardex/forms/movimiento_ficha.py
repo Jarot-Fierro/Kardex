@@ -4,14 +4,14 @@ from kardex.models import MovimientoFicha, Ficha, ServicioClinico, Profesional
 
 
 class FormEntradaFicha(forms.ModelForm):
-    fecha_entrada = forms.DateTimeField(
+    fecha_recepcion = forms.DateTimeField(
         label='Fecha de Recepción',
         widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_entrada_ficha',
+            'id': 'fecha_recepcion_ficha',
             'class': 'form-control',
             'type': 'datetime-local'
         }),
-        required=True
+        required=False
     )
 
     rut = forms.ChoiceField(
@@ -35,8 +35,8 @@ class FormEntradaFicha(forms.ModelForm):
         })
     )
 
-    servicio_clinico = forms.ModelChoiceField(
-        label='Servicio Clínico',
+    servicio_clinico_recepcion = forms.ModelChoiceField(
+        label='Servicio Clínico de Recepción',
         queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
         empty_label="Seleccione un Servicio Clínico",
         widget=forms.Select(
@@ -46,16 +46,16 @@ class FormEntradaFicha(forms.ModelForm):
                 'readonly': 'readonly'
             }
         ),
-        required=True
+        required=False
     )
 
-    observacion_entrada = forms.CharField(
-        label='Observación de Entrada',
+    observacion_recepcion = forms.CharField(
+        label='Observación de Recepción',
         widget=forms.Textarea(attrs={
-            'id': 'observacion_entrada_ficha',
+            'id': 'observacion_recepcion_ficha',
             'class': 'form-control',
             'rows': 3,
-            'placeholder': 'Ingrese una observación de entrada (opcional)'
+            'placeholder': 'Ingrese una observación de recepción (opcional)'
         }),
         required=False
     )
@@ -67,21 +67,19 @@ class FormEntradaFicha(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 'id': 'id_ficha',
-                'class': 'form-control select2',
-                'readonly': 'readonly'
+                'class': 'form-control select2'
             }
         ),
         required=True
     )
-    profesional = forms.ModelChoiceField(
-        label='Profesional',
+    profesional_recepcion = forms.ModelChoiceField(
+        label='Profesional que recibe',
         empty_label="Seleccione un Profesional",
         queryset=Profesional.objects.filter(status='ACTIVE').all(),
         widget=forms.Select(
             attrs={
                 'id': 'profesional_movimiento',
                 'class': 'form-control select2',
-
             }
         ),
         required=True
@@ -94,6 +92,7 @@ class FormEntradaFicha(forms.ModelForm):
 
         if data:
             ficha_id = data.get('ficha')
+            print(ficha_id)
             if ficha_id and ficha_id.isdigit():
                 from kardex.models import Ficha
                 try:
@@ -117,11 +116,11 @@ class FormEntradaFicha(forms.ModelForm):
     class Meta:
         model = MovimientoFicha
         fields = [
-            'fecha_entrada',
-            'servicio_clinico',
-            'observacion_entrada',
+            'fecha_recepcion',
+            'servicio_clinico_recepcion',
+            'observacion_recepcion',
             'ficha',
-            'profesional',
+            'profesional_recepcion',
             'rut',
             'nombre',
         ]
@@ -163,8 +162,8 @@ class FormSalidaFicha(forms.ModelForm):
             }
         )
     )
-    servicio_clinico = forms.ModelChoiceField(
-        label='Servicio Clínico',
+    servicio_clinico_envio = forms.ModelChoiceField(
+        label='Servicio Clínico de Envío',
         empty_label="Selecciona un Servicio Clínico",
         queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
         widget=forms.Select(
@@ -176,28 +175,41 @@ class FormSalidaFicha(forms.ModelForm):
         required=True
     )
 
-    fecha_salida = forms.DateTimeField(
-        label='Fecha de Salida',
-        widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_salida_ficha',
-            'class': 'form-control',
-            'type': 'datetime-local'
-        }),
+    servicio_clinico_recepcion = forms.ModelChoiceField(
+        label='Servicio Clínico de Recepción',
+        empty_label="Selecciona un Servicio Clínico",
+        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'servicio_clinico_recepcion',
+                'class': 'form-control select2'
+            }
+        ),
         required=True
     )
 
-    observacion_salida = forms.CharField(
-        label='Observación de Salida',
-        widget=forms.Textarea(attrs={
-            'id': 'observacion_salida_ficha',
+    fecha_envio = forms.DateTimeField(
+        label='Fecha de Envío',
+        widget=forms.DateTimeInput(attrs={
+            'id': 'fecha_envio_ficha',
             'class': 'form-control',
-            'rows': 3,
-            'placeholder': 'Ingrese una observación de salida (opcional)'
+            'type': 'datetime-local'
         }),
         required=False
     )
-    profesional = forms.ModelChoiceField(
-        label='Profesional',
+
+    observacion_envio = forms.CharField(
+        label='Observación de Envío',
+        widget=forms.Textarea(attrs={
+            'id': 'observacion_envio_ficha',
+            'class': 'form-control',
+            'rows': 3,
+            'placeholder': 'Ingrese una observación de envío (opcional)'
+        }),
+        required=False
+    )
+    profesional_envio = forms.ModelChoiceField(
+        label='Profesional que envía',
         empty_label="Seleccione un Profesional",
         queryset=Profesional.objects.filter(status='ACTIVE').all(),
         widget=forms.Select(
@@ -237,10 +249,11 @@ class FormSalidaFicha(forms.ModelForm):
         model = MovimientoFicha
         fields = [
             'ficha',
-            'fecha_salida',
-            'servicio_clinico',
-            'observacion_salida',
-            'profesional',
+            'fecha_envio',
+            'servicio_clinico_envio',
+            'servicio_clinico_recepcion',
+            'observacion_envio',
+            'profesional_envio',
             'rut',
             'nombre',
         ]

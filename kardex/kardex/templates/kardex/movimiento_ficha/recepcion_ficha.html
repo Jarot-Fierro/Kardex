@@ -42,27 +42,27 @@
                         <div class="form-row">
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.fecha_entrada.label }}</label>
-                                    {{ form.fecha_entrada }}
-                                    {% for error in form.fecha_entrada.errors %}
+                                    <label class="form-check-label">{{ form.fecha_recepcion.label }}</label>
+                                    {{ form.fecha_recepcion }}
+                                    {% for error in form.fecha_recepcion.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.servicio_clinico.label }}</label>
-                                    {{ form.servicio_clinico }}
-                                    {% for error in form.servicio_clinico.errors %}
+                                    <label class="form-check-label">{{ form.servicio_clinico_recepcion.label }}</label>
+                                    {{ form.servicio_clinico_recepcion }}
+                                    {% for error in form.servicio_clinico_recepcion.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.profesional.label }}</label>
-                                    {{ form.profesional }}
-                                    {% for error in form.profesional.errors %}
+                                    <label class="form-check-label">{{ form.profesional_recepcion.label }}</label>
+                                    {{ form.profesional_recepcion }}
+                                    {% for error in form.profesional_recepcion.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
@@ -71,9 +71,9 @@
                         <div class="form-row">
                             <div class="col-md-12">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.observacion_entrada.label }}</label>
-                                    {{ form.observacion_entrada }}
-                                    {% for error in form.observacion_entrada.errors %}
+                                    <label class="form-check-label">{{ form.observacion_recepcion.label }}</label>
+                                    {{ form.observacion_recepcion }}
+                                    {% for error in form.observacion_recepcion.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
@@ -119,5 +119,19 @@
 {% endblock %}
 
 {% block javascript %}
+<script>
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%'
+    });
+</script>
 <script src="{% static 'js/apis/api_select2_recepcion_ficha.js' %}"></script>
+<script>
+    // Marcar campos de envío como solo lectura en UI (rut y nombre ya tienen readonly en los widgets)
+    $('#servicio_clinico_ficha').prop('disabled', true);
+    // Importante: no deshabilitar #id_ficha para que el valor se envíe en el POST
+    $('#id_ficha').prop('disabled', false);
+    $('#nombre_mov').prop('readonly', true);
+    $('#id_rut').prop('disabled', false); // sólo para buscar y cargar
+</script>
 {% endblock %}

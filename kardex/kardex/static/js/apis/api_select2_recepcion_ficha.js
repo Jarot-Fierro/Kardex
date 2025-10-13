@@ -58,11 +58,14 @@ $(function () {
           const optFicha = new Option(f.numero_ficha, f.id, true, true);
           $('#id_ficha').empty().append(optFicha).trigger('change');
           console.log('Opción Ficha agregada y seleccionada:', f.numero_ficha);
+        } else {
+          // Si no viene ficha en la respuesta, limpiar el select para evitar valores obsoletos
+          $('#id_ficha').empty().trigger('change');
         }
 
-        if (data.servicio_clinico) $('#servicio_clinico_ficha').val(data.servicio_clinico).trigger('change');
-        if (data.profesional) $('#profesional_movimiento').val(data.profesional).trigger('change');
-        if (typeof data.observacion_entrada !== 'undefined') $('#observacion_entrada_ficha').val(data.observacion_entrada || '');
+        if (data.servicio_clinico_recepcion) $('#servicio_clinico_ficha').val(data.servicio_clinico_recepcion).trigger('change');
+        // No preseleccionamos profesional_recepcion; lo debe escoger el usuario
+        if (typeof data.observacion_recepcion !== 'undefined') $('#observacion_recepcion_ficha').val(data.observacion_recepcion || '');
       },
       error: function (err) {
         console.error('Error en AJAX:', err);

@@ -37,11 +37,15 @@ class FichaSerializer(serializers.ModelSerializer):
 
 
 class MovimientoFichaSerializer(serializers.ModelSerializer):
-    ficha = FichaSerializer()
+    ficha = FichaSerializer(read_only=True)
 
     class Meta:
         model = MovimientoFicha
         fields = '__all__'
+        read_only_fields = (
+            'fecha_envio','observacion_envio','estado_envio','servicio_clinico_envio','usuario_envio','profesional_envio',
+            'ficha','estado_recepcion','usuario_recepcion','fecha_recepcion','servicio_clinico_recepcion','observacion_recepcion','profesional_recepcion'
+        )
 
 
 class RecepcionFichaViewSet(viewsets.ModelViewSet):
@@ -53,13 +57,17 @@ class RecepcionFichaViewSet(viewsets.ModelViewSet):
         qs = MovimientoFicha.objects.select_related(
             'ficha__ingreso_paciente__paciente',
             'ficha__ingreso_paciente__establecimiento',
-            'servicio_clinico',
-            'usuario'
+            'servicio_clinico_envio',
+            'servicio_clinico_recepcion',
+            'usuario_envio',
+            'usuario_recepcion',
+            'profesional_envio',
+            'profesional_recepcion',
         ).filter(
-            fecha_salida__isnull=False,
-            fecha_entrada__isnull=True,
+            fecha_envio__isnull=False,
+            estado_recepcion__in=['EN ESPERA', 'RECIBIDO'],
             ficha__ingreso_paciente__establecimiento=user.establecimiento
-        ).order_by('-fecha_salida')
+        ).order_by('-fecha_envio')
         return qs
 
     @action(detail=True, methods=['post'], url_path='mark_received')
@@ -69,22 +77,33 @@ class RecepcionFichaViewSet(viewsets.ModelViewSet):
         except MovimientoFicha.DoesNotExist:
             return Response({'ok': False, 'error': 'No encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        fecha_entrada = request.data.get('fecha_entrada')
-        obs = request.data.get('observacion_entrada')
+        if m.estado_recepcion == 'RECIBIDO':
+            return Response({'ok': False, 'error': 'El movimiento ya fue recepcionado.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        fecha_recepcion = request.data.get('fecha_recepcion')
+        obs = request.data.get('observacion_recepcion')
+        profesional_id = request.data.get('profesional_recepcion')
         from datetime import datetime
 
-        if fecha_entrada:
+        if fecha_recepcion:
             try:
-                dt = datetime.fromisoformat(fecha_entrada)
+                dt = datetime.fromisoformat(fecha_recepcion)
             except Exception:
                 dt = timezone.now()
         else:
             dt = timezone.now()
 
-        m.fecha_entrada = dt
+        m.fecha_recepcion = dt
         if obs is not None:
-            m.observacion_entrada = obs
-        m.fecha_mov = m.fecha_entrada
-        m.save(update_fields=['fecha_entrada', 'observacion_entrada', 'fecha_mov'])
+            m.observacion_recepcion = obs
+        if profesional_id:
+            try:
+                from kardex.models import Profesional
+                m.profesional_recepcion = Profesional.objects.get(pk=profesional_id)
+            except Exception:
+                pass
+        m.usuario_recepcion = request.user
+        m.estado_recepcion = 'RECIBIDO'
+        m.save()
 
         return Response({'ok': True, 'id': m.id})

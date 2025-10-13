@@ -15,7 +15,7 @@
                     <form id="form-filtros" class="form" method="get">
                         <div class="form-row">
                             <div class="form-group col-md-3">
-                                <label for="id_hora_inicio">{{ filter_form.hora_inicio.label }}</label>
+                                <label>{{ filter_form.hora_inicio.label }}</label>
                                 {{ filter_form.hora_inicio }}
                             </div>
                             <div class="form-group col-md-3">
@@ -82,10 +82,10 @@
                             <div class="col-md-4">
                                 <div class="form-check">
                                     <label class="form-check-label" for="fecha_salida_ficha">
-                                        {{ form.fecha_salida.label }}
+                                        {{ form.fecha_envio.label }}
                                     </label>
-                                    {{ form.fecha_salida }}
-                                    {% for error in form.fecha_salida.errors %}
+                                    {{ form.fecha_envio }}
+                                    {% for error in form.fecha_envio.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
@@ -93,35 +93,46 @@
                             <div class="col-md-4">
                                 <div class="form-check">
                                     <label class="form-check-label" for="servicio_clinico_ficha">
-                                        {{ form.servicio_clinico.label }}
+                                        {{ form.servicio_clinico_envio.label }}
                                     </label>
-                                    {{ form.servicio_clinico }}
+                                    {{ form.servicio_clinico_envio }}
 
-                                    {% for error in form.servicio_clinico.errors %}
+                                    {% for error in form.servicio_clinico_envio.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label" for="profesional_movimiento">
-                                        {{ form.profesional.label }}
+                                    <label class="form-check-label" for="servicio_clinico_recepcion">
+                                        {{ form.servicio_clinico_recepcion.label }}
                                     </label>
-                                    {{ form.profesional }}
-                                    {% for error in form.profesional.errors %}
+                                    {{ form.servicio_clinico_recepcion }}
+                                    {% for error in form.servicio_clinico_recepcion.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-check">
-                                    <label class="form-check-label" for="observacion_salida_ficha">
-                                        {{ form.observacion_salida.label }}
+                                    <label class="form-check-label" for="profesional_movimiento">
+                                        {{ form.profesional_envio.label }}
                                     </label>
-                                    {{ form.observacion_salida }}
-                                    {% for error in form.observacion_salida.errors %}
+                                    {{ form.profesional_envio }}
+                                    {% for error in form.profesional_envio.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <label class="form-check-label" for="observacion_envio_ficha">
+                                        {{ form.observacion_envio.label }}
+                                    </label>
+                                    {{ form.observacion_envio }}
+                                    {% for error in form.observacion_envio.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>

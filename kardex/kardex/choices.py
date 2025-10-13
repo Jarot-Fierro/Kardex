@@ -25,6 +25,7 @@ TIPO_PERFIL = [
 ]
 
 ESTADO_RESPUESTA = [
-    ('ENTREGA', 'Entregado'),
-    ('RECIBIDO', 'Recibido')
+    ('ENVIADO', 'Enviado'),
+    ('RECIBIDO', 'Recibido'),
+    ('EN ESPERA', 'En Espera'),
 ]
