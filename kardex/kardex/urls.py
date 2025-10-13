@@ -68,6 +68,7 @@ urlpatterns = [
     path('pacientes/por-fecha/', PacientePorFechaListView.as_view(), name='paciente_por_fecha_list'),
     path('pacientes/por-fecha/form/', PacienteFechaFormView.as_view(), name='paciente_fecha_form'),
     path('pacientes/crear/', PacienteCreateView.as_view(), name='paciente_create'),
+    path('pacientes/crear-nuevo/', PacienteCreacionView.as_view(), name='paciente_creacion'),
     path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
     path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),

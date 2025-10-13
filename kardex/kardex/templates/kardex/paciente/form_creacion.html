@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Pacientes - {{ title|default:'Formulario' }}{% endblock %}
-
+{% block title %}Crear Paciente{% endblock %}
 {% block content %}
 
 <div class="container-fluid py-2 small-input">
@@ -21,7 +20,7 @@
                         <div class="col-7">
                             <span>N° FICHA:</span><br>
                             <select name="ficha" class="form-control select2-ajax" placeholder="N° Ficha" id="id_ficha"
-                                    style="min-width: 100px;">
+                                    style="min-width: 100px;" disabled>
                             </select>
                         </div>
                         <div class="col-4">
@@ -38,7 +37,7 @@
             </div>
             <div class="col-md-3 text-md-end">
                 <select value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
-                        placeholder="Código" id="id_codigo">
+                        placeholder="Código" id="id_codigo" disabled>
                 </select>
                 <input type="hidden" id="codigo_inicial" value="{{ paciente.codigo }}">
             </div>
@@ -388,3 +387,6 @@
         width: '100%'
     });
 </script>
+<script src="{% static 'js/fields_form_paciente.js' %}"></script>
+<script src="{% static 'js/apis/api_select2_rut_inicial.js' %}"></script>
+{% endblock %}

@@ -322,3 +322,16 @@ class PacienteFechaRangoForm(forms.Form):
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         required=True,
     )
+
+
+class FormPacienteCreacion(FormPaciente):
+    # Igual que FormPaciente pero el campo RUT es un input de texto en lugar de Select2
+    rut = forms.CharField(
+        label='R.U.T.',
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control id_rut',
+            'id': 'id_rut',
+            'placeholder': 'Ingrese RUT (ej: 12345678-9)'
+        })
+    )

@@ -13,6 +13,7 @@ from django.views.generic import TemplateView, FormView
 
 from kardex.forms.pacientes import FormPaciente
 from kardex.forms.pacientes import PacienteFechaRangoForm
+from kardex.forms.pacientes import FormPacienteCreacion
 from kardex.mixin import DataTableMixin
 from kardex.models import IngresoPaciente, Ficha
 from kardex.models import Paciente
@@ -370,6 +371,23 @@ class PacienteFallecidoListView(PacienteListView):
             'title': 'Pacientes Fallecidos',
             'list_url': reverse_lazy('kardex:paciente_fallecido_list'),
         })
+        return context
+
+
+class PacienteCreacionView(PermissionRequiredMixin, CreateView):
+    template_name = 'kardex/paciente/form_creacion.html'
+    model = Paciente
+    form_class = FormPacienteCreacion
+    success_url = reverse_lazy('kardex:paciente_list')
+    permission_required = 'kardex.add_paciente'
+    raise_exception = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Crear Paciente'
+        context['list_url'] = self.success_url
+        context['action'] = 'add'
+        context['module_name'] = MODULE_NAME
         return context
 
 
