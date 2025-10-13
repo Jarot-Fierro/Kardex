@@ -219,7 +219,8 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
         form = self.get_form()
         if form.is_valid():
             paciente = form.save()
-            # Lógica de creación automática de IngresoPaciente y Ficha en modo edición
+            # En modo edición NO se debe crear un nuevo IngresoPaciente.
+            # Solo asegurar ficha para el ingreso existente en el establecimiento del usuario.
             from kardex.models import IngresoPaciente, Ficha
             user = request.user
             establecimiento = getattr(user, 'establecimiento', None)
@@ -235,17 +236,10 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
                     )
                     if created:
                         messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
-                else:
-                    if ingresos_qs.count() >= 5:
-                        messages.warning(request, 'Máximo de ingresos alcanzado. No se creó un nuevo ingreso.')
                     else:
-                        ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
-                        ficha, created = Ficha.objects.get_or_create(
-                            ingreso_paciente=ingreso,
-                            defaults={'usuario': user}
-                        )
-                        if created:
-                            messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
+                        messages.info(request, 'Ficha ya existente para este ingreso.')
+                else:
+                    messages.info(request, 'El paciente no tiene ingreso en su establecimiento. No se creó uno nuevo en modo edición.')
             messages.success(request, 'Paciente actualizado correctamente')
             return redirect(self.success_url)
         messages.error(request, 'Hay errores en el formulario')

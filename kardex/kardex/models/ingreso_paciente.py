@@ -14,9 +14,6 @@ class IngresoPaciente(StandardModel):
 
     history = HistoricalRecords()
 
-    def __str__(self):
-        return self.paciente.codigo
-
     def clean(self):
         # Validar que no haya más de 5 registros para el paciente
         existing_records = IngresoPaciente.objects.filter(paciente=self.paciente)
