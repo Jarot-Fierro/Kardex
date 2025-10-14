@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -442,6 +441,9 @@ class PacientePorFechaListView(PacienteListView):
         return context
 
 
+from django.db import transaction
+
+
 class PacienteQueryView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/paciente/form_creacion.html'
     model = Paciente
@@ -450,10 +452,90 @@ class PacienteQueryView(PermissionRequiredMixin, CreateView):
     permission_required = 'kardex.add_paciente'
     raise_exception = True
 
+    class ValidationError(Exception):
+        pass
+
+    # Helpers
+    def _get_paciente_instance(self, request):
+        paciente_id = request.POST.get('paciente_id') or request.GET.get('paciente_id')
+        if paciente_id:
+            try:
+                return Paciente.objects.get(pk=paciente_id)
+            except Paciente.DoesNotExist:
+                messages.error(request, 'El paciente indicado no existe.')
+        return None
+
+    def _validar_limite_fichas(self, paciente):
+        qs = Ficha.objects.filter(paciente=paciente, establecimiento__isnull=False).values_list('establecimiento',
+                                                                                                flat=True).distinct()
+        return qs.count() >= 5
+
+    def _existe_ficha_en_establecimiento(self, paciente, establecimiento):
+        if not establecimiento:
+            return False
+        return Ficha.objects.filter(paciente=paciente, establecimiento=establecimiento).exists()
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        instance = self._get_paciente_instance(request)
+        form = self.form_class(request.POST or None, request.FILES or None, instance=instance)
+
+        if not form.is_valid():
+            messages.error(request, 'Por favor corrija los errores del formulario.')
+            print(form.errors)
+            self.object = instance or None
+            return self.render_to_response(self.get_context_data(form=form))
+
+        try:
+            user = request.user
+            establecimiento = getattr(request, 'establecimiento', None) or getattr(user, 'establecimiento', None)
+
+            paciente = form.save(commit=False)
+            if not instance:  # creación
+                paciente.usuario = user
+            paciente.save()
+            self.object = paciente
+
+            # Solo en creación: crear ficha asociada
+            if not instance:
+                # Validaciones de negocio
+                if self._validar_limite_fichas(paciente):
+                    raise self.ValidationError(
+                        'El paciente ya tiene el máximo de 5 fichas en establecimientos distintos.')
+
+                if not establecimiento:
+                    raise self.ValidationError(
+                        'El usuario no tiene un establecimiento asociado. No se puede crear la ficha.')
+
+                if self._existe_ficha_en_establecimiento(paciente, establecimiento):
+                    raise self.ValidationError('Ya existe una ficha para este paciente en su establecimiento.')
+
+                # Crear ficha
+                ficha = Ficha.objects.create(
+                    paciente=paciente,
+                    usuario=user,
+                    establecimiento=establecimiento,
+                )
+                messages.success(request, f'Ficha creada correctamente. N° SISTEMA: {ficha.numero_ficha_sistema}')
+                messages.success(request, 'Paciente creado correctamente')
+            else:
+                messages.success(request, 'Paciente actualizado correctamente')
+
+            return redirect(self.success_url)
+
+        except self.ValidationError as e:
+            form.add_error(None, str(e))
+            self.object = paciente  # importante para evitar errores en get_context_data
+            return self.render_to_response(self.get_context_data(form=form))
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Consultas Paciente'
+        instance = self._get_paciente_instance(self.request)
+        is_update = instance is not None
+        context['title'] = 'Editar Paciente' if is_update else 'Crear Paciente'
         context['list_url'] = self.success_url
-        context['action'] = 'add'
+        context['action'] = 'edit' if is_update else 'add'
         context['module_name'] = MODULE_NAME
+        if 'form' not in kwargs and is_update:
+            context['form'] = self.form_class(instance=instance)
         return context

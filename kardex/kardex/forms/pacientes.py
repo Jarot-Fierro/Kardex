@@ -1,76 +1,76 @@
 from django import forms
 
-from kardex.models import Paciente, Comuna, Prevision
+from kardex.models import Paciente, Comuna, Prevision, Genero
 from usuarios.models import UsuarioPersonalizado
 
 
 class FormPaciente(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        # Permite asignar el RUT seleccionado «desde el init del formulario».
-        # Si viene una instancia (p. ej., desde PacienteCreateView con paciente_id),
-        # inicializamos el campo rut con instance.rut para que el select quede seleccionado.
-        # Si en initial ya vino un rut explícito, lo respetamos.
-        initial = kwargs.get('initial') or {}
-        instance = kwargs.get('instance')
-        super().__init__(*args, **kwargs)
-        try:
-            # Si initial trae 'rut', se mantiene. Si no, usar el de la instancia si existe.
-            if not initial.get('rut') and instance is not None:
-                rut_val = getattr(instance, 'rut', None)
-                if rut_val:
-                    self.fields['rut'].initial = rut_val
-            else:
-                # Si initial trae rut explícito, reflectarlo en el widget/field initial
-                rut_ini = initial.get('rut')
-                if rut_ini:
-                    self.fields['rut'].initial = rut_ini
-        except Exception:
-            # Fallback silencioso para no romper el formulario ante situaciones inesperadas
-            pass
-
-    def clean(self):
-        cleaned = super().clean()
-        # Validar unicidad de identificadores excluyendo la propia instancia cuando existe (modo actualización)
-        instance_pk = getattr(self.instance, 'pk', None)
-        from kardex.models import Paciente as Pac
-        # Campos únicos en el modelo: rut, nie, pasaporte, codigo (codigo no está en el form)
-        rut = cleaned.get('rut')
-        nie = cleaned.get('nie')
-        pasaporte = cleaned.get('pasaporte')
-
-        # Normalizar como lo hace el modelo.save()
-        if rut:
-            rut = rut.lower().strip()
-            cleaned['rut'] = rut
-        if nie:
-            nie = nie.strip()
-        if pasaporte:
-            pasaporte = pasaporte.strip()
-
-        errors = {}
-        if rut:
-            qs = Pac.objects.filter(rut=rut)
-            if instance_pk:
-                qs = qs.exclude(pk=instance_pk)
-            if qs.exists():
-                errors['rut'] = 'Ya existe Paciente con este Rut.'
-        if nie:
-            qs = Pac.objects.filter(nie=nie)
-            if instance_pk:
-                qs = qs.exclude(pk=instance_pk)
-            if qs.exists():
-                errors['nie'] = 'Ya existe Paciente con este NIE.'
-        if pasaporte:
-            qs = Pac.objects.filter(pasaporte=pasaporte)
-            if instance_pk:
-                qs = qs.exclude(pk=instance_pk)
-            if qs.exists():
-                errors['pasaporte'] = 'Ya existe Paciente con este Pasaporte.'
-
-        if errors:
-            from django.core.exceptions import ValidationError
-            raise ValidationError(errors)
-        return cleaned
+    # def __init__(self, *args, **kwargs):
+    #     # Permite asignar el RUT seleccionado «desde el init del formulario».
+    #     # Si viene una instancia (p. ej., desde PacienteCreateView con paciente_id),
+    #     # inicializamos el campo rut con instance.rut para que el select quede seleccionado.
+    #     # Si en initial ya vino un rut explícito, lo respetamos.
+    #     initial = kwargs.get('initial') or {}
+    #     instance = kwargs.get('instance')
+    #     super().__init__(*args, **kwargs)
+    #     try:
+    #         # Si initial trae 'rut', se mantiene. Si no, usar el de la instancia si existe.
+    #         if not initial.get('rut') and instance is not None:
+    #             rut_val = getattr(instance, 'rut', None)
+    #             if rut_val:
+    #                 self.fields['rut'].initial = rut_val
+    #         else:
+    #             # Si initial trae rut explícito, reflectarlo en el widget/field initial
+    #             rut_ini = initial.get('rut')
+    #             if rut_ini:
+    #                 self.fields['rut'].initial = rut_ini
+    #     except Exception:
+    #         # Fallback silencioso para no romper el formulario ante situaciones inesperadas
+    #         pass
+    #
+    # def clean(self):
+    #     cleaned = super().clean()
+    #     # Validar unicidad de identificadores excluyendo la propia instancia cuando existe (modo actualización)
+    #     instance_pk = getattr(self.instance, 'pk', None)
+    #     from kardex.models import Paciente as Pac
+    #     # Campos únicos en el modelo: rut, nie, pasaporte, codigo (codigo no está en el form)
+    #     rut = cleaned.get('rut')
+    #     nie = cleaned.get('nie')
+    #     pasaporte = cleaned.get('pasaporte')
+    #
+    #     # Normalizar como lo hace el modelo.save()
+    #     if rut:
+    #         rut = rut.lower().strip()
+    #         cleaned['rut'] = rut
+    #     if nie:
+    #         nie = nie.strip()
+    #     if pasaporte:
+    #         pasaporte = pasaporte.strip()
+    #
+    #     errors = {}
+    #     if rut:
+    #         qs = Pac.objects.filter(rut=rut)
+    #         if instance_pk:
+    #             qs = qs.exclude(pk=instance_pk)
+    #         if qs.exists():
+    #             errors['rut'] = 'Ya existe Paciente con este Rut.'
+    #     if nie:
+    #         qs = Pac.objects.filter(nie=nie)
+    #         if instance_pk:
+    #             qs = qs.exclude(pk=instance_pk)
+    #         if qs.exists():
+    #             errors['nie'] = 'Ya existe Paciente con este NIE.'
+    #     if pasaporte:
+    #         qs = Pac.objects.filter(pasaporte=pasaporte)
+    #         if instance_pk:
+    #             qs = qs.exclude(pk=instance_pk)
+    #         if qs.exists():
+    #             errors['pasaporte'] = 'Ya existe Paciente con este Pasaporte.'
+    #
+    #     if errors:
+    #         from django.core.exceptions import ValidationError
+    #         raise ValidationError(errors)
+    #     return cleaned
     rut = forms.CharField(
         label='R.U.T.',
         required=False,
@@ -193,9 +193,9 @@ class FormPaciente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': '+56912345678',
-            'id': 'numero_telefono1_paciente'
+            'id': 'telefono_personal'
         }),
-        required=False
+        required=True
     )
 
     numero_telefono2 = forms.CharField(
@@ -218,8 +218,8 @@ class FormPaciente(forms.ModelForm):
         required=False
     )
 
-    nie = forms.CharField(
-        label='NIE',
+    nip = forms.CharField(
+        label='NIP',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Opcional',
@@ -315,6 +315,14 @@ class FormPaciente(forms.ModelForm):
         required=True
     )
 
+    genero = forms.ModelChoiceField(
+        label='Género',
+        empty_label='Seleccione una Género',
+        queryset=Genero.objects.filter(status='ACTIVE'),
+        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'genero_paciente'}),
+        required=False
+    )
+
     prevision = forms.ModelChoiceField(
         label='Previsión',
         empty_label='Seleccione una Previsión',
@@ -335,9 +343,9 @@ class FormPaciente(forms.ModelForm):
         rut = self.cleaned_data.get('rut', '').strip()
         return rut or None
 
-    def clean_nie(self):
-        nie = self.cleaned_data.get('nie', '').strip()
-        return nie or None
+    def clean_nip(self):
+        nip = self.cleaned_data.get('nip', '').strip()
+        return nip or None
 
     def clean_pasaporte(self):
         pasaporte = self.cleaned_data.get('pasaporte', '').strip()
@@ -347,7 +355,7 @@ class FormPaciente(forms.ModelForm):
         model = Paciente
         fields = [
             'rut',
-            'nie',
+            'nip',
             'pasaporte',
             'nombre',
             'apellido_paterno',
@@ -374,6 +382,7 @@ class FormPaciente(forms.ModelForm):
             'comuna',
             'prevision',
             'usuario',
+            'genero',
         ]
 
 

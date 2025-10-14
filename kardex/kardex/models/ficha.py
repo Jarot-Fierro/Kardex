@@ -8,6 +8,7 @@ class Ficha(StandardModel):
     numero_ficha_sistema = models.IntegerField(unique=True, null=True, blank=True, verbose_name='Número de Ficha')
     numero_ficha_tarjeta = models.IntegerField(unique=True, null=True, blank=True,
                                                verbose_name='Número de Ficha Tarjeta')
+    pasivado = models.BooleanField(default=False, verbose_name='Pasivado')
     observacion = models.TextField(null=True, blank=True, verbose_name='Observación')
 
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.PROTECT, null=True, blank=True,
@@ -46,9 +47,9 @@ class Ficha(StandardModel):
     def save(self, *args, **kwargs):
         if self.pk is None:
             super().save(*args, **kwargs)
-            if not self.numero_ficha:
+            if not self.numero_ficha_sistema:
                 self.numero_ficha = self.pk
-                super().save(update_fields=['numero_ficha'])
+                super().save(update_fields=['numero_ficha_sistema'])
         else:
             super().save(*args, **kwargs)
 

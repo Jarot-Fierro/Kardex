@@ -12,14 +12,13 @@ $('#id_rut').select2({
             };
         },
         processResults: function (data) {
+            // Si hay paginación DRF -> data.results, si no -> data (array)
+            const items = Array.isArray(data) ? data : (data.results || []);
             return {
-                results: data.results.map(item => {
-                    const paciente = item.ingreso_paciente.paciente;
-                    return {
-                        id: item.id,
-                        text: `${paciente.rut}`
-                    };
-                })
+                results: items.map(item => ({
+                    id: item.id,
+                    text: item.paciente && item.paciente.rut ? item.paciente.rut : 'Sin RUT'
+                }))
             };
         }
     },

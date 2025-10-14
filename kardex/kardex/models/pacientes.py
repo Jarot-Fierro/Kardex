@@ -40,6 +40,7 @@ class Paciente(StandardModel):
 
     # CONTACTO Y DIRECCIÓN
     direccion = models.CharField(max_length=200, verbose_name='Dirección', null=False)
+    sin_telefono = models.BooleanField(default=False)
     numero_telefono1 = models.CharField(max_length=15, verbose_name='Número de Teléfono', null=False)
     numero_telefono2 = models.CharField(max_length=15, verbose_name='Número de Teléfono 2', null=True, blank=True)
     ocupacion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Ocupación')
@@ -49,7 +50,6 @@ class Paciente(StandardModel):
     extranjero = models.BooleanField(default=False, verbose_name='Extranjero')
     fallecido = models.BooleanField(default=False, verbose_name='Fallecido')
     fecha_fallecimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de Fallecimiento')
-    pasivado = models.BooleanField(default=False, verbose_name='Pasivado')
 
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.PROTECT, null=False,
                                verbose_name='Comuna', related_name='pacientes_comuna')

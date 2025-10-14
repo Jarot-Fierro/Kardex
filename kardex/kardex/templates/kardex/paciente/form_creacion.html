@@ -35,7 +35,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 text-md-end">
+            <div class="col-md-3 text-md-end ficha-header">
+                <span>N° Código:</span><br>
                 <select value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
                         placeholder="Código" id="id_codigo" disabled>
                 </select>
@@ -144,11 +145,11 @@
                         {% endfor %}
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label" for="nie_paciente">
-                            {{ form.nie.label }}
+                        <label class="form-label" for="nip_paciente">
+                            {{ form.nip.label }}
                         </label>
-                        {{ form.nie }}
-                        {% for error in form.nie.errors %}
+                        {{ form.nip }}
+                        {% for error in form.nip.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -158,15 +159,6 @@
                         </label>
                         {{ form.nombre }}
                         {% for error in form.nombre.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="nombre_social_paciente">
-                            {{ form.nombre_social.label }}
-                        </label>
-                        {{ form.nombre_social }}
-                        {% for error in form.nombre_social.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -188,6 +180,15 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nombre_social_paciente">
+                            {{ form.nombre_social.label }}
+                        </label>
+                        {{ form.nombre_social }}
+                        {% for error in form.nombre_social.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -199,7 +200,7 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label" for="fecha_nacimiento_paciente">
                             {{ form.fecha_nacimiento.label }}</label>
                         {{ form.fecha_nacimiento }}
@@ -207,17 +208,24 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label" for="sexo_paciente">{{ form.sexo.label }}</label>
                         {{ form.sexo }}
                         {% for error in form.sexo.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label" for="estado_civil_paciente">{{ form.estado_civil.label }}</label>
                         {{ form.estado_civil }}
                         {% for error in form.estado_civil.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="genero">{{ form.genero.label }}</label>
+                        {{ form.genero }}
+                        {% for error in form.genero.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -355,12 +363,9 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-6 d-none">
-                        <label class="form-label" for="usuario_paciente">{{ form.usuario.label }}</label>
-                        {{ form.usuario }}
-                        {% for error in form.usuario.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                    <div class="col-md-6">
+                        <label class="form-label" for="usuario_paciente">Pasivar</label>
+                        <a class="btn btn-info form-control">Pasivar</a>
                     </div>
                 </div>
             </div>
@@ -387,6 +392,6 @@
         width: '100%'
     });
 </script>
+<script src="{% static 'js/apis/api_select2_ficha.js' %}"></script>
 <script src="{% static 'js/fields_form_paciente.js' %}"></script>
-<script src="{% static 'js/apis/api_select2_rut_inicial.js' %}"></script>
 {% endblock %}
