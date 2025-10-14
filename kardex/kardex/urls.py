@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from django.urls import path
 
-from kardex.views.api.movimiento_ficha_lookup import movimiento_ficha_lookup
 from kardex.views.comuna import *
 from kardex.views.establecimiento import *
 from kardex.views.ficha import *
-from kardex.views.ingreso_paciente import *
 from kardex.views.movimiento_fichas import *
 from kardex.views.pacientes import *
 from kardex.views.pais import *
@@ -73,24 +71,12 @@ urlpatterns = [
     path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
 
-    # APIs AJAX para búsqueda de Pacientes
-    path('api/buscar_paciente_por_rut/', buscar_paciente_por_rut, name='api_buscar_paciente_por_rut'),
-    path('api/buscar_paciente_por_codigo/', buscar_paciente_por_codigo, name='api_buscar_paciente_por_codigo'),
-    path('api/buscar_paciente_por_ficha/', buscar_paciente_por_ficha, name='api_buscar_paciente_por_ficha'),
-
     # Vistas básicas para Fichas
     path('fichas/', FichaListView.as_view(), name='ficha_list'),
     path('fichas/crear/', FichaCreateView.as_view(), name='ficha_create'),
     path('fichas/<int:pk>/editar/', FichaUpdateView.as_view(), name='ficha_update'),
     path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
-
-    # Vistas básicas para Ingresos de Paciente
-    path('ingresos-paciente/', IngresoPacienteListView.as_view(), name='ingreso_paciente_list'),
-    path('ingresos-paciente/crear/', IngresoPacienteCreateView.as_view(), name='ingreso_paciente_create'),
-    path('ingresos-paciente/<int:pk>/editar/', IngresoPacienteUpdateView.as_view(), name='ingreso_paciente_update'),
-    path('ingresos-paciente/<int:pk>/eliminar/', IngresoPacienteDeleteView.as_view(), name='ingreso_paciente_delete'),
-    path('ingresos-paciente/<int:pk>/detalle/', IngresoPacienteDetailView.as_view(), name='ingreso_paciente_detail'),
 
     # Vistas básicas para Movimientos de Ficha
     path('movimientos-ficha/', MovimientoFichaListView.as_view(), name='movimiento_ficha_list'),
@@ -116,8 +102,8 @@ urlpatterns = [
     path('movimientos/recepcion/', RecepcionFichaView.as_view(), name='recepcion_ficha'),
     path('movimientos/salida/', SalidaFichaView.as_view(), name='salida_ficha'),
 
-    # API de autocompletado para movimientos de ficha
-    path('api/movimiento-ficha-lookup/', movimiento_ficha_lookup, name='api_movimiento_ficha_lookup'),
+    path('consulta-pacientes/', PacienteQueryView.as_view(), name='paciente_query'),
+
 ]
 
 

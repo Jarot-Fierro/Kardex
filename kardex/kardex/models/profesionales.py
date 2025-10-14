@@ -10,10 +10,10 @@ class Profesional(StandardModel):
     correo = models.EmailField(max_length=100, unique=True, null=False, verbose_name='Correo')
     telefono = models.CharField(max_length=15, verbose_name='Teléfono')
     profesion = models.ForeignKey('kardex.Profesion', null=True, blank=True, on_delete=models.SET_NULL,
-                                  verbose_name='Profesión')
+                                  verbose_name='Profesión', related_name='profesionales_profesion')
 
     establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.SET_NULL,
-                                        verbose_name='Establecimiento')
+                                        verbose_name='Establecimiento', related_name='profesionales_establecimiento')
 
     history = HistoricalRecords()
 

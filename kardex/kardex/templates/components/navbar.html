@@ -30,9 +30,11 @@
                         </li>
                         <li class="dropdown-divider"></li>
                         {% endif %}
-                        <li><a href="{% url 'kardex:comuna_list' %}" class="dropdown-item">Comunas</a></li>
+                        <li>
+                            <a href="{% url 'kardex:comuna_list' %}" class="dropdown-item">Comunas</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:establecimiento_list' %}"
+                        <li>
+                            <a href="{% url 'kardex:establecimiento_list' %}"
                                class="dropdown-item">Establecimientos</a>
                         </li>
                         <li class="dropdown-divider"></li>
@@ -41,22 +43,27 @@
                             Clínicos</a>
                         </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:profesion_list' %}" class="dropdown-item">Profesiones</a>
+                        <li>
+                            <a href="{% url 'kardex:profesion_list' %}" class="dropdown-item">Profesiones</a>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:profesional_list' %}" class="dropdown-item">Profesionales</a>
+                        <li>
+                            <a href="{% url 'kardex:profesional_list' %}" class="dropdown-item">Profesionales</a>
                         </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:paciente_list' %}" class="dropdown-item">Pacientes</a>
+                        <li>
+                            <a href="{% url 'kardex:paciente_list' %}" class="dropdown-item">Pacientes</a>
                         </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:prevision_list' %}" class="dropdown-item">Previsión</a>
+                        <li>
+                            <a href="{% url 'kardex:prevision_list' %}" class="dropdown-item">Previsión</a>
                         </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:ingreso_paciente_list' %}" class="dropdown-item">Incorporación de
-                            Pacientes</a>
+                        <li>
+                            <a href="{% url 'kardex:ficha_list' %}" class="dropdown-item">Fichas</a>
                         </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:ficha_list' %}" class="dropdown-item">Fichas</a>
+                        <li>
+                            <a href="{% url 'kardex:paciente_query' %}" class="dropdown-item">Nuevos Pacientes</a>
                         </li>
 
                     </ul>

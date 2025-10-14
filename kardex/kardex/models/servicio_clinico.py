@@ -11,7 +11,8 @@ class ServicioClinico(StandardModel):
     telefono = models.CharField(max_length=15, verbose_name='Teléfono')
 
     establecimiento = models.ForeignKey('kardex.Establecimiento', null=True, blank=True, on_delete=models.SET_NULL,
-                                        verbose_name='Establecimiento')
+                                        verbose_name='Establecimiento',
+                                        related_name='servicios_clinicos_establecimiento')
 
     history = HistoricalRecords()
 
@@ -24,7 +25,7 @@ class ServicioClinico(StandardModel):
 
         if self.correo_jefe:
             self.correo_jefe = self.correo_jefe.lower()
-            
+
         super().save(*args, **kwargs)
 
     class Meta:

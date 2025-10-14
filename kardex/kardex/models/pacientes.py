@@ -8,7 +8,7 @@ from kardex.choices import ESTADO_CIVIL
 class Paciente(StandardModel):
     # IDENTIFICACIÓN
     codigo = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Código')
-    rut = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='Rut')
+    rut = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='R.U.T.')
     nip = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='NIP')
     nombre = models.CharField(max_length=100, null=False, verbose_name='Nombre')
     rut_madre = models.CharField(max_length=100, null=True, blank=True, verbose_name='R.U.T. Madre')
@@ -49,14 +49,18 @@ class Paciente(StandardModel):
     extranjero = models.BooleanField(default=False, verbose_name='Extranjero')
     fallecido = models.BooleanField(default=False, verbose_name='Fallecido')
     fecha_fallecimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de Fallecimiento')
+    pasivado = models.BooleanField(default=False, verbose_name='Pasivado')
 
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.PROTECT, null=False,
-                               verbose_name='Comuna')
+                               verbose_name='Comuna', related_name='pacientes_comuna')
     prevision = models.ForeignKey('kardex.Prevision', on_delete=models.SET_NULL, null=True, blank=True,
-                                  verbose_name='Previsión')
+                                  verbose_name='Previsión', related_name='pacientes_prevision')
 
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.SET_NULL, null=True, blank=True,
-                                verbose_name='Usuario')
+                                verbose_name='Usuario', related_name='pacientes_usuario')
+
+    genero = models.ForeignKey('kardex.Genero', on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Genero', related_name='pacientes_genero')
 
     history = HistoricalRecords()
 

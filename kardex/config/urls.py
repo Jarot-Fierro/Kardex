@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from kardex.views.api.api_routers import router
+# from kardex.views.api.api_routers import router
 from kardex.views.home import HomeDashboardView
 
 urlpatterns = [
@@ -10,5 +10,5 @@ urlpatterns = [
     path('kardex/', include('kardex.urls'), name="kardex-home"),
     path('usuarios/', include('usuarios.urls'), name="usuarios"),
     path('api-auth/v1/', include('rest_framework.urls')),
-    path('api/', include(router.urls)),
+    # path('api/', include(router.urls)),
 ]

@@ -10,7 +10,6 @@ class CustomUserAdmin(UserAdmin):
 
     list_display = (
         'username',
-        'rut',
         'first_name',
         'last_name',
         'email',
@@ -26,7 +25,6 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('username', 'password')}),
         ('Información Personal', {
             'fields': (
-                'rut',
                 'first_name',
                 'last_name',
                 'email',
@@ -55,7 +53,6 @@ class CustomUserAdmin(UserAdmin):
                 'username',
                 'password1',
                 'password2',
-                'rut',
                 'first_name',
                 'last_name',
                 'email',
