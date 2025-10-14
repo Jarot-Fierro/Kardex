@@ -107,8 +107,30 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
     model = Paciente
     form_class = FormPaciente
     success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'kardex.add_paciente'
+    # Esta vista actúa como actualización por selección desde API
+    permission_required = 'kardex.change_paciente'
     raise_exception = True
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        request = getattr(self, 'request', None)
+        paciente_id = None
+        if request is not None:
+            paciente_id = (request.POST.get('paciente_id') or request.GET.get('paciente_id') or '').strip()
+        if paciente_id:
+            try:
+                instance = Paciente.objects.get(pk=paciente_id)
+                # Vincular la instancia seleccionada para que el formulario cargue sus datos
+                self.object = instance
+                kwargs['instance'] = instance
+                # Asegurar que el campo rut quede preseleccionado/prefijado en el init
+                initial = kwargs.get('initial', {}).copy()
+                if getattr(instance, 'rut', None):
+                    initial['rut'] = instance.rut
+                kwargs['initial'] = initial
+            except Paciente.DoesNotExist:
+                pass
+        return kwargs
 
     def post(self, request, *args, **kwargs):
         print("[DEBUG] POST iniciado")
@@ -142,46 +164,13 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
                         messages.error(request, f"Error al guardar el paciente: {e}")
                         return self.render_to_response(self.get_context_data(form=form))
 
-                    establecimiento = getattr(user, 'establecimiento', None)
-                    if not establecimiento:
-                        messages.warning(request, 'El usuario no tiene un establecimiento asociado.')
-                    else:
-                        ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
-                        count_ingresos = ingresos_qs.count()
-                        ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
+                    # IMPORTANTE: Esta vista funciona como ACTUALIZACIÓN/CONSULTA vía API.
+                    # No crear IngresoPaciente ni Ficha aquí. Solo guardar datos del paciente.
+                    # La creación se realiza en PacienteCreacionView.
+                    pass
 
-                        if count_ingresos >= 5 and not ingreso_existente:
-                            # Si ya alcanzó el máximo y además no existe uno en este establecimiento, no crear otro
-                            messages.warning(request, 'Máximo de ingresos alcanzado.')
-                        else:
-                            if ingreso_existente:
-                                # Ya existe ingreso en el establecimiento actual
-                                # En edición queremos asegurar la existencia de ficha
-                                ficha, created = Ficha.objects.get_or_create(
-                                    ingreso_paciente=ingreso_existente,
-                                    defaults={'usuario': user}
-                                )
-                                if created:
-                                    messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
-                                else:
-                                    messages.info(request, 'Ficha ya existente para este ingreso.')
-                            else:
-                                # No existe ingreso en este establecimiento: crear respetando el tope
-                                ingreso = IngresoPaciente.objects.create(paciente=paciente,
-                                                                         establecimiento=establecimiento)
-                                ficha, created = Ficha.objects.get_or_create(
-                                    ingreso_paciente=ingreso,
-                                    defaults={'usuario': user}
-                                )
-                                if created:
-                                    messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
-                                else:
-                                    messages.info(request, 'Ficha ya existente.')
-
-                    if instance:
-                        messages.success(request, 'Paciente actualizado correctamente')
-                    else:
-                        messages.success(request, 'Paciente creado correctamente')
+                    # Siempre actuamos como actualización cuando viene desde API con paciente existente
+                    messages.success(request, 'Paciente actualizado correctamente')
                     return redirect(self.success_url)
 
             except Exception as e:
@@ -196,9 +185,9 @@ class PacienteCreateView(PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Nuevo Paciente'
+        context['title'] = 'Consulta/Actualización de Paciente'
         context['list_url'] = self.success_url
-        context['action'] = 'add'
+        context['action'] = 'edit'
         context['module_name'] = MODULE_NAME
         return context
 
@@ -218,28 +207,7 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid():
-            paciente = form.save()
-            # En modo edición NO se debe crear un nuevo IngresoPaciente.
-            # Solo asegurar ficha para el ingreso existente en el establecimiento del usuario.
-            from kardex.models import IngresoPaciente, Ficha
-            user = request.user
-            establecimiento = getattr(user, 'establecimiento', None)
-            if not establecimiento:
-                messages.warning(request, 'El usuario no tiene un establecimiento asociado.')
-            else:
-                ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
-                ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
-                if ingreso_existente:
-                    ficha, created = Ficha.objects.get_or_create(
-                        ingreso_paciente=ingreso_existente,
-                        defaults={'usuario': user}
-                    )
-                    if created:
-                        messages.success(request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
-                    else:
-                        messages.info(request, 'Ficha ya existente para este ingreso.')
-                else:
-                    messages.info(request, 'El paciente no tiene ingreso en su establecimiento. No se creó uno nuevo en modo edición.')
+            form.save()
             messages.success(request, 'Paciente actualizado correctamente')
             return redirect(self.success_url)
         messages.error(request, 'Hay errores en el formulario')

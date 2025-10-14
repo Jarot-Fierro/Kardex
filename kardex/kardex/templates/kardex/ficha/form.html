@@ -13,11 +13,12 @@
             {% csrf_token %}
             {{ form.non_field_errors }}
             <input type="hidden" name="action" value="{{ action|default:'add' }}">
+            <input type="hidden" name="ficha_id" id="ficha_id" value="{{ ficha.id|default_if_none:'' }}">
 
             <div class="row">
                 {% for field in form %}
                 <div class="col-md-6 mb-3">
-                    <label for="id_{{ field.name }}">{{ field.label }}</label>
+                    <label>{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
                     <small class="form-text text-muted">{{ field.help_text }}</small>
