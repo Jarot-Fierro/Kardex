@@ -28,49 +28,50 @@ class FormPaciente(forms.ModelForm):
     #         # Fallback silencioso para no romper el formulario ante situaciones inesperadas
     #         pass
     #
-    # def clean(self):
-    #     cleaned = super().clean()
-    #     # Validar unicidad de identificadores excluyendo la propia instancia cuando existe (modo actualización)
-    #     instance_pk = getattr(self.instance, 'pk', None)
-    #     from kardex.models import Paciente as Pac
-    #     # Campos únicos en el modelo: rut, nie, pasaporte, codigo (codigo no está en el form)
-    #     rut = cleaned.get('rut')
-    #     nie = cleaned.get('nie')
-    #     pasaporte = cleaned.get('pasaporte')
-    #
-    #     # Normalizar como lo hace el modelo.save()
-    #     if rut:
-    #         rut = rut.lower().strip()
-    #         cleaned['rut'] = rut
-    #     if nie:
-    #         nie = nie.strip()
-    #     if pasaporte:
-    #         pasaporte = pasaporte.strip()
-    #
-    #     errors = {}
-    #     if rut:
-    #         qs = Pac.objects.filter(rut=rut)
-    #         if instance_pk:
-    #             qs = qs.exclude(pk=instance_pk)
-    #         if qs.exists():
-    #             errors['rut'] = 'Ya existe Paciente con este Rut.'
-    #     if nie:
-    #         qs = Pac.objects.filter(nie=nie)
-    #         if instance_pk:
-    #             qs = qs.exclude(pk=instance_pk)
-    #         if qs.exists():
-    #             errors['nie'] = 'Ya existe Paciente con este NIE.'
-    #     if pasaporte:
-    #         qs = Pac.objects.filter(pasaporte=pasaporte)
-    #         if instance_pk:
-    #             qs = qs.exclude(pk=instance_pk)
-    #         if qs.exists():
-    #             errors['pasaporte'] = 'Ya existe Paciente con este Pasaporte.'
-    #
-    #     if errors:
-    #         from django.core.exceptions import ValidationError
-    #         raise ValidationError(errors)
-    #     return cleaned
+    def clean(self):
+        cleaned = super().clean()
+        # Validar unicidad de identificadores excluyendo la propia instancia cuando existe (modo actualización)
+        instance_pk = getattr(self.instance, 'pk', None)
+        from kardex.models import Paciente as Pac
+        # Campos únicos en el modelo: rut, nip, pasaporte, codigo (codigo no está en el form)
+        rut = cleaned.get('rut')
+        nip = cleaned.get('nip')
+        pasaporte = cleaned.get('pasaporte')
+
+        # Normalizar como lo hace el modelo.save()
+        if rut:
+            rut = rut.lower().strip()
+            cleaned['rut'] = rut
+        if nip:
+            nip = nip.strip()
+        if pasaporte:
+            pasaporte = pasaporte.strip()
+
+        errors = {}
+        if rut:
+            qs = Pac.objects.filter(rut=rut)
+            if instance_pk:
+                qs = qs.exclude(pk=instance_pk)
+            if qs.exists():
+                errors['rut'] = 'Ya existe Paciente con este Rut.'
+        if nip:
+            qs = Pac.objects.filter(nip=nip)
+            if instance_pk:
+                qs = qs.exclude(pk=instance_pk)
+            if qs.exists():
+                errors['nip'] = 'Ya existe Paciente con este NIE.'
+        if pasaporte:
+            qs = Pac.objects.filter(pasaporte=pasaporte)
+            if instance_pk:
+                qs = qs.exclude(pk=instance_pk)
+            if qs.exists():
+                errors['pasaporte'] = 'Ya existe Paciente con este Pasaporte.'
+
+        if errors:
+            from django.core.exceptions import ValidationError
+            raise ValidationError(errors)
+        return cleaned
+
     rut = forms.CharField(
         label='R.U.T.',
         required=False,
@@ -223,7 +224,7 @@ class FormPaciente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Opcional',
-            'id': 'nie_paciente'
+            'id': 'nip_paciente'
         }),
         required=False
     )

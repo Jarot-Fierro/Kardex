@@ -19,6 +19,13 @@ function cargarDatosFicha(fichaId) {
         success: function (data) {
             // **Corrección aquí**: paciente = data.paciente (no data.paciente.paciente)
             const paciente = data.paciente || {};
+            // Establecer modo edición y IDs ocultos cuando viene desde API
+            if (paciente && paciente.id) {
+                $('#paciente_id_hidden').val(paciente.id);
+                $('#form_action_hidden').val('edit');
+            } else {
+                $('#paciente_id_hidden').val('');
+            }
 
             // Botones
             const caratulaUrl = `/kardex/pdfs/ficha/${data.id}/`;
@@ -36,6 +43,9 @@ function cargarDatosFicha(fichaId) {
             // Ficha
             const fichaOption = new Option(data.numero_ficha_sistema || data.numero_ficha || data.id, data.id, true, true);
             $('#id_ficha').append(fichaOption).trigger('change');
+            // Hidden ficha id y modo
+            $('#ficha_id_hidden').val(data.id || '');
+            $('#form_action_hidden').val('edit');
 
             // RUT
             if (paciente.rut) {
