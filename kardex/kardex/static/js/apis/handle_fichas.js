@@ -1,72 +1,131 @@
 function cargarDatosFicha(fichaId) {
+    function setSelectValue(selector, value, label) {
+        if (value === null || value === undefined || value === '') return;
+        const $el = $(selector);
+        if ($el.length === 0) return;
+        const valStr = String(value);
+        // Si no existe la opción, agregarla (compatible con select2)
+        if ($el.find(`option[value="${valStr}"]`).length === 0) {
+            const text = (label !== undefined && label !== null && label !== '') ? String(label) : valStr;
+            const newOpt = new Option(text, valStr, true, true);
+            $el.append(newOpt);
+        }
+        $el.val(valStr).trigger('change');
+    }
+
     $.ajax({
-        url: `http://127.0.0.1:8000/api/ingreso-paciente-ficha/${fichaId}/`,
+        url: `/api/ingreso-paciente-ficha/${fichaId}/`,  // Ajusta si tu ruta es otra
         method: 'GET',
         success: function (data) {
-            const paciente = data.ingreso_paciente.paciente;
+            // **Corrección aquí**: paciente = data.paciente (no data.paciente.paciente)
+            const paciente = data.paciente || {};
 
+            // Botones
             const caratulaUrl = `/kardex/pdfs/ficha/${data.id}/`;
             const stickersUrl = `/kardex/pdfs/stickers/ficha/${data.id}/`;
-
             $('#btn-caratula')
                 .removeClass('disabled')
                 .attr('aria-disabled', 'false')
                 .attr('href', caratulaUrl);
-
             $('#btn-stickers')
                 .removeClass('disabled')
                 .attr('aria-disabled', 'false')
                 .attr('href', stickersUrl);
 
-            // --- Sincronizar los campos select2 ---
-            // id_ficha: mostrar número de ficha del sistema y asegurar opción
-            setSelectValue('#id_ficha', data.id, data.numero_ficha_sistema);
+            // --- Sincronizar los campos select2 / selects ---
+            // Ficha
+            const fichaOption = new Option(data.numero_ficha_sistema || data.numero_ficha || data.id, data.id, true, true);
+            $('#id_ficha').append(fichaOption).trigger('change');
 
-            // id_rut: mostrar RUT del paciente
+            // RUT
             if (paciente.rut) {
-                setSelectValue('#id_rut', data.id, paciente.rut);
+                const $rutCtrl = $('#id_rut');
+                if ($rutCtrl.is('input')) {
+                    $rutCtrl.val(paciente.rut).trigger('change');
+                } else {
+                    const rutOption = new Option(paciente.rut, paciente.rut, true, true);
+                    $rutCtrl.append(rutOption).trigger('change');
+                }
             }
 
-            // id_codigo: mostrar código del paciente
+            // Código (si aplica)
             if (paciente.codigo) {
-                setSelectValue('#id_codigo', paciente.codigo, paciente.codigo);
+                const codigoOption = new Option(paciente.codigo, paciente.codigo, true, true);
+                $('#id_codigo').append(codigoOption).trigger('change');
             }
 
-            $('#nombre_paciente').val(paciente.nombre);
-            $('#apellido_paterno_paciente').val(paciente.apellido_paterno);
-            $('#apellido_materno_paciente').val(paciente.apellido_materno);
-            $('#id_rut_madre').val(paciente.rut_madre);
-            $('#sexo_paciente').val(paciente.sexo).trigger('change');
-            $('#estado_civil_paciente').val(paciente.estado_civil).trigger('change');
-            $('#nombres_padre_paciente').val(paciente.nombres_padre);
-            $('#nombres_madre_paciente').val(paciente.nombres_madre);
-            $('#nombre_pareja_paciente').val(paciente.nombre_pareja);
-            $('#direccion_paciente').val(paciente.direccion);
-            $('#numero_telefono1_paciente').val(paciente.numero_telefono1);
-            $('#numero_telefono2_paciente').val(paciente.numero_telefono2);
-            $('#pasaporte_paciente').val(paciente.pasaporte);
-            $('#nie_paciente').val(paciente.nie);
-            $('#rut_responsable_temporal_paciente').val(paciente.rut_responsable_temporal);
-            $('#usar_rut_madre_como_responsable_paciente').prop('checked', paciente.usar_rut_madre_como_responsable).trigger('change');
-            $('#recien_nacido_paciente').prop('checked', paciente.recien_nacido).trigger('change');
-            $('#extranjero_paciente').prop('checked', paciente.extranjero).trigger('change');
-            $('#fallecido_paciente').prop('checked', paciente.fallecido).trigger('change');
-            $('#fecha_fallecimiento_paciente').val(paciente.fecha_fallecimiento);
-            $('#ocupacion_paciente').val(paciente.ocupacion);
-            $('#representante_legal_paciente').val(paciente.representante_legal);
-            $('#nombre_social_paciente').val(paciente.nombre_social);
-            $('#comuna_paciente').val(paciente.comuna).trigger('change');
-            $('#prevision_paciente').val(paciente.prevision).trigger('change');
-            $('#usuario_paciente').val(paciente.usuario).trigger('change');
+            // Campos de texto / input
+            $('#nombre_paciente').val(paciente.nombre || '');
+            $('#apellido_paterno_paciente').val(paciente.apellido_paterno || '');
+            $('#apellido_materno_paciente').val(paciente.apellido_materno || '');
+            $('#id_rut_madre').val(paciente.rut_madre || '');
+            setSelectValue('#sexo_paciente', paciente.sexo);
+            setSelectValue('#estado_civil_paciente', paciente.estado_civil);
+            $('#nombres_padre_paciente').val(paciente.nombres_padre || '');
+            $('#nombres_madre_paciente').val(paciente.nombres_madre || '');
+            $('#nombre_pareja_paciente').val(paciente.nombre_pareja || '');
+            $('#direccion_paciente').val(paciente.direccion || '');
+            $('#telefono_personal').val(paciente.numero_telefono1 || '');
+            $('#numero_telefono2_paciente').val(paciente.numero_telefono2 || '');
+            $('#pasaporte_paciente').val(paciente.pasaporte || '');
+            $('#nie_paciente').val(paciente.nip || paciente.nie || '');
+            $('#rut_responsable_temporal_paciente').val(paciente.rut_responsable_temporal || '');
 
+            $('#usar_rut_madre_como_responsable_paciente')
+                .prop('checked', !!paciente.usar_rut_madre_como_responsable)
+                .trigger('change');
+            $('#recien_nacido_paciente')
+                .prop('checked', !!paciente.recien_nacido)
+                .trigger('change');
+            $('#extranjero_paciente')
+                .prop('checked', !!paciente.extranjero)
+                .trigger('change');
+            $('#fallecido_paciente')
+                .prop('checked', !!paciente.fallecido)
+                .trigger('change');
+
+            // Fecha de fallecimiento si existe
+            if (paciente.fecha_fallecimiento) {
+                const isoFal = String(paciente.fecha_fallecimiento);
+                const datePart = isoFal.split('T')[0];
+                const partsFal = datePart.split('-');
+                if (partsFal.length === 3) {
+                    const [y, m, d] = partsFal;
+                    $('#fecha_fallecimiento_paciente').val(`${d}/${m}/${y}`).trigger('change');
+                } else {
+                    $('#fecha_fallecimiento_paciente').val(paciente.fecha_fallecimiento).trigger('change');
+                }
+            } else {
+                $('#fecha_fallecimiento_paciente').val('').trigger('change');
+            }
+
+            // Otros campos
+            $('#ocupacion_paciente').val(paciente.ocupacion || '');
+            $('#representante_legal_paciente').val(paciente.representante_legal || '');
+            $('#nombre_social_paciente').val(paciente.nombre_social || '');
+
+            setSelectValue('#comuna_paciente', paciente.comuna);
+            setSelectValue('#prevision_paciente', paciente.prevision);
+            setSelectValue('#usuario_paciente', paciente.usuario);
+            setSelectValue('#genero_paciente', paciente.genero);
+
+            // Fecha de nacimiento
             if (paciente.fecha_nacimiento) {
-                const [year, month, day] = paciente.fecha_nacimiento.split("-");
-                $('#id_fecha_nacimiento').val(`${day}/${month}/${year}`);
+                const iso = String(paciente.fecha_nacimiento);
+                const datePart = iso.split('T')[0];
+                const parts = datePart.split('-');
+                if (parts.length === 3) {
+                    const [year, month, day] = parts;
+                    const ddmmyyyy = `${day}/${month}/${year}`;
+                    $('#fecha_nacimiento_paciente').val(ddmmyyyy).trigger('change');
+                    $('#id_fecha_nacimiento').val(ddmmyyyy).trigger('change');
+                }
             }
 
+            // Fechas de la ficha (created / updated)
             if (data.created_at) {
-            const [year, month, day] = data.created_at.split("T")[0].split("-");
-            $('#ficha_created_at_text').text(`${day}/${month}/${year}`);
+                const [year, month, day] = data.created_at.split("T")[0].split("-");
+                $('#ficha_created_at_text').text(`${day}/${month}/${year}`);
             } else {
                 $('#ficha_created_at_text').text('-');
             }
@@ -77,23 +136,26 @@ function cargarDatosFicha(fichaId) {
             } else {
                 $('#ficha_updated_at_text').text('-');
             }
-            if (data.codigo) {
-                const newOption = new Option(data.codigo, data.codigo, true, true);
-                $('#id_codigo').append(newOption).trigger('change');
-            }
 
             // Aplicar reglas de negocio si existen
             if (window._pacienteApplyRules) {
-                window._pacienteApplyRules();
+                try {
+                    window._pacienteApplyRules();
+                } catch (err) {
+                    console.error('Error en _pacienteApplyRules:', err);
+                }
             }
         },
-        error: function () {
+        error: function (xhr, status, error) {
+            console.error('Error cargar datos ficha:', status, error, xhr.responseText);
             alert('Error al cargar los datos de la ficha.');
         }
     });
 }
 
-// Aplica a los 3 campos
+// Exponer globalmente
+window.cargarDatosFicha = cargarDatosFicha;
+
 $('#id_ficha, #id_rut, #id_codigo').on('select2:select', function (e) {
     const fichaId = e.params.data.id;
     cargarDatosFicha(fichaId);
