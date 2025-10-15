@@ -29,10 +29,11 @@ class DataTableMixin:
         model_name = self.model.__name__ if self.model else ''
         # Filtrar para modelos que se relacionan con pacientes por establecimiento
         if model_name == 'Paciente':
-            # Pacientes que tengan al menos un ingreso en el establecimiento del usuario
-            return qs.filter(ingresopaciente__establecimiento=establecimiento).distinct()
+            # Pacientes que tengan fichas en el establecimiento del usuario
+            return qs.filter(fichas_pacientes__establecimiento=establecimiento).distinct()
         if model_name == 'Ficha':
-            return qs.filter(ingreso_paciente__establecimiento=establecimiento)
+            # Filtrar directamente por establecimiento en Ficha
+            return qs.filter(establecimiento=establecimiento)
         if model_name == 'IngresoPaciente':
             return qs.filter(establecimiento=establecimiento)
         # Para otros modelos no se aplica filtro aquí por defecto

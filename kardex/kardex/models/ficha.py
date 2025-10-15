@@ -48,7 +48,7 @@ class Ficha(StandardModel):
         if self.pk is None:
             super().save(*args, **kwargs)
             if not self.numero_ficha_sistema:
-                self.numero_ficha = self.pk
+                self.numero_ficha_sistema = self.pk
                 super().save(update_fields=['numero_ficha_sistema'])
         else:
             super().save(*args, **kwargs)

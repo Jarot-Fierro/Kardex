@@ -4,11 +4,10 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
-from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
+from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 from django.views.generic import TemplateView, FormView
 
-from kardex.forms.pacientes import FormPaciente
-from kardex.forms.pacientes import FormPacienteCreacion
+from kardex.forms.pacientes import FormPacienteCreacion, FormPaciente
 from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.mixin import DataTableMixin
 from kardex.models import Ficha
@@ -96,96 +95,6 @@ class PacienteDetailView(PermissionRequiredMixin, DetailView):
             html = render_to_string(self.template_name, context=context, request=self.request)
             return HttpResponse(html)
         return super().render_to_response(context, **response_kwargs)
-
-
-class PacienteCreateView(PermissionRequiredMixin, CreateView):
-    template_name = 'kardex/paciente/form.html'
-    model = Paciente
-    form_class = FormPaciente
-    success_url = reverse_lazy('kardex:paciente_list')
-    # Esta vista actúa como actualización por selección desde API
-    permission_required = 'kardex.change_paciente'
-    raise_exception = True
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        request = getattr(self, 'request', None)
-        paciente_id = None
-        if request is not None:
-            paciente_id = (request.POST.get('paciente_id') or request.GET.get('paciente_id') or '').strip()
-        if paciente_id:
-            try:
-                instance = Paciente.objects.get(pk=paciente_id)
-                # Vincular la instancia seleccionada para que el formulario cargue sus datos
-                self.object = instance
-                kwargs['instance'] = instance
-                # Asegurar que el campo rut quede preseleccionado/prefijado en el init
-                initial = kwargs.get('initial', {}).copy()
-                if getattr(instance, 'rut', None):
-                    initial['rut'] = instance.rut
-                kwargs['initial'] = initial
-            except Paciente.DoesNotExist:
-                pass
-        return kwargs
-
-    def post(self, request, *args, **kwargs):
-        print("[DEBUG] POST iniciado")
-        # Detect if this should be treated as an update (AJAX prefilled existing paciente)
-        paciente_id = (request.POST.get('paciente_id') or '').strip()
-        instance = None
-        if paciente_id:
-            try:
-                instance = Paciente.objects.get(pk=paciente_id)
-                self.object = instance  # Make get_form bind to instance
-                print(f"[DEBUG] Modo edición detectado (ID: {paciente_id})")
-            except Paciente.DoesNotExist:
-                print(f"[WARN] paciente_id {paciente_id} no existe. Continuando como creación.")
-                instance = None
-
-        form = self.get_form()
-        if form.is_valid():
-            user = request.user
-
-            try:
-                with transaction.atomic():
-                    paciente = form.save(commit=False)
-                    # Asignar usuario siempre
-                    paciente.usuario = request.user
-
-                    try:
-                        paciente.save()
-                        print(f"[DEBUG] Paciente guardado: {paciente} (ID: {paciente.pk})")
-                    except Exception as e:
-                        print("[ERROR] No se pudo guardar el paciente:", e)
-                        messages.error(request, f"Error al guardar el paciente: {e}")
-                        return self.render_to_response(self.get_context_data(form=form))
-
-                    # IMPORTANTE: Esta vista funciona como ACTUALIZACIÓN/CONSULTA vía API.
-                    # No crear IngresoPaciente ni Ficha aquí. Solo guardar datos del paciente.
-                    # La creación se realiza en PacienteCreacionView.
-                    pass
-
-                    # Siempre actuamos como actualización cuando viene desde API con paciente existente
-                    messages.success(request, 'Paciente actualizado correctamente')
-                    return redirect(self.success_url)
-
-            except Exception as e:
-                print("[ERROR] Transacción fallida:", e)
-                messages.error(request, f"No se pudo completar: {e}")
-                self.object = None
-                return self.render_to_response(self.get_context_data(form=form, open_modal=True))
-
-        messages.error(request, 'Hay errores en el formulario')
-        self.object = instance
-        return self.render_to_response(self.get_context_data(form=form, open_modal=True))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Consulta/Actualización de Paciente'
-        context['list_url'] = self.success_url
-        context['action'] = 'edit'
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
@@ -330,67 +239,6 @@ class PacienteFallecidoListView(PacienteListView):
             'list_url': reverse_lazy('kardex:paciente_fallecido_list'),
         })
         return context
-
-
-class PacienteCreacionView(PermissionRequiredMixin, CreateView):
-    template_name = 'kardex/paciente/form_creacion.html'
-    model = Paciente
-    form_class = FormPacienteCreacion
-    success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'kardex.add_paciente'
-    raise_exception = True
-
-    # def form_valid(self, form):
-    #     user = self.request.user
-    #     try:
-    #         with transaction.atomic():
-    #             paciente = form.save(commit=False)
-    #             paciente.usuario = user
-    #             paciente.save()
-    #
-    #             establecimiento = getattr(user, 'establecimiento', None)
-    #             if not establecimiento:
-    #                 messages.warning(self.request, 'El usuario no tiene un establecimiento asociado.')
-    #             else:
-    #                 ingresos_qs = IngresoPaciente.objects.filter(paciente=paciente)
-    #                 count_ingresos = ingresos_qs.count()
-    #                 ingreso_existente = ingresos_qs.filter(establecimiento=establecimiento).first()
-    #
-    #                 if count_ingresos >= 5 and not ingreso_existente:
-    #                     messages.warning(self.request, 'Máximo de ingresos alcanzado.')
-    #                 else:
-    #                     if ingreso_existente:
-    #                         ficha, created = Ficha.objects.get_or_create(
-    #                             ingreso_paciente=ingreso_existente,
-    #                             defaults={'usuario': user}
-    #                         )
-    #                         if created:
-    #                             messages.success(self.request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
-    #                         else:
-    #                             messages.info(self.request, 'Ficha ya existente para este ingreso.')
-    #                     else:
-    #                         ingreso = IngresoPaciente.objects.create(paciente=paciente, establecimiento=establecimiento)
-    #                         ficha, created = Ficha.objects.get_or_create(
-    #                             ingreso_paciente=ingreso,
-    #                             defaults={'usuario': user}
-    #                         )
-    #                         if created:
-    #                             messages.success(self.request, f'Ficha creada. N°: {str(ficha.numero_ficha).zfill(4)}')
-    #                         else:
-    #                             messages.info(self.request, 'Ficha ya existente.')
-    #             messages.success(self.request, 'Paciente creado correctamente')
-    #             return redirect(self.success_url)
-    #     except Exception as e:
-    #         messages.error(self.request, f'No se pudo completar la creación: {e}')
-    #         return self.form_invalid(form)
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['title'] = 'Crear Paciente'
-    #     context['list_url'] = self.success_url
-    #     context['action'] = 'add'
-    #     context['module_name'] = MODULE_NAME
-    #     return context
 
 
 class PacienteFechaFormView(PermissionRequiredMixin, FormView):

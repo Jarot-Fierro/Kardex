@@ -15,11 +15,15 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/ficha/list.html'
     model = Ficha
     datatable_columns = ['ID', 'Número', 'Establecimiento', 'RUT', 'Código', 'Paciente', 'Fecha Creación']
-    datatable_order_fields = ['id', None, 'numero_ficha',
-                              'ingreso_paciente__paciente__rut', 'ingreso_paciente__paciente__codigo', 'created_at']
+    datatable_order_fields = ['id', 'numero_ficha_sistema', 'establecimiento__nombre',
+                              'paciente__rut', 'paciente__codigo', None, 'created_at']
     datatable_search_fields = [
-        'numero_ficha__icontains', 'profesional__nombres__icontains', 'usuario__username__icontains',
-        'ingreso_paciente__paciente__rut__icontains'
+        'numero_ficha_sistema__icontains',
+        'profesional__nombres__icontains',
+        'usuario__username__icontains',
+        'paciente__rut__icontains',
+        'paciente__codigo__icontains',
+        'establecimiento__nombre__icontains'
     ]
 
     permission_required = 'kardex.view_ficha'
@@ -32,14 +36,14 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     url_delete = 'kardex:ficha_delete'
 
     def render_row(self, obj):
-        pac = getattr(obj.ingreso_paciente, 'paciente', None)
-        est = getattr(obj.ingreso_paciente, 'establecimiento', None)
+        pac = getattr(obj, 'paciente', None)
+        est = getattr(obj, 'establecimiento', None)
         nombre_completo = ''
         if pac:
             nombre_completo = f"{(getattr(pac, 'nombre', '') or '').upper()} {(getattr(pac, 'apellido_paterno', '') or '').upper()} {(getattr(pac, 'apellido_materno', '') or '').upper()}".strip()
         return {
             'ID': obj.id,
-            'Número': obj.numero_ficha,
+            'Número': obj.numero_ficha_sistema,
             'Establecimiento': (getattr(est, 'nombre', '') or '').upper(),
             'RUT': getattr(pac, 'rut', '') if pac else '',
             'Código': getattr(pac, 'codigo', '') if pac else '',
@@ -68,14 +72,14 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     def get_base_queryset(self):
         # Optimiza consultas y, si aplica la política del sistema, restringe por establecimiento del usuario
         qs = Ficha.objects.select_related(
-            'ingreso_paciente__paciente',
-            'ingreso_paciente__establecimiento',
+            'paciente',
+            'establecimiento',
         )
         # Si la app en otras vistas filtra por establecimiento, puede activarse aquí:
         user = getattr(self.request, 'user', None)
         establecimiento = getattr(user, 'establecimiento', None) if user else None
         if establecimiento:
-            qs = qs.filter(ingreso_paciente__establecimiento=establecimiento)
+            qs = qs.filter(establecimiento=establecimiento)
         return qs
 
 
