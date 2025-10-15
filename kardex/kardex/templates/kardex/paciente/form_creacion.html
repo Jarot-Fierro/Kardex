@@ -20,7 +20,7 @@
                         <div class="col-7">
                             <span>N° FICHA:</span><br>
                             <select name="ficha" class="form-control select2-ajax" placeholder="N° Ficha" id="id_ficha"
-                                    style="min-width: 100px;" disabled>
+                                    style="min-width: 100px;">
                             </select>
                         </div>
                         <div class="col-4">
@@ -38,7 +38,7 @@
             <div class="col-md-3 text-md-end ficha-header">
                 <span>N° Código:</span><br>
                 <select value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
-                        placeholder="Código" id="id_codigo" disabled>
+                        placeholder="Código" id="id_codigo">
                 </select>
                 <input type="hidden" id="codigo_inicial" value="{{ paciente.codigo }}">
             </div>

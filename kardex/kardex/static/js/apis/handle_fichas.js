@@ -19,17 +19,17 @@ function cargarDatosFicha(fichaId) {
                 .attr('href', stickersUrl);
 
             // --- Sincronizar los campos select2 ---
-            const fichaOption = new Option(data.numero_ficha, data.id, true, true);
-            $('#id_ficha').append(fichaOption).trigger('change');
+            // id_ficha: mostrar número de ficha del sistema y asegurar opción
+            setSelectValue('#id_ficha', data.id, data.numero_ficha_sistema);
 
+            // id_rut: mostrar RUT del paciente
             if (paciente.rut) {
-                const rutOption = new Option(paciente.rut, data.id, true, true);
-                $('#id_rut').append(rutOption).trigger('change');
+                setSelectValue('#id_rut', data.id, paciente.rut);
             }
 
+            // id_codigo: mostrar código del paciente
             if (paciente.codigo) {
-                const codigoOption = new Option(paciente.codigo, data.id, true, true);
-                $('#id_codigo').append(codigoOption).trigger('change');
+                setSelectValue('#id_codigo', paciente.codigo, paciente.codigo);
             }
 
             $('#nombre_paciente').val(paciente.nombre);

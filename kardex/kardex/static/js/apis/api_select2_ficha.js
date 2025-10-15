@@ -15,7 +15,7 @@ $('#id_ficha').select2({
             return {
                 results: data.results.map(item => ({
                     id: item.id,
-                    text: `Ficha: ${item.numero_ficha}`
+                    text: `Ficha: ${item.numero_ficha_sistema}`
                 }))
             };
         }

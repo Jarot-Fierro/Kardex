@@ -14,7 +14,7 @@ $('#id_codigo').select2({
         processResults: function (data) {
             return {
                 results: data.results.map(item => {
-                    const paciente = item.ingreso_paciente.paciente;
+                    const paciente = item.paciente;
                     return {
                         id: item.id,
                         text: `${paciente.codigo}`
