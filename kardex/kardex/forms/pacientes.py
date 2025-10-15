@@ -74,7 +74,7 @@ class FormPaciente(forms.ModelForm):
     rut = forms.CharField(
         label='R.U.T.',
         required=False,
-        widget=forms.Select(attrs={
+        widget=forms.TextInput(attrs={
             'class': 'form-control select2-ajax id_rut',
             'id': 'id_rut'
         })
@@ -191,9 +191,9 @@ class FormPaciente(forms.ModelForm):
     numero_telefono1 = forms.CharField(
         label='Teléfono 1',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control telefono_personal',
             'placeholder': '+56912345678',
-            'id': 'telefono_personal'
+            'id': 'numero_telefono1_paciente'
         }),
         required=True
     )
@@ -201,7 +201,7 @@ class FormPaciente(forms.ModelForm):
     numero_telefono2 = forms.CharField(
         label='Teléfono 2',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control telefono_personal',
             'placeholder': 'Opcional',
             'id': 'numero_telefono2_paciente'
         }),
@@ -223,7 +223,7 @@ class FormPaciente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Opcional',
-            'id': 'nie_paciente'
+            'id': 'nip_paciente'
         }),
         required=False
     )
