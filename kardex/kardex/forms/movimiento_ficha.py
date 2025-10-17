@@ -20,7 +20,7 @@ class FormEntradaFicha(forms.ModelForm):
         choices=[],
         widget=forms.Select(attrs={
             'id': 'id_rut',
-            'class': 'form-control select2-ajax',
+            'class': 'form-control id_rut',
             'readonly': 'readonly'
         })
     )
@@ -127,26 +127,26 @@ class FormEntradaFicha(forms.ModelForm):
 
 
 class FormSalidaFicha(forms.ModelForm):
-    ficha = forms.ModelChoiceField(
+    ficha = forms.CharField(
         label='Ficha',
-        queryset=Ficha.objects.none(),
-        widget=forms.Select(
+        widget=forms.TextInput(
             attrs={
                 'id': 'id_ficha',
-                'class': 'form-control select2-ajax'
+                'class': 'form-control id_ficha'
             }
         ),
         required=True
     )
 
-    rut = forms.ChoiceField(
+    rut = forms.CharField(
         label='RUT',
         required=False,
-        choices=[],
-        widget=forms.Select(
+        widget=forms.TextInput(
             attrs={
                 'id': 'id_rut',
-                'class': 'form-control select2-ajax'
+                'class': 'form-control id_rut',
+                'autocomplete': 'off',
+                'inputmode': 'text'
             }
         )
     )
@@ -236,14 +236,14 @@ class FormSalidaFicha(forms.ModelForm):
         elif self.instance.pk:
             self.fields['ficha'].queryset = Ficha.objects.filter(pk=self.instance.ficha_id)
 
-        # --- RUT ---
+        # --- RUT como texto: mantener valor tipeado si viene en POST o instancia ---
         if 'rut' in self.data:
-            rut_value = self.data.get('rut')
-            # Asumimos que rut_value es texto como "12345678-9"
-            self.fields['rut'].choices = [(rut_value, rut_value)]
+            self.fields['rut'].initial = self.data.get('rut')
         elif self.instance.pk:
-            # Si estás editando, podrías mostrar el rut original si lo tienes
-            self.fields['rut'].choices = [(self.instance.ficha.paciente.rut, self.instance.ficha.paciente.rut)]
+            try:
+                self.fields['rut'].initial = self.instance.ficha.paciente.rut
+            except Exception:
+                pass
 
     class Meta:
         model = MovimientoFicha
