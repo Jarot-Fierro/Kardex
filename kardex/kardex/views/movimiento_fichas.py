@@ -105,6 +105,12 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
         establecimiento = getattr(self.request.user, 'establecimiento', None)
         if establecimiento and 'profesional_recepcion' in form.fields:
             form.fields['profesional_recepcion'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
+
+        # Formulario de filtro (mismo que en salida)
+        filter_form = FiltroSalidaFichaForm(self.request.GET or None)
+        if establecimiento and 'profesional' in filter_form.fields:
+            filter_form.fields['profesional'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
+
         context.update({
             'title': 'Recepción de Fichas',
             'list_url': reverse_lazy('kardex:recepcion_ficha'),
@@ -112,12 +118,13 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             'datatable_order': [[0, 'asc']],
             'columns': self.datatable_columns,
             'form': form,
+            'filter_form': filter_form,
         })
         return context
 
     def get_base_queryset(self):
         establecimiento = getattr(self.request.user, 'establecimiento', None)
-        return MovimientoFicha.objects.filter(
+        qs = MovimientoFicha.objects.filter(
             estado_recepcion__in=['EN ESPERA', 'RECIBIDO'],
             ficha__establecimiento=establecimiento
         ).select_related(
@@ -125,6 +132,33 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             'servicio_clinico_envio',
             'usuario_envio'
         )
+
+        # Filtros desde filter_form (análogos a salida, pero por recepción)
+        inicio = self.request.GET.get('hora_inicio')
+        termino = self.request.GET.get('hora_termino')
+        servicio_id = self.request.GET.get('servicio_clinico')
+        profesional_id = self.request.GET.get('profesional')
+
+        if inicio:
+            try:
+                from datetime import datetime
+                dt = datetime.fromisoformat(inicio)
+                qs = qs.filter(fecha_recepcion__gte=dt)
+            except Exception:
+                pass
+        if termino:
+            try:
+                from datetime import datetime
+                dt = datetime.fromisoformat(termino)
+                qs = qs.filter(fecha_recepcion__lte=dt)
+            except Exception:
+                pass
+        if servicio_id:
+            qs = qs.filter(servicio_clinico_recepcion_id=servicio_id)
+        if profesional_id:
+            qs = qs.filter(usuario_recepcion_id=profesional_id)
+
+        return qs
 
     def render_row(self, obj):
         pac = obj.ficha.paciente if obj.ficha else None
