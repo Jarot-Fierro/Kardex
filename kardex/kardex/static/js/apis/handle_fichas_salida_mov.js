@@ -3,14 +3,14 @@ function cargarDatosSalidaFicha(fichaId) {
         url: `http://127.0.0.1:8000/api/ingreso-paciente-ficha/${fichaId}/`,
         method: 'GET',
         success: function (data) {
-            const paciente = data.ingreso_paciente.paciente;
+            const paciente = data.paciente || {};
 
             // --- Rellenar nombre ---
             const nombreCompleto = `${paciente.nombre} ${paciente.apellido_paterno} ${paciente.apellido_materno}`;
             $('#nombre_mov').val(nombreCompleto);
 
             // --- Sincronizar los campos select2 ---
-            const fichaOption = new Option(data.numero_ficha, data.id, true, true);
+            const fichaOption = new Option(data.numero_ficha_sistema, data.id, true, true);
             $('#id_ficha').empty().append(fichaOption).trigger('change');
 
 

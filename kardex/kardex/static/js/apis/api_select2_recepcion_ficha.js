@@ -15,7 +15,7 @@ $(function () {
       },
       processResults: function (data) {
         const results = (data.results || []).map(item => {
-          const paciente = (item.ficha && item.ficha.ingreso_paciente && item.ficha.ingreso_paciente.paciente) || {};
+          const paciente = (item.ficha && item.ficha.paciente) || {};
           const rut = paciente.rut || '';
           const nombre = `${paciente.nombre || ''} ${paciente.apellido_paterno || ''} ${paciente.apellido_materno || ''}`.trim();
           return {
@@ -43,21 +43,21 @@ $(function () {
         console.log('Datos recibidos en llenarPorMovimiento:', data);
 
         const f = data.ficha || {};
-        const p = (f.ingreso_paciente && f.ingreso_paciente.paciente) || {};
+        const p = (f.paciente) || {};
 
         const nombreCompleto = `${p.nombre || ''} ${p.apellido_paterno || ''} ${p.apellido_materno || ''}`.trim();
         $('#nombre_mov').val(nombreCompleto);
 
         if (p.rut) {
-          const optRut = new Option(p.rut, movId, true, true);
+          const optRut = new Option(p.rut, p.rut, true, true);
           $('#id_rut').empty().append(optRut).trigger('change');
           console.log('Opción RUT agregada y seleccionada:', p.rut);
         }
 
-        if (f.numero_ficha && f.id) {
-          const optFicha = new Option(f.numero_ficha, f.id, true, true);
+        if (f.numero_ficha_sistema && f.id) {
+          const optFicha = new Option(f.numero_ficha_sistema, f.id, true, true);
           $('#id_ficha').empty().append(optFicha).trigger('change');
-          console.log('Opción Ficha agregada y seleccionada:', f.numero_ficha);
+          console.log('Opción Ficha agregada y seleccionada:', f.numero_ficha_sistema);
         } else {
           // Si no viene ficha en la respuesta, limpiar el select para evitar valores obsoletos
           $('#id_ficha').empty().trigger('change');

@@ -52,6 +52,10 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     url_update = 'kardex:paciente_update'
     url_delete = 'kardex:paciente_delete'
 
+    def get_base_queryset(self):
+        # Vista libre: no limitar por establecimiento, mostrar todos los pacientes
+        return Paciente.objects.all()
+
     def render_row(self, obj):
         nombre_completo = f"{(obj.nombre or '').upper()} {(obj.apellido_paterno or '').upper()} {(obj.apellido_materno or '').upper()}".strip()
         return {
@@ -364,6 +368,7 @@ class PacienteQueryView(PermissionRequiredMixin, CreateView):
                     usuario=user,
                     establecimiento=establecimiento,
                 )
+                print(ficha)
                 messages.success(request, f'Ficha creada correctamente. N° SISTEMA: {ficha.numero_ficha_sistema}')
                 messages.success(request, 'Paciente creado correctamente')
             else:

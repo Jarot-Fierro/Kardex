@@ -24,16 +24,16 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
 
     datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Fecha de salida',
                          'Estado']
-    datatable_order_fields = ['id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
-                              'ficha__ingreso_paciente__paciente__apellido_paterno',
+    datatable_order_fields = ['id', None, 'ficha__paciente__rut', 'ficha__numero_ficha_sistema',
+                              'ficha__paciente__apellido_paterno',
                               'servicio_clinico_envio__nombre', 'usuario_envio__username', 'fecha_envio',
                               'estado_recepcion']
     datatable_search_fields = [
-        'ficha__ingreso_paciente__paciente__rut__icontains',
-        'ficha__numero_ficha__icontains',
-        'ficha__ingreso_paciente__paciente__nombre__icontains',
-        'ficha__ingreso_paciente__paciente__apellido_paterno__icontains',
-        'ficha__ingreso_paciente__paciente__apellido_materno__icontains',
+        'ficha__paciente__rut__icontains',
+        'ficha__numero_ficha_sistema__icontains',
+        'ficha__paciente__nombre__icontains',
+        'ficha__paciente__apellido_paterno__icontains',
+        'ficha__paciente__apellido_materno__icontains',
         'servicio_clinico_envio__nombre__icontains',
         'usuario_envio__username__icontains',
     ]
@@ -64,7 +64,8 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
 
             if not mov:
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'ok': False, 'errors': {'ficha': ['No existe un envío previo para esta ficha.']}}, status=400)
+                    return JsonResponse(
+                        {'ok': False, 'errors': {'ficha': ['No existe un envío previo para esta ficha.']}}, status=400)
                 messages.error(request, 'No existe un envío previo para esta ficha.')
                 context = self.get_context_data(form=form)
                 return self.render_to_response(context)
@@ -73,7 +74,8 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             # Si ya estaba recepcionado, no permitir re-modificar
             if mov.estado_recepcion == 'RECIBIDO':
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'ok': False, 'errors': {'__all__': ['El movimiento ya fue recepcionado.']}}, status=400)
+                    return JsonResponse({'ok': False, 'errors': {'__all__': ['El movimiento ya fue recepcionado.']}},
+                                        status=400)
                 messages.error(request, 'El movimiento ya fue recepcionado.')
                 context = self.get_context_data(form=form)
                 return self.render_to_response(context)
@@ -116,22 +118,21 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
     def get_base_queryset(self):
         establecimiento = getattr(self.request.user, 'establecimiento', None)
         return MovimientoFicha.objects.filter(
-            fecha_envio__isnull=False,
             estado_recepcion__in=['EN ESPERA', 'RECIBIDO'],
-            ficha__ingreso_paciente__establecimiento=establecimiento
+            ficha__establecimiento=establecimiento
         ).select_related(
-            'ficha__ingreso_paciente__paciente',
+            'ficha__paciente',
             'servicio_clinico_envio',
             'usuario_envio'
         )
 
     def render_row(self, obj):
-        pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
+        pac = obj.ficha.paciente if obj.ficha else None
         nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
         return {
             'ID': obj.id,
             'RUT': getattr(pac, 'rut', '') if pac else '',
-            'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
+            'Ficha': getattr(obj.ficha, 'numero_ficha_sistema', '') if obj.ficha else '',
             'Nombre completo': nombre.strip(),
             'Servicio Clínico': getattr(obj.servicio_clinico_envio, 'nombre', ''),
             'Profesional': getattr(obj.usuario_envio, 'username', ''),
@@ -151,17 +152,17 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         'Usuario Envío', 'Observación envío', 'Fecha envío', 'Estado envio'
     ]
     datatable_order_fields = [
-        'id', None, 'ficha__ingreso_paciente__paciente__rut', 'ficha__numero_ficha',
-        'ficha__ingreso_paciente__paciente__apellido_paterno',
+        'id', None, 'ficha__paciente__rut', 'ficha__numero_ficha_sistema',
+        'ficha__paciente__apellido_paterno',
         'servicio_clinico_envio__nombre', 'usuario_envio__username',
         'observacion_envio', 'fecha_envio', 'estado_envio'
     ]
     datatable_search_fields = [
-        'ficha__ingreso_paciente__paciente__rut__icontains',
-        'ficha__numero_ficha__icontains',
-        'ficha__ingreso_paciente__paciente__nombre__icontains',
-        'ficha__ingreso_paciente__paciente__apellido_paterno__icontains',
-        'ficha__ingreso_paciente__paciente__apellido_materno__icontains',
+        'ficha__paciente__rut__icontains',
+        'ficha__numero_ficha_sistema__icontains',
+        'ficha__paciente__nombre__icontains',
+        'ficha__paciente__apellido_paterno__icontains',
+        'ficha__paciente__apellido_materno__icontains',
         'servicio_clinico_envio__nombre__icontains',
         'usuario_envio__username__icontains',
         'observacion_envio__icontains',
@@ -222,7 +223,7 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
 
     def get_base_queryset(self):
         qs = MovimientoFicha.objects.filter(estado_envio='ENVIADO').select_related(
-            'ficha__ingreso_paciente__paciente',
+            'ficha__paciente',
             'servicio_clinico_envio',
             'usuario_envio'
         )
@@ -255,12 +256,12 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         return qs
 
     def render_row(self, obj):
-        pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
+        pac = obj.ficha.paciente if obj.ficha else None
         nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
         return {
             'ID': obj.id,
             'RUT': getattr(pac, 'rut', '') if pac else '',
-            'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
+            'Ficha': getattr(obj.ficha, 'numero_ficha_sistema', '') if obj.ficha else '',
             'Nombre completo': nombre.strip(),
             'Servicio Clínico Envío': getattr(obj.servicio_clinico_envio, 'nombre', ''),
             'Usuario Envío': getattr(obj.usuario_envio, 'username', '') if obj.usuario_envio else '',
@@ -277,10 +278,10 @@ class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateV
     template_name = 'kardex/movimiento_ficha/list.html'
     model = MovimientoFicha
     datatable_columns = ['ID', 'Ficha', 'Servicio Clínico', 'Estado', 'Fecha Movimiento']
-    datatable_order_fields = ['id', None, 'ficha__numero_ficha', 'servicio_clinico_envio__nombre', 'estado_envio',
+    datatable_order_fields = ['id', None, 'ficha__numero_ficha_sistema', 'servicio_clinico_envio__nombre', 'estado_envio',
                               'fecha_envio']
     datatable_search_fields = [
-        'ficha__numero_ficha__icontains', 'servicio_clinico_envio__nombre__icontains', 'estado_envio__icontains'
+        'ficha__numero_ficha_sistema__icontains', 'servicio_clinico_envio__nombre__icontains', 'estado_envio__icontains'
     ]
 
     permission_required = 'kardex.view_movimiento_ficha'
@@ -295,12 +296,12 @@ class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateV
     url_delete = 'kardex:movimiento_ficha_delete'
 
     def render_row(self, obj):
-        pac = obj.ficha.ingreso_paciente.paciente if obj.ficha and obj.ficha.ingreso_paciente else None
+        pac = obj.ficha.paciente if obj.ficha else None
         nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
         return {
             'ID': obj.id,
             'RUT': getattr(pac, 'rut', '') if pac else '',
-            'Ficha': getattr(obj.ficha, 'numero_ficha', '') if obj.ficha else '',
+            'Ficha': getattr(obj.ficha, 'numero_ficha_sistema', '') if obj.ficha else '',
             'Nombre completo': nombre.strip(),
             'Servicio Clínico Envío': getattr(obj.servicio_clinico_envio, 'nombre', ''),
             'Servicio Clínico Recepción': getattr(obj.servicio_clinico_recepcion, 'nombre', ''),

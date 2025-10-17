@@ -232,7 +232,7 @@ class FormPaciente(forms.ModelForm):
     rut_responsable_temporal = forms.CharField(
         label='RUT Responsable Temporal',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control id_rut',
             'placeholder': 'Opcional',
             'id': 'rut_responsable_temporal_paciente'
         }),
