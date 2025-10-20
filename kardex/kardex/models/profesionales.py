@@ -22,11 +22,11 @@ class Profesional(StandardModel):
 
     def save(self, *args, **kwargs):
         if self.rut:
-            self.rut = self.rut.lower()
+            self.rut = self.rut.upper()
         if self.nombres:
             self.nombres = self.nombres.upper()
         if self.correo:
-            self.correo = self.correo.lower()
+            self.correo = self.correo.upper()
 
         super().save(*args, **kwargs)
 
