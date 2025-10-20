@@ -13,10 +13,13 @@ $('#id_ficha').select2({
         },
         processResults: function (data) {
             return {
-                results: data.results.map(item => ({
-                    id: item.id,
-                    text: `Ficha: ${item.numero_ficha_sistema}`
-                }))
+                results: data.results.map(item => {
+                    const num = String(item.numero_ficha_sistema).padStart(4, '0');
+                    return {
+                        id: item.id,
+                        text: `Ficha: ${num}`
+                    };
+                })
             };
         }
     },

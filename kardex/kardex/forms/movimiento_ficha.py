@@ -14,14 +14,13 @@ class FormEntradaFicha(forms.ModelForm):
         required=False
     )
 
-    rut = forms.ChoiceField(
+    rut = forms.CharField(
         label='RUT',
         required=False,
-        choices=[],
-        widget=forms.Select(attrs={
+        widget=forms.TextInput(attrs={
             'id': 'id_rut',
             'class': 'form-control id_rut',
-            'readonly': 'readonly'
+            'placeholder': 'Ingrese RUT (sin puntos, con guión)'
         })
     )
 
@@ -60,18 +59,17 @@ class FormEntradaFicha(forms.ModelForm):
         required=False
     )
 
-    ficha = forms.ModelChoiceField(
+    ficha = forms.CharField(
         label='Ficha',
-        empty_label="Seleccione una Ficha",
-        queryset=Ficha.objects.none(),
-        widget=forms.Select(
+        widget=forms.TextInput(
             attrs={
                 'id': 'id_ficha',
-                'class': 'form-control select2'
+                'class': 'form-control id_ficha'
             }
         ),
         required=True
     )
+
     profesional_recepcion = forms.ModelChoiceField(
         label='Profesional que recibe',
         empty_label="Seleccione un Profesional",
@@ -85,33 +83,21 @@ class FormEntradaFicha(forms.ModelForm):
         required=True
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def clean_ficha(self):
+        ficha_value = self.cleaned_data['ficha']
 
-        data = args[0] if args else None
+        # Intentamos obtener la instancia de Ficha usando ficha_value
+        # Aquí debes definir la lógica para convertir ese string a instancia
+        # Por ejemplo, si es el ID numérico:
+        try:
+            print(Ficha.objects.all())
+            print(int(ficha_value))
+            ficha_instance = Ficha.objects.get(numero_ficha_sistema=int(ficha_value))
+        except (ValueError, Ficha.DoesNotExist):
+            raise forms.ValidationError("Ficha no válida o no encontrada.")
 
-        if data:
-            ficha_id = data.get('ficha')
-            print(ficha_id)
-            if ficha_id and ficha_id.isdigit():
-                from kardex.models import Ficha
-                try:
-                    ficha = Ficha.objects.get(pk=ficha_id)
-                    self.fields['ficha'].queryset = Ficha.objects.filter(pk=ficha.pk)
-                except Ficha.DoesNotExist:
-                    pass
+        return ficha_instance
 
-            rut_id = data.get('rut')
-            if rut_id and rut_id.isdigit():
-                from kardex.models import MovimientoFicha
-                try:
-                    mov = MovimientoFicha.objects.get(pk=rut_id)
-                    self.fields['rut'].choices = [
-                        (mov.pk,
-                         f"{mov.ficha.ingreso_paciente.paciente.rut} - {mov.ficha.ingreso_paciente.paciente.nombre}")
-                    ]
-                except MovimientoFicha.DoesNotExist:
-                    pass
 
     class Meta:
         model = MovimientoFicha
@@ -220,6 +206,21 @@ class FormSalidaFicha(forms.ModelForm):
         ),
         required=True
     )
+
+    def clean_ficha(self):
+        ficha_value = self.cleaned_data['ficha']
+
+        # Intentamos obtener la instancia de Ficha usando ficha_value
+        # Aquí debes definir la lógica para convertir ese string a instancia
+        # Por ejemplo, si es el ID numérico:
+        try:
+            print(Ficha.objects.all())
+            print(int(ficha_value))
+            ficha_instance = Ficha.objects.get(numero_ficha_sistema=int(ficha_value))
+        except (ValueError, Ficha.DoesNotExist):
+            raise forms.ValidationError("Ficha no válida o no encontrada.")
+
+        return ficha_instance
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

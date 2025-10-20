@@ -5,12 +5,13 @@ from usuarios.models import UsuarioPersonalizado
 
 
 class FormFicha(forms.ModelForm):
-    numero_ficha = forms.IntegerField(
+    ficha = forms.CharField(
         label='Número de Ficha',
-        widget=forms.NumberInput(attrs={
-            'id': 'numero_ficha',
+        widget=forms.TextInput(attrs={
+            'id': 'id_ficha',
             'class': 'form-control',
             'placeholder': 'Ingrese el número de ficha',
+            'autocomplete': 'off'
         }),
         required=True
     )
@@ -68,7 +69,7 @@ class FormFicha(forms.ModelForm):
     class Meta:
         model = Ficha
         fields = [
-            'numero_ficha',
+            'ficha',
             'observacion',
             'fecha_mov',
             'establecimiento',

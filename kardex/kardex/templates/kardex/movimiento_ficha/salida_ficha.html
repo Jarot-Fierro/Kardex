@@ -185,7 +185,84 @@
         width: '100%'
     });
 </script>
-<script src="{% static 'js/apis/api_select2_ficha.js' %}"></script>
-<script src="{% static 'js/apis/rut_scan_salida.js' %}"></script>
 <script src="{% static 'js/apis/handle_fichas_salida_mov.js' %}"></script>
+<script>
+(function(){
+  document.addEventListener('DOMContentLoaded', function(){
+    var form = document.getElementById('form-salida');
+    if(!form) return;
+    var rutEl = document.getElementById('id_rut');
+    var fichaEl = document.getElementById('id_ficha');
+
+    var apiOK = false;
+    var lastCargaTs = 0;
+
+    // Marca cuando la API terminó de cargar la ficha
+    window.addEventListener('salidaFichaCargada', function(e){
+      apiOK = true;
+      lastCargaTs = Date.now();
+      try { window.__ultimaFichaCargadaId = (e && e.detail && e.detail.fichaId) || null; } catch(_) { /* noop */ }
+    });
+
+    function fetchByRutOrFicha(){
+      var base = 'http://127.0.0.1:8000/api/ingreso-paciente-ficha/';
+      var search = '';
+      var tipo = '';
+      var rut = rutEl && rutEl.value ? String(rutEl.value).trim() : '';
+      var ficha = fichaEl && fichaEl.value ? String(fichaEl.value).trim() : '';
+
+      if(rut){
+        search = rut; tipo = 'rut';
+      } else if(ficha){
+        var normalized = ficha.replace(/^0+/, '');
+        search = normalized || ficha;
+        tipo = 'ficha';
+      } else {
+        return Promise.reject(new Error('Debe ingresar RUT o Ficha antes de enviar.'));
+      }
+
+      var params = new URLSearchParams({ search: search, tipo: tipo });
+      return fetch(base + '?' + params.toString(), { headers: { 'Accept': 'application/json' }})
+        .then(function(res){ return res.json().catch(function(){ return {}; }); })
+        .then(function(data){
+          var items = Array.isArray(data) ? data : (data.results || []);
+          if(Array.isArray(items) && items.length){
+            var first = items[0];
+            if(first && typeof first.id !== 'undefined' && typeof window.cargarDatosSalidaFicha === 'function'){
+              window.cargarDatosSalidaFicha(first.id);
+              return true;
+            }
+          }
+          throw new Error('No se encontró ficha para los datos ingresados.');
+        });
+    }
+
+    // Intercepta el submit para garantizar que la API se consuma antes de enviar
+    form.addEventListener('submit', function(e){
+      var recentlyLoaded = apiOK && (Date.now() - lastCargaTs) < 1500; // ventana corta de validez
+      if(recentlyLoaded){
+        return; // permitir submit natural
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      fetchByRutOrFicha()
+        .then(function(){
+          // Esperar confirmación de carga; fallback por timeout
+          var timeout = setTimeout(function(){ try { form.submit(); } catch(_){} }, 800);
+          var once = function(){
+            try { clearTimeout(timeout); } catch(_){ }
+            window.removeEventListener('salidaFichaCargada', once);
+            setTimeout(function(){ try { form.submit(); } catch(_){ } }, 10);
+          };
+          window.addEventListener('salidaFichaCargada', once);
+        })
+        .catch(function(err){
+          console.warn('[salida_ficha][guard] Error antes de enviar:', err);
+          alert(err && err.message ? err.message : 'Error consultando la API antes de enviar.');
+        });
+    }, true);
+  });
+})();
+</script>
 {% endblock %}
