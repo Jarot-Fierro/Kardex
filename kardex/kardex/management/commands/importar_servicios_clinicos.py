@@ -1,62 +1,45 @@
 import pandas as pd
 from django.core.management.base import BaseCommand
 
-from kardex.models import Profesional, Profesion, Establecimiento
+from kardex.models import ServicioClinico, Establecimiento
 
 
 class Command(BaseCommand):
-    help = 'Importa profesionales desde una hoja llamada "profesional" en un archivo Excel'
+    help = 'Importa servicios clínicos desde una hoja llamada "servicio_clinico" en un archivo Excel'
 
     def add_arguments(self, parser):
         parser.add_argument(
             'excel_path',
             type=str,
-            help='Ruta al archivo Excel que contiene la hoja "profesional"'
+            help='Ruta al archivo Excel que contiene la hoja "servicio_clinico"'
         )
 
     def handle(self, *args, **options):
         excel_path = options['excel_path']
 
         try:
-            df = pd.read_excel(excel_path, sheet_name='profesional')
+            df = pd.read_excel(excel_path, sheet_name='servicio_clinico')
         except Exception as e:
             self.stderr.write(self.style.ERROR(f'❌ Error al leer el archivo: {e}'))
             return
 
-        df.columns = df.columns.str.strip()  # eliminar espacios en nombres de columnas
+        df.columns = df.columns.str.strip()  # Eliminar espacios en los nombres de columnas
 
         total_importados = 0
         total_actualizados = 0
 
         for index, row in df.iterrows():
-            rut = str(row.get('rut', '')).strip()
-            nombres = str(row.get('nombres', '')).strip()
-            correo = str(row.get('correo', '')).strip()
-            anexo = str(row.get('anexo', '')).strip()
+            nombre = str(row.get('nombre', '')).strip()
+            tiempo_horas = row.get('tiempo_horas')
+            correo_jefe = str(row.get('correo_jefe', '')).strip()
             telefono = str(row.get('telefono', '')).strip()
-            profesion_id_raw = row.get('profesion_id')
             establecimiento_id_raw = row.get('establecimiento_id')
 
-            if not rut or not nombres or not correo:
+            if not nombre:
                 self.stdout.write(self.style.WARNING(
-                    f'⚠️ Fila {index + 2} sin rut, nombre o correo. Se omite.'
+                    f'⚠️ Fila {index + 2} sin nombre, tiempo_horas o correo_jefe. Se omite.'
                 ))
                 continue
-
-            # Buscar profesión
-            profesion_obj = None
-            if pd.notna(profesion_id_raw) and profesion_id_raw != '':
-                try:
-                    profesion_id = int(profesion_id_raw)
-                    profesion_obj = Profesion.objects.filter(id=profesion_id).first()
-                    if not profesion_obj:
-                        self.stdout.write(self.style.WARNING(
-                            f'⚠️ Fila {index + 2}: Profesión ID {profesion_id} no encontrada.'
-                        ))
-                except ValueError:
-                    self.stdout.write(self.style.WARNING(
-                        f'⚠️ Fila {index + 2}: Profesión ID inválido: {profesion_id_raw}.'
-                    ))
 
             # Buscar establecimiento
             establecimiento_obj = None
@@ -73,15 +56,13 @@ class Command(BaseCommand):
                         f'⚠️ Fila {index + 2}: Establecimiento ID inválido: {establecimiento_id_raw}.'
                     ))
 
-            # Crear o actualizar profesional
-            obj, created = Profesional.objects.update_or_create(
-                rut=rut.upper(),
+            # Crear o actualizar el servicio clínico
+            obj, created = ServicioClinico.objects.update_or_create(
+                nombre=nombre.upper(),
                 defaults={
-                    'nombres': nombres.upper(),
-                    'correo': correo.lower(),
-                    'anexo': anexo,
+                    'tiempo_horas': int(tiempo_horas),
+                    'correo_jefe': correo_jefe.lower(),
                     'telefono': telefono,
-                    'profesion': profesion_obj,
                     'establecimiento': establecimiento_obj
                 }
             )

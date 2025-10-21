@@ -29,3 +29,18 @@ ESTADO_RESPUESTA = [
     ('RECIBIDO', 'Recibido'),
     ('EN ESPERA', 'En Espera'),
 ]
+
+GENERO_CHOICES = [
+    ('NO INFORMADO', 'No Informado'),
+    ('MASCULINO', 'Masculino'),
+    ('FEMENINO', 'Femenino'),
+    ('NO BINARIO', 'No Binario'),
+    ('GÉNERO FLUIDO', 'Género Fluido'),
+    ('TRANSGÉNERO', 'Transgénero'),
+    ('MUJER TRANS', 'Mujer Trans'),
+    ('HOMBRE TRANS', 'Hombre Trans'),
+    ('INTERSEX', 'Intersex'),
+    ('AGÉNERO', 'Agénero'),
+    ('PREFIERO NO DECIRLO', 'Prefiero no decirlo'),
+    ('OTRO', 'Otro'),
+]

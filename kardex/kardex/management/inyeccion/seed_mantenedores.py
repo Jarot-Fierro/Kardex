@@ -1,8 +1,8 @@
-from typing import Dict, List
 import random
+from typing import Dict, List
 
+from kardex.management.inyeccion.utils import random_address, random_phone, unique_email
 from kardex.models import Comuna, Establecimiento, Prevision, ServicioClinico, Profesion
-from .utils import random_address, random_phone, unique_email
 
 
 def seed_comunas() -> Dict[str, Comuna]:

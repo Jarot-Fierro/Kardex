@@ -2,7 +2,7 @@ from django.db import models
 from simple_history.models import HistoricalRecords
 
 from config.abstract import StandardModel
-from kardex.choices import ESTADO_CIVIL
+from kardex.choices import ESTADO_CIVIL, GENERO_CHOICES
 
 
 class Paciente(StandardModel):
@@ -23,11 +23,13 @@ class Paciente(StandardModel):
                                                           verbose_name='Usar RUT de la madre como responsable'
                                                           )
 
-    pasaporte = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name='Pasaporte')
+    pasaporte = models.CharField(max_length=50, null=True, blank=True, verbose_name='Pasaporte')
     nombre_social = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre Social')
+    genero = models.CharField(max_length=20, choices=GENERO_CHOICES, default='NO INFORMADO', null=False,
+                              verbose_name='Estado Civil')
 
     # DATOS DE NACIMIENTO
-    fecha_nacimiento = models.DateField(null=False, verbose_name='Fecha de Nacimiento')
+    fecha_nacimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de Nacimiento')
     sexo = models.CharField(max_length=10, choices=[('MASCULINO', 'Masculino'), ('FEMENINO', 'Femenino')], null=False,
                             verbose_name='Sexo')
     estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL, null=False, verbose_name='Estado Civil')
@@ -41,7 +43,7 @@ class Paciente(StandardModel):
     # CONTACTO Y DIRECCIÓN
     direccion = models.CharField(max_length=200, verbose_name='Dirección', null=False)
     sin_telefono = models.BooleanField(default=False)
-    numero_telefono1 = models.CharField(max_length=15, verbose_name='Número de Teléfono', null=False)
+    numero_telefono1 = models.CharField(max_length=15, verbose_name='Número de Teléfono', null=True, blank=True)
     numero_telefono2 = models.CharField(max_length=15, verbose_name='Número de Teléfono 2', null=True, blank=True)
     ocupacion = models.CharField(max_length=100, null=True, blank=True, verbose_name='Ocupación')
 
@@ -59,8 +61,8 @@ class Paciente(StandardModel):
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.SET_NULL, null=True, blank=True,
                                 verbose_name='Usuario', related_name='pacientes_usuario')
 
-    genero = models.ForeignKey('kardex.Genero', on_delete=models.SET_NULL, null=True, blank=True,
-                               verbose_name='Genero', related_name='pacientes_genero')
+    usuario_anterior = models.ForeignKey('kardex.UsuarioAnterior', on_delete=models.PROTECT, null=True, blank=True,
+                                         verbose_name='UsuarioAnterior', related_name='usuarios_anteriores')
 
     history = HistoricalRecords()
 

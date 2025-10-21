@@ -26,6 +26,8 @@ class Command(BaseCommand):
         total_importadas = 0
         total_actualizadas = 0
 
+        pais, _ = Pais.objects.get_or_create(nombre='Chile', defaults={'cod_pais': 'CL'})
+
         for index, row in df.iterrows():
             nombre = str(row.get('nombre', '')).strip()
             codigo = str(row.get('codigo', '')).strip()

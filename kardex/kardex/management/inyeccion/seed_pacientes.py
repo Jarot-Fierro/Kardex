@@ -1,21 +1,21 @@
-from typing import Dict, List
 import random
 from datetime import date, timedelta
+from typing import Dict, List
 
 from django.core.exceptions import ValidationError
 
-from kardex.models import Comuna, Prevision, Establecimiento, Paciente, IngresoPaciente, Ficha
 from kardex.choices import ESTADO_CIVIL
+from kardex.management.inyeccion.utils import make_rut, unique_code, random_name, random_address, random_phone
+from kardex.models import Comuna, Prevision, Establecimiento, Paciente, IngresoPaciente, Ficha
 from usuarios.models import UsuarioPersonalizado
-from .utils import make_rut, unique_code, random_name, random_address, random_phone
 
 
 def generate_pacientes_e_ingresos(
-    count: int,
-    comunas_by_name: Dict[str, Comuna],
-    previsiones: List[Prevision],
-    establecimientos: List[Establecimiento],
-    seed_user: UsuarioPersonalizado,
+        count: int,
+        comunas_by_name: Dict[str, Comuna],
+        previsiones: List[Prevision],
+        establecimientos: List[Establecimiento],
+        seed_user: UsuarioPersonalizado,
 ) -> None:
     used_ruts = set(Paciente.objects.exclude(rut__isnull=True).values_list('rut', flat=True))
     used_nies = set(Paciente.objects.exclude(nie__isnull=True).values_list('nie', flat=True))

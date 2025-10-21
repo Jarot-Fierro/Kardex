@@ -1,9 +1,9 @@
 import random
 from typing import List
 
+from kardex.management.inyeccion.utils import random_name, make_rut, unique_email, random_phone
 from kardex.models import Profesion, Establecimiento
 from kardex.models import Profesional
-from .utils import random_name, make_rut, unique_email, random_phone
 
 
 def generate_profesionales(count: int, profesiones: List[Profesion], establecimientos: List[Establecimiento]) -> None:

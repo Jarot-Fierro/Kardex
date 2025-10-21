@@ -100,21 +100,20 @@ class FichaDetailView(PermissionRequiredMixin, DetailView):
 
 class FichaCreateView(PermissionRequiredMixin, CreateView):
     """
-    Esta vista se utiliza como vista de CONSULTA/EDICIÓN rápida.
-    - Permite entrar sin pk (URL /fichas/crear/), mostrar el formulario vacío.
-    - Cuando se envía el formulario, si viene un "ficha_id" en POST, ACTUALIZA esa ficha.
-      Si no viene "ficha_id", NO crea una nueva ficha (la creación real la hace FichaCreacionView en otro lugar).
+    Vista para crear o editar fichas:
+    - Si no viene ficha_id en POST, crea una ficha nueva.
+    - Si viene ficha_id, actualiza la ficha existente.
     """
     template_name = 'kardex/ficha/form.html'
     model = Ficha
     form_class = FormFicha
     success_url = reverse_lazy('kardex:ficha_list')
 
-    permission_required = 'kardex.change_ficha'
+    permission_required = 'kardex.change_ficha'  # Cambiar si quieres que permita crear
     raise_exception = True
 
     def post(self, request, *args, **kwargs):
-        # Si viene ficha_id, trabajamos en modo actualización
+        self.object = None
         ficha_id = (request.POST.get('ficha_id') or '').strip()
         instance = None
         if ficha_id:
@@ -127,36 +126,32 @@ class FichaCreateView(PermissionRequiredMixin, CreateView):
                 return self.render_to_response(self.get_context_data(form=self.get_form(), open_modal=True))
 
         form = self.get_form()
-        # Vincular instancia si estamos editando
         if instance is not None:
-            form.instance = instance
+            form.instance = instance  # Edición
+        # Si instance es None, form.save() creará una nueva ficha
 
         if form.is_valid():
-            if instance is None:
-                # No creamos fichas desde aquí; solo consulta/edición
-                from django.contrib import messages
-                messages.info(request, 'Esta vista no crea fichas nuevas. Use la vista de creación para ello.')
-                return self.render_to_response(self.get_context_data(form=form, open_modal=True))
-
-            form.save()
+            saved_obj = form.save()
+            self.object = saved_obj
             from django.contrib import messages
             from django.shortcuts import redirect
-            messages.success(request, 'Ficha actualizada correctamente')
+            if instance:
+                messages.success(request, 'Ficha actualizada correctamente')
+            else:
+                messages.success(request, 'Ficha creada correctamente')
             return redirect(self.success_url)
 
         from django.contrib import messages
         messages.error(request, 'Hay errores en el formulario')
-        # Mantener la instancia para re-render
         self.object = instance
         return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Consulta/Edición de Ficha'
+        context['title'] = 'Crear / Editar Ficha'
         context['list_url'] = self.success_url
-        context['action'] = 'edit'
+        context['action'] = 'edit' if getattr(self, 'object', None) else 'create'
         context['module_name'] = MODULE_NAME
-        # Exponer la ficha si existe en self.object para que el template cargue hidden ficha_id
         if getattr(self, 'object', None) is not None:
             context['ficha'] = self.object
         return context

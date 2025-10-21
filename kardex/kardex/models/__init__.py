@@ -9,3 +9,4 @@ from .prevision import Prevision
 from .profesion import Profesion
 from .profesionales import Profesional
 from .servicio_clinico import ServicioClinico
+from .usuario_anterior import UsuarioAnterior

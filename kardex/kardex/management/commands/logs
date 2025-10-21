@@ -1,0 +1,39 @@
+PROFESIONALES
+⚠️ Fila 72 sin rut, nombre o correo. Se omite.
+
+
+SERVICIOS CLINICOS
+⚠️ Fila 99 sin nombre, tiempo_horas o correo_jefe. Se omite.
+⚠️ Fila 143 sin nombre, tiempo_horas o correo_jefe. Se omite.
+⚠️ Fila 172 sin nombre, tiempo_horas o correo_jefe. Se omite.
+
+PACIENTES
+(.venv) PS C:\Users\Informatica\PycharmProjects\Kardex\kardex> python manage.py importar_pacientes C:\Users\Informatica\Desktop\some2025\db_some\db_some_excel_maestra.xlsx
+⚠️ Fila 1455: Faltan datos obligatorios. Se omite.
+❌ Error en fila 10804: cannot convert float NaN to integer
+❌ Error en fila 11035: cannot convert float NaN to integer
+❌ Error en fila 12325: cannot convert float NaN to integer
+⚠️ Fila 14344: Faltan datos obligatorios. Se omite.
+❌ Error en fila 22225: cannot convert float NaN to integer
+❌ Error en fila 22423: cannot convert float NaN to integer
+⚠️ Fila 39771: Faltan datos obligatorios. Se omite.
+❌ Error en fila 69886: cannot convert float NaN to integer
+❌ Error en fila 71261: cannot convert float NaN to integer
+⚠️ Fila 74347: Faltan datos obligatorios. Se omite.
+❌ Error en fila 75232: cannot convert float NaN to integer
+❌ Error en fila 81855: cannot convert float NaN to integer
+❌ Error en fila 102036: cannot convert float NaN to integer
+⚠️ Fila 118483: Faltan datos obligatorios. Se omite.
+⚠️ Fila 118626: Faltan datos obligatorios. Se omite.
+⚠️ Fila 138254: Faltan datos obligatorios. Se omite.
+❌ Error en fila 147136: cannot convert float NaN to integer
+❌ Error en fila 147906: cannot convert float NaN to integer
+❌ Error en fila 190684: cannot convert float NaN to integer
+⚠️ Fila 190907: Faltan datos obligatorios. Se omite.
+⚠️ Fila 206178: Faltan datos obligatorios. Se omite.
+❌ Error en fila 207644: cannot convert float NaN to integer
+❌ Error en fila 217067: cannot convert float NaN to integer
+❌ Error en fila 234743: cannot convert float NaN to integer
+❌ Error en fila 239801: cannot convert float NaN to integer
+⚠️ Fila 246314: Faltan datos obligatorios. Se omite.
+✅ Pacientes procesados: 247072 nuevos, 2 actualizados.

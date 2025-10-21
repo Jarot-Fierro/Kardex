@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from kardex.management.inyeccion.utils import get_or_create_seed_user
 from .seed_mantenedores import (
     seed_comunas,
     seed_establecimientos,
@@ -10,7 +11,6 @@ from .seed_mantenedores import (
 )
 from .seed_pacientes import generate_pacientes_e_ingresos
 from .seed_profesionales import generate_profesionales
-from .utils import get_or_create_seed_user
 
 
 class Command(BaseCommand):
