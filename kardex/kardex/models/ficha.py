@@ -5,8 +5,8 @@ from config.abstract import StandardModel
 
 
 class Ficha(StandardModel):
-    numero_ficha_sistema = models.IntegerField(unique=True, null=True, blank=True, verbose_name='Número de Ficha')
-    numero_ficha_tarjeta = models.IntegerField(unique=True, null=True, blank=True,
+    numero_ficha_sistema = models.IntegerField(null=True, blank=True, verbose_name='Número de Ficha')
+    numero_ficha_tarjeta = models.IntegerField(null=True, blank=True,
                                                verbose_name='Número de Ficha Tarjeta')
     pasivado = models.BooleanField(default=False, verbose_name='Pasivado')
     observacion = models.TextField(null=True, blank=True, verbose_name='Observación')
@@ -15,6 +15,8 @@ class Ficha(StandardModel):
                                 verbose_name='Usuario', related_name='fichas_usuarios')
     profesional = models.ForeignKey('kardex.Profesional', on_delete=models.PROTECT, null=True, blank=True,
                                     verbose_name='Profesional', related_name='fichas_profesionales')
+
+    fecha_creacion_anterior = models.DateTimeField(null=True, blank=True)
 
     paciente = models.ForeignKey('kardex.Paciente', on_delete=models.PROTECT, null=True, blank=True,
                                  verbose_name='Paciente', related_name='fichas_pacientes')
@@ -45,14 +47,30 @@ class Ficha(StandardModel):
             return f"Ficha #{numero} - Sin paciente"
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            super().save(*args, **kwargs)
-            if not self.numero_ficha_sistema:
+        creando = self.pk is None
+        super().save(*args, **kwargs)  # Guardamos primero para tener el PK
+
+        if creando and not self.numero_ficha_sistema and self.establecimiento:
+            # Obtener el máximo actual
+            max_ficha = Ficha.objects.filter(establecimiento=self.establecimiento) \
+                .exclude(pk=self.pk) \
+                .aggregate(models.Max('numero_ficha_sistema'))['numero_ficha_sistema__max']
+
+            if max_ficha is not None:
+                self.numero_ficha_sistema = max_ficha + 1
+            else:
+                # Fallback: usar el ID como número de ficha si no hay registros
                 self.numero_ficha_sistema = self.pk
-                super().save(update_fields=['numero_ficha_sistema'])
-        else:
-            super().save(*args, **kwargs)
+
+            # Guardamos solo el campo actualizado para evitar loops
+            super().save(update_fields=['numero_ficha_sistema'])
 
     class Meta:
         verbose_name = 'Ficha'
         verbose_name_plural = 'Fichas'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['numero_ficha_sistema', 'establecimiento'],
+                name='unique_ficha_por_establecimiento'
+            )
+        ]

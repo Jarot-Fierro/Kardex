@@ -1,7 +1,6 @@
 from .comuna import Comuna
 from .establecimiento import Establecimiento
 from .ficha import Ficha
-from .genero import Genero
 from .movimiento_ficha import MovimientoFicha
 from .pacientes import Paciente
 from .pais import Pais

@@ -25,7 +25,7 @@ class Paciente(StandardModel):
 
     pasaporte = models.CharField(max_length=50, null=True, blank=True, verbose_name='Pasaporte')
     nombre_social = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre Social')
-    genero = models.CharField(max_length=20, choices=GENERO_CHOICES, default='NO INFORMADO', null=False,
+    genero = models.CharField(max_length=20, choices=GENERO_CHOICES, default='NO INFORMADO',
                               verbose_name='Estado Civil')
 
     # DATOS DE NACIMIENTO
@@ -52,6 +52,7 @@ class Paciente(StandardModel):
     extranjero = models.BooleanField(default=False, verbose_name='Extranjero')
     fallecido = models.BooleanField(default=False, verbose_name='Fallecido')
     fecha_fallecimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de Fallecimiento')
+    alergico_a = models.CharField(null=True, blank=True, max_length=200, verbose_name='Alergico a')
 
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.PROTECT, null=False,
                                verbose_name='Comuna', related_name='pacientes_comuna')
@@ -74,23 +75,63 @@ class Paciente(StandardModel):
         verbose_name_plural = 'Pacientes'
 
     def save(self, *args, **kwargs):
-        is_new = self.pk is None  # Saber si es un nuevo registro
+        # Normalizar campos texto
+        if self.rut:
+            self.rut = self.rut.strip().lower()
+        if self.nip:
+            self.nip = self.nip.strip().upper()
+        if self.nombre:
+            self.nombre = self.nombre.strip().upper()
+        if self.rut_madre:
+            self.rut_madre = self.rut_madre.strip().upper()
+        if self.apellido_paterno:
+            self.apellido_paterno = self.apellido_paterno.strip().upper()
+        if self.apellido_materno:
+            self.apellido_materno = self.apellido_materno.strip().upper()
+        if self.rut_responsable_temporal:
+            self.rut_responsable_temporal = self.rut_responsable_temporal.strip().upper()
+        if self.pasaporte:
+            self.pasaporte = self.pasaporte.strip().upper()
+        if self.nombre_social:
+            self.nombre_social = self.nombre_social.strip().upper()
+        if self.genero:
+            self.genero = self.genero.strip().upper()
+        if self.estado_civil:
+            self.estado_civil = self.estado_civil.strip().upper()
+        if self.nombres_padre:
+            self.nombres_padre = self.nombres_padre.strip().upper()
+        if self.nombres_madre:
+            self.nombres_madre = self.nombres_madre.strip().upper()
+        if self.nombre_pareja:
+            self.nombre_pareja = self.nombre_pareja.strip().upper()
+        if self.representante_legal:
+            self.representante_legal = self.representante_legal.strip().upper()
+        if self.direccion:
+            self.direccion = self.direccion.strip().upper()
+        if self.numero_telefono1:
+            self.numero_telefono1 = self.numero_telefono1.strip()
+        if self.numero_telefono2:
+            self.numero_telefono2 = self.numero_telefono2.strip()
+        if self.ocupacion:
+            self.ocupacion = self.ocupacion.strip().upper()
+        if self.alergico_a:
+            self.alergico_a = self.alergico_a.strip().upper()
 
-        # Recorrer todos los campos del modelo
-        for field in self._meta.get_fields():
-            # Solo nos interesa CharField y TextField
-            if isinstance(field, (models.CharField, models.TextField)):
-                value = getattr(self, field.name, None)
-                if value:
-                    if field.name == 'rut':
-                        setattr(self, field.name, value.lower())
-                    else:
-                        setattr(self, field.name, value.upper())
+        # Si es creación y no tiene código, hacer primer save sin historial para obtener el ID
+        is_creating = self.pk is None
+        if is_creating and not self.codigo:
+            # deshabilitar historial para este primer guardado
+            setattr(self, '_disable_history', True)
+            super().save(*args, **kwargs)
+            # limpiar flag para que el próximo guardado sí cree historial
+            if hasattr(self, '_disable_history'):
+                delattr(self, '_disable_history')
 
-        # Primero guarda el objeto para que se genere el ID
-        super().save(*args, **kwargs)
-
-        # Si es nuevo y no tenía código, ahora lo generamos usando el ID
-        if is_new and not self.codigo:
+            # generar y asignar código basado en el ID
             self.codigo = f"PAC-{self.pk:07d}"
-            super().save(update_fields=["codigo"])  # Solo actualiza el campo código
+            # ahora guardar normalmente (esto creará un único registro en el historial con el código)
+            super().save(update_fields=["codigo"])  # no usar signals, ni crear segundo historial previo
+            return
+
+        # Comportamiento normal para updates o creaciones con código previamente definido
+        super().save(*args, **kwargs)

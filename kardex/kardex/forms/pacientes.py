@@ -1,6 +1,7 @@
 from django import forms
 
-from kardex.models import Paciente, Comuna, Prevision, Genero
+from kardex.choices import GENERO_CHOICES
+from kardex.models import Paciente, Comuna, Prevision
 from usuarios.models import UsuarioPersonalizado
 
 
@@ -316,12 +317,11 @@ class FormPaciente(forms.ModelForm):
         required=True
     )
 
-    genero = forms.ModelChoiceField(
-        label='Género',
-        empty_label='Seleccione una Género',
-        queryset=Genero.objects.filter(status='ACTIVE'),
-        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'genero_paciente'}),
-        required=False
+    genero = forms.ChoiceField(
+        label='Estado Civil',
+        choices=GENERO_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'genero_paciente'}),
+        required=True
     )
 
     prevision = forms.ModelChoiceField(
