@@ -28,6 +28,8 @@ ESTADO_RESPUESTA = [
     ('ENVIADO', 'Enviado'),
     ('RECIBIDO', 'Recibido'),
     ('EN ESPERA', 'En Espera'),
+    ('TRASPASDO', 'Traspasado'),
+    ('SIN TRASPASO', 'Traspaso'),
 ]
 
 GENERO_CHOICES = [

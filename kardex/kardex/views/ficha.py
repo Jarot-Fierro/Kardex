@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
+from django.views import View
+from django.shortcuts import redirect
+from django.contrib import messages
 
 from kardex.forms.fichas import FormFicha
 from kardex.mixin import DataTableMixin
@@ -188,6 +191,27 @@ class FichaUpdateView(PermissionRequiredMixin, UpdateView):
         context['action'] = 'edit'
         context['module_name'] = MODULE_NAME
         return context
+
+
+class TogglePasivadoFichaView(PermissionRequiredMixin, View):
+    permission_required = 'kardex.change_ficha'
+    raise_exception = True
+
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            ficha = Ficha.objects.get(pk=pk)
+        except Ficha.DoesNotExist:
+            messages.error(request, 'La ficha indicada no existe.')
+            return redirect('kardex:paciente_query')
+
+        ficha.pasivado = not bool(ficha.pasivado)
+        ficha.save(update_fields=['pasivado'])
+        if ficha.pasivado:
+            messages.success(request, 'La ficha fue pasivada correctamente.')
+        else:
+            messages.success(request, 'La ficha fue despasivada correctamente.')
+        # Volver a la pantalla de consulta/creación
+        return redirect('kardex:paciente_query')
 
 
 class FichaDeleteView(PermissionRequiredMixin, DeleteView):

@@ -76,6 +76,7 @@ urlpatterns = [
     path('fichas/<int:pk>/editar/', FichaUpdateView.as_view(), name='ficha_update'),
     path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
+    path('fichas/<int:pk>/toggle-pasivar/', TogglePasivadoFichaView.as_view(), name='ficha_toggle_pasivar'),
 
     # Vistas básicas para Movimientos de Ficha
     path('movimientos-ficha/', MovimientoFichaListView.as_view(), name='movimiento_ficha_list'),
@@ -100,6 +101,7 @@ urlpatterns = [
     # Nuevas vistas de movimientos (Recepción y Salida)
     path('movimientos/recepcion/', RecepcionFichaView.as_view(), name='recepcion_ficha'),
     path('movimientos/salida/', SalidaFichaView.as_view(), name='salida_ficha'),
+    path('movimientos/traspaso/', TraspasoFichaView.as_view(), name='traspaso_ficha'),
 
 ]
 

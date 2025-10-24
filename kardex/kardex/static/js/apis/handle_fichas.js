@@ -39,6 +39,33 @@ function cargarDatosFicha(fichaId) {
                 .attr('aria-disabled', 'false')
                 .attr('href', stickersUrl);
 
+            // Botón Pasivar/Despasivar: siempre apunta a la última ficha cargada
+            const $btnPasivar = $('#btn-pasivar');
+            if ($btnPasivar.length) {
+                const toggleUrl = `/kardex/fichas/${data.id}/toggle-pasivar/`;
+                $btnPasivar
+                    .removeClass('disabled')
+                    .attr('aria-disabled', 'false')
+                    .attr('href', toggleUrl)
+                    .text(data.pasivado ? 'Despasivar' : 'Pasivar');
+                // Ajustar estilo según estado
+                $btnPasivar.toggleClass('btn-outline-danger', !!data.pasivado);
+                $btnPasivar.toggleClass('btn-outline-warning', !data.pasivado);
+            }
+
+            // Botón Pasivar/Despasivar en sección Gestión
+            const $btnPasivarGestion = $('#btn-pasivar-gestion');
+            if ($btnPasivarGestion.length) {
+                const toggleUrl = `/kardex/fichas/${data.id}/toggle-pasivar/`;
+                $btnPasivarGestion
+                    .removeClass('disabled')
+                    .attr('aria-disabled', 'false')
+                    .attr('href', toggleUrl)
+                    .text(data.pasivado ? 'Despasivar' : 'Pasivar');
+                $btnPasivarGestion.toggleClass('btn-danger', !!data.pasivado);
+                $btnPasivarGestion.toggleClass('btn-info', !data.pasivado);
+            }
+
             // --- Sincronizar los campos select2 / selects ---
             // Ficha
             const fichaOption = new Option(data.numero_ficha_sistema || data.numero_ficha || data.id, data.id, true, true);

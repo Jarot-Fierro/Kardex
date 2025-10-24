@@ -10,15 +10,20 @@ from kardex.choices import ESTADO_RESPUESTA
 class MovimientoFicha(StandardModel):
     fecha_envio = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de Envío')
     fecha_recepcion = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de Recepción')
+    fecha_traspaso = models.DateTimeField(null=True, blank=True, verbose_name='Fecha de Traspaso')
 
     observacion_envio = models.TextField(null=True, blank=True, verbose_name='Observación de Envío')
     observacion_recepcion = models.TextField(null=True, blank=True, verbose_name='Observación de Recepción')
+    observacion_traspaso = models.TextField(null=True, blank=True, verbose_name='Observación de Traspaso')
 
     estado_envio = models.CharField(max_length=50, choices=ESTADO_RESPUESTA,
                                     default='ENVIADO', null=True, blank=True, verbose_name='Estado de Envío')
 
     estado_recepcion = models.CharField(max_length=50, choices=ESTADO_RESPUESTA,
                                         default='EN ESPERA', null=True, blank=True, verbose_name='Estado de Recepción')
+
+    estado_traspaso = models.CharField(max_length=50, choices=ESTADO_RESPUESTA,
+                                       default='SIN TRASPASO', null=True, blank=True, verbose_name='Estado de Traspaso')
 
     servicio_clinico_envio = models.ForeignKey('kardex.ServicioClinico', on_delete=models.PROTECT,
                                                verbose_name='Servicio Clínico de Envío',
@@ -31,6 +36,12 @@ class MovimientoFicha(StandardModel):
                                                    related_name='recepciones_en_este_servicio',
                                                    null=True, blank=True,
                                                    )
+
+    servicio_clinico_traspaso = models.ForeignKey('kardex.ServicioClinico', on_delete=models.PROTECT,
+                                                  verbose_name='Servicio Clínico de Traspaso',
+                                                  related_name='traspaso_en_este_servicio',
+                                                  null=True, blank=True,
+                                                  )
     usuario_envio = models.ForeignKey('usuarios.UsuarioPersonalizado', null=True, blank=True, on_delete=models.PROTECT,
                                       verbose_name='Usuario Envio', related_name='movimientos_enviados',
                                       )
@@ -39,6 +50,11 @@ class MovimientoFicha(StandardModel):
                                           on_delete=models.PROTECT,
                                           verbose_name='Usuario Recepcion', related_name='movimientos_recepcionados',
                                           )
+
+    usuario_traspaso = models.ForeignKey('usuarios.UsuarioPersonalizado', null=True, blank=True,
+                                         on_delete=models.PROTECT,
+                                         verbose_name='Usuario Traspaso', related_name='movimientos_traspasados',
+                                         )
 
     profesional_envio = models.ForeignKey('kardex.Profesional', null=True, blank=True, on_delete=models.PROTECT,
                                           verbose_name='Profesional Envio',
@@ -49,6 +65,11 @@ class MovimientoFicha(StandardModel):
                                               verbose_name='Profesional Recepcion',
                                               related_name='movimientos_recepcionados_profesionales',
                                               )
+
+    profesional_traspaso = models.ForeignKey('kardex.Profesional', null=True, blank=True, on_delete=models.PROTECT,
+                                             verbose_name='Profesional Recepcion',
+                                             related_name='movimientos_traspaso_profesionales',
+                                             )
 
     ficha = models.ForeignKey('kardex.Ficha', null=True, blank=True, on_delete=models.PROTECT,
                               verbose_name='Ficha')

@@ -8,7 +8,7 @@ $(document).ready(function () {
             placeholder: 'Buscar por RUT',
             width: '100%',
             ajax: {
-                url: 'http://127.0.0.1:8000/api/ingreso-paciente-ficha/',
+                url: 'http://10.8.85.141:8000/api/ingreso-paciente-ficha/',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -41,7 +41,7 @@ $(document).ready(function () {
         lastQueriedRut = rut;
 
         $.ajax({
-            url: 'http://127.0.0.1:8000/api/ingreso-paciente-ficha/',
+            url: 'http://10.8.85.141:8000/api/ingreso-paciente-ficha/',
             method: 'GET',
             dataType: 'json',
             data: { search: rut, tipo: 'rut' },

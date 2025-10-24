@@ -260,6 +260,94 @@ class FormSalidaFicha(forms.ModelForm):
         ]
 
 
+class FormTraspasoFicha(forms.ModelForm):
+    fecha_traspaso = forms.DateTimeField(
+        label='Fecha de Traspaso',
+        widget=forms.DateTimeInput(attrs={
+            'id': 'fecha_traspaso_ficha',
+            'class': 'form-control',
+            'type': 'datetime-local'
+        }),
+        required=False
+    )
+
+    rut = forms.CharField(
+        label='RUT',
+        required=False,
+        widget=forms.TextInput(attrs={
+            'id': 'id_rut',
+            'class': 'form-control id_rut',
+            'placeholder': 'Ingrese RUT (sin puntos, con guión)'
+        })
+    )
+
+    nombre = forms.CharField(
+        label='Nombre del paciente',
+        required=True,
+        widget=forms.TextInput(attrs={
+            'id': 'nombre_mov',
+            'class': 'form-control',
+            'readonly': 'readonly'
+        })
+    )
+
+    servicio_clinico_traspaso = forms.ModelChoiceField(
+        label='Servicio Clínico de Traspaso',
+        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        empty_label="Seleccione un Servicio Clínico",
+        widget=forms.Select(
+            attrs={
+                'id': 'servicio_clinico_ficha',
+                'class': 'form-control select2',
+            }
+        ),
+        required=True
+    )
+
+    ficha = forms.CharField(
+        label='Ficha',
+        widget=forms.TextInput(
+            attrs={
+                'id': 'id_ficha',
+                'class': 'form-control id_ficha'
+            }
+        ),
+        required=True
+    )
+
+    profesional_traspaso = forms.ModelChoiceField(
+        label='Profesional que traslada',
+        empty_label="Seleccione un Profesional",
+        queryset=Profesional.objects.filter(status='ACTIVE').all(),
+        widget=forms.Select(
+            attrs={
+                'id': 'profesional_movimiento',
+                'class': 'form-control select2',
+            }
+        ),
+        required=True
+    )
+
+    def clean_ficha(self):
+        ficha_value = self.cleaned_data['ficha']
+        try:
+            ficha_instance = Ficha.objects.get(numero_ficha_sistema=int(ficha_value))
+        except (ValueError, Ficha.DoesNotExist):
+            raise forms.ValidationError("Ficha no válida o no encontrada.")
+        return ficha_instance
+
+    class Meta:
+        model = MovimientoFicha
+        fields = [
+            'fecha_traspaso',
+            'servicio_clinico_traspaso',
+            'ficha',
+            'profesional_traspaso',
+            'rut',
+            'nombre',
+        ]
+
+
 class FiltroSalidaFichaForm(forms.Form):
     hora_inicio = forms.DateTimeField(
         label="Hora inicio",

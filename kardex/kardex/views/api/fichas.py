@@ -45,7 +45,7 @@ class FichaViewSet(viewsets.ReadOnlyModelViewSet):
                 'establecimiento',
                 'usuario',
                 'profesional'
-            )
+            ).filter(establecimiento=user.establecimiento)
             .order_by('id')
         )
 

@@ -1,12 +1,12 @@
 import base64
 from io import BytesIO
+from types import SimpleNamespace
 
 import barcode
 from barcode.writer import ImageWriter
 from django.contrib.auth.decorators import permission_required
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from types import SimpleNamespace
 
 from kardex.models import Ficha
 from kardex.models import Paciente
@@ -48,10 +48,12 @@ def pdf_index(request, ficha_id=None, paciente_id=None):
     rut_paciente = getattr(paciente, 'rut', '') or ''
     numero_rut = obtener_numero_rut(rut_paciente)
     # Fallbacks por si no hay RUT válido
-    if not numero_rut:
+    if not rut_paciente:
         # Usar el código interno de paciente si existe, de lo contrario el número de ficha del sistema
-        numero_rut = (getattr(paciente, 'codigo', '') or str(getattr(ficha, 'numero_ficha_sistema', '') or '')).strip()
-    codigo_barras_base64 = generar_barcode_base64(numero_rut)
+        rut_paciente = (
+                    getattr(paciente, 'codigo', '') or str(getattr(ficha, 'numero_ficha_sistema', '') or '')).strip()
+    codigo_barras_base64 = generar_barcode_base64(rut_paciente)
+    print(rut_paciente)
 
     context = {
         'paciente': paciente,

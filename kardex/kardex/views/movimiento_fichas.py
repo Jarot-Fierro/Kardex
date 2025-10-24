@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 
 from kardex.forms.movimiento_ficha import FormEntradaFicha, FiltroSalidaFichaForm
 from kardex.forms.movimiento_ficha import FormSalidaFicha
+from kardex.forms.movimiento_ficha import FormTraspasoFicha
 from kardex.mixin import DataTableMixin
 from kardex.models import MovimientoFicha
 from kardex.models import Profesional
@@ -306,6 +307,69 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
 
 
 MODULE_NAME = 'Movimientos de Ficha'
+
+
+class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    template_name = 'kardex/movimiento_ficha/traspaso_ficha.html'
+    model = MovimientoFicha
+    permission_required = 'kardex.view_movimientoficha'
+    raise_exception = True
+
+    def post(self, request, *args, **kwargs):
+        form = FormTraspasoFicha(request.POST)
+        if form.is_valid():
+            ficha = form.cleaned_data.get('ficha')
+            profesional_traspaso = form.cleaned_data.get('profesional_traspaso')
+            servicio_clinico_traspaso = form.cleaned_data.get('servicio_clinico_traspaso')
+            fecha_traspaso = form.cleaned_data.get('fecha_traspaso')
+
+            try:
+                mov = MovimientoFicha.objects.filter(
+                    ficha=ficha,
+                    fecha_envio__isnull=False
+                ).order_by('-fecha_envio').first()
+            except Exception:
+                mov = None
+
+            if not mov:
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'ok': False, 'errors': {'ficha': ['No existe un envío previo para esta ficha.']}}, status=400)
+                messages.error(request, 'No existe un envío previo para esta ficha.')
+                context = self.get_context_data(form=form)
+                return self.render_to_response(context)
+
+            # Registrar traspaso
+            mov.usuario_traspaso = request.user
+            mov.profesional_traspaso = profesional_traspaso
+            mov.servicio_clinico_traspaso = servicio_clinico_traspaso
+            mov.fecha_traspaso = fecha_traspaso or now()
+            # El estado_traspaso se mantiene según la lógica del modelo (no modificarlo aquí)
+            mov.save()
+
+            messages.success(request, 'Traspaso registrado correctamente.')
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'ok': True, 'id': mov.id})
+            return self.get(request, *args, **kwargs)
+        else:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'ok': False, 'errors': form.errors}, status=400)
+            messages.error(request, 'El formulario contiene errores. Por favor, verifique los campos.')
+            context = self.get_context_data(form=form)
+            return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = kwargs.get('form') or FormTraspasoFicha()
+        establecimiento = getattr(self.request.user, 'establecimiento', None)
+        if establecimiento and 'profesional_traspaso' in form.fields:
+            form.fields['profesional_traspaso'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
+
+        context.update({
+            'title': 'Traspaso de Fichas',
+            'list_url': reverse_lazy('kardex:traspaso_ficha'),
+            'form': form,
+        })
+        return context
 
 
 class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
