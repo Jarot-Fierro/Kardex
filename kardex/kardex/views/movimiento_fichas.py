@@ -204,6 +204,11 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         'observacion_envio__icontains',
     ]
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # ✅ Inyectamos el usuario logueado al form
+        return kwargs
+
     def get(self, request, *args, **kwargs):
         # Si es llamada AJAX para DataTable
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('datatable'):
@@ -211,7 +216,7 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        form = FormSalidaFicha(request.POST)
+        form = FormSalidaFicha(request.POST, user=request.user)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.usuario_envio = request.user
@@ -237,7 +242,7 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         establecimiento = getattr(self.request.user, 'establecimiento', None)
 
         # Formulario principal
-        form = kwargs.get('form') or FormSalidaFicha()
+        form = kwargs.get('form') or FormSalidaFicha(user=self.request.user)
         if establecimiento and 'profesional_envio' in form.fields:
             form.fields['profesional_envio'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
 

@@ -34,15 +34,13 @@ class FormEntradaFicha(forms.ModelForm):
         })
     )
 
-    servicio_clinico_recepcion = forms.ModelChoiceField(
+    servicio_clinico_recepcion = forms.CharField(
         label='Servicio Clínico de Recepción',
-        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
-        empty_label="Seleccione un Servicio Clínico",
-        widget=forms.Select(
+        widget=forms.TextInput(
             attrs={
                 'id': 'servicio_clinico_ficha',
-                'class': 'form-control select2',
-                'readonly': 'readonly'
+                'class': 'form-control',
+                'readonly': 'readonly',
             }
         ),
         required=False
@@ -83,36 +81,52 @@ class FormEntradaFicha(forms.ModelForm):
         required=True
     )
 
+    def get_initial(self):
+        initial = super().get_initial()
+        user = self.request.user
+        if hasattr(user, 'servicio_clinico'):
+            initial['servicio_clinico_recepcion'] = user.servicio_clinico.nombre
+        return initial
+
     def clean_ficha(self):
-        ficha_value = self.cleaned_data['ficha']
-
-        # Intentamos obtener la instancia de Ficha usando ficha_value
-        # Aquí debes definir la lógica para convertir ese string a instancia
-        # Por ejemplo, si es el ID numérico:
+        ficha_id = self.cleaned_data['ficha']
         try:
-            print(Ficha.objects.all())
-            print(int(ficha_value))
-            ficha_instance = Ficha.objects.get(numero_ficha_sistema=int(ficha_value))
-        except (ValueError, Ficha.DoesNotExist):
-            raise forms.ValidationError("Ficha no válida o no encontrada.")
-
-        return ficha_instance
-
+            return Ficha.objects.get(pk=ficha_id)
+        except Ficha.DoesNotExist:
+            raise forms.ValidationError("Ficha no encontrada")
 
     class Meta:
         model = MovimientoFicha
         fields = [
             'fecha_recepcion',
-            'servicio_clinico_recepcion',
             'observacion_recepcion',
+            'rut',
             'ficha',
             'profesional_recepcion',
-            'rut',
             'nombre',
         ]
 
 
 class FormSalidaFicha(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    rut = forms.CharField(
+        label='RUT',
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'id': 'id_rut',
+                'class': 'form-control id_rut',
+                'name': 'rut',
+                'autocomplete': 'off',
+                'inputmode': 'text'
+            }
+        )
+    )
+
     ficha = forms.CharField(
         label='Ficha',
         widget=forms.TextInput(
@@ -122,19 +136,6 @@ class FormSalidaFicha(forms.ModelForm):
             }
         ),
         required=True
-    )
-
-    rut = forms.CharField(
-        label='RUT',
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                'id': 'id_rut',
-                'class': 'form-control id_rut',
-                'autocomplete': 'off',
-                'inputmode': 'text'
-            }
-        )
     )
 
     nombre = forms.CharField(
@@ -207,55 +208,74 @@ class FormSalidaFicha(forms.ModelForm):
         required=True
     )
 
-    def clean_ficha(self):
-        ficha_value = self.cleaned_data['ficha']
+    def clean(self):
+        cleaned_data = super().clean()
+        print("---- DEBUG POST DATA ----")
+        print(self.data)
+        print("--------------------------")
+        return cleaned_data
 
-        # Intentamos obtener la instancia de Ficha usando ficha_value
-        # Aquí debes definir la lógica para convertir ese string a instancia
-        # Por ejemplo, si es el ID numérico:
+    def clean_ficha(self):
+        ficha_value = self.cleaned_data.get('ficha')
+        rut_value = self.cleaned_data.get('rut')  # El nombre del campo es 'rut', no 'id_rut'
+
+        print(ficha_value)
+        print(rut_value)
+
         try:
-            print(Ficha.objects.all())
-            print(int(ficha_value))
-            ficha_instance = Ficha.objects.get(numero_ficha_sistema=int(ficha_value))
-        except (ValueError, Ficha.DoesNotExist):
+            # Validaciones básicas
+            if not ficha_value or not rut_value:
+                raise forms.ValidationError("Debe ingresar el número de ficha y el RUT del paciente.")
+
+            # Conversión a tipos adecuados
+            ficha_numero = int(ficha_value)
+
+            # ✅ Obtenemos el establecimiento del usuario logueado
+            if not self.user or not hasattr(self.user, 'establecimiento'):
+                raise forms.ValidationError("No se encontró el establecimiento asociado al usuario.")
+
+            # Filtro compuesto: ficha + rut + establecimiento
+            filtro = {
+                'numero_ficha_sistema': ficha_numero,
+                'paciente__rut': rut_value,
+                'establecimiento': self.user.establecimiento,
+            }
+
+            qs = Ficha.objects.filter(**filtro)
+            print(qs)
+
+            print('Aqui van los datos')
+            print(f'{ficha_numero} {rut_value} {self.user.establecimiento}')
+            print('Aqui termina')
+
+            # Validaciones de resultados
+            if not qs.exists():
+                raise forms.ValidationError("No se encontró ninguna ficha que coincida con los datos ingresados.")
+
+            if qs.count() > 1:
+                raise forms.ValidationError(
+                    "Existen múltiples fichas con los mismos datos. Contacte al administrador."
+                )
+
+            ficha_instance = qs.get()
+
+        except ValueError:
+            raise forms.ValidationError("El número de ficha debe ser un valor numérico válido.")
+        except Ficha.DoesNotExist:
             raise forms.ValidationError("Ficha no válida o no encontrada.")
 
         return ficha_instance
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Si el formulario viene con un valor ya seleccionado en POST (como ocurre con Select2 AJAX)
-        if 'ficha' in self.data:
-            try:
-                ficha_id = int(self.data.get('ficha'))
-                self.fields['ficha'].queryset = Ficha.objects.filter(id=ficha_id)
-            except (ValueError, TypeError):
-                pass  # Si por alguna razón el ID no es válido, dejamos el queryset vacío
-
-        # Si estamos editando una instancia existente
-        elif self.instance.pk:
-            self.fields['ficha'].queryset = Ficha.objects.filter(pk=self.instance.ficha_id)
-
-        # --- RUT como texto: mantener valor tipeado si viene en POST o instancia ---
-        if 'rut' in self.data:
-            self.fields['rut'].initial = self.data.get('rut')
-        elif self.instance.pk:
-            try:
-                self.fields['rut'].initial = self.instance.ficha.paciente.rut
-            except Exception:
-                pass
-
     class Meta:
         model = MovimientoFicha
         fields = [
+            'rut',
             'ficha',
             'fecha_envio',
             'servicio_clinico_envio',
             'servicio_clinico_recepcion',
             'observacion_envio',
             'profesional_envio',
-            'rut',
             'nombre',
         ]
 
@@ -330,11 +350,18 @@ class FormTraspasoFicha(forms.ModelForm):
 
     def clean_ficha(self):
         ficha_value = self.cleaned_data['ficha']
+        # Validación robusta para evitar múltiples coincidencias
         try:
-            ficha_instance = Ficha.objects.get(numero_ficha_sistema=int(ficha_value))
-        except (ValueError, Ficha.DoesNotExist):
+            numero = int(ficha_value)
+        except (TypeError, ValueError):
             raise forms.ValidationError("Ficha no válida o no encontrada.")
-        return ficha_instance
+        qs = Ficha.objects.filter(numero_ficha_sistema=numero)
+        if not qs.exists():
+            raise forms.ValidationError("Ficha no válida o no encontrada.")
+        if qs.count() > 1:
+            raise forms.ValidationError(
+                "La búsqueda de ficha es ambigua (existen varias con ese número). Use el RUT para cargar o contacte al administrador.")
+        return qs.get()
 
     class Meta:
         model = MovimientoFicha

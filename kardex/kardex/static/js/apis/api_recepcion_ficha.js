@@ -26,10 +26,35 @@
 
     if (f.numero_ficha_sistema) setVal('#id_ficha', f.numero_ficha_sistema);
 
-    if (data.servicio_clinico_recepcion) {
-      const $svc = $('#servicio_clinico_ficha');
-      if ($svc.length) {
-        $svc.val(data.servicio_clinico_recepcion).trigger('change');
+    // Servicio clínico de recepción puede ser texto (input) o un select
+    const $svc = $('#servicio_clinico_ficha');
+    if ($svc.length) {
+      const tag = ($svc.prop('tagName') || '').toLowerCase();
+      const type = ($svc.attr('type') || '').toLowerCase();
+      const isSelect = tag === 'select';
+      const isTextInput = tag === 'input' && (type === 'text' || type === 'search' || type === '');
+
+      if (isSelect) {
+        // Si es select, asumimos que la API entrega el ID del servicio
+        if (typeof data.servicio_clinico_recepcion !== 'undefined' && data.servicio_clinico_recepcion !== null) {
+          $svc.val(data.servicio_clinico_recepcion).trigger('change');
+        }
+      } else if (isTextInput) {
+        // Si es input de texto, intentamos rellenar el nombre del servicio
+        const nombreServicio =
+          data.servicio_clinico_recepcion_nombre ||
+          data.servicio_clinico_recepcion_text ||
+          data.servicio_clinico_recepcion_label ||
+          data.servicio_clinico_recepcion_name ||
+          (typeof data.servicio_clinico_recepcion === 'string' ? data.servicio_clinico_recepcion : '') ||
+          (data.servicio_clinico && data.servicio_clinico.nombre ? data.servicio_clinico.nombre : '');
+        $svc.val(nombreServicio || '');
+      } else {
+        // Para cualquier otro caso, intentar asignar algo razonable
+        const valor =
+          data.servicio_clinico_recepcion_nombre ||
+          data.servicio_clinico_recepcion || '';
+        $svc.val(valor);
       }
     }
 

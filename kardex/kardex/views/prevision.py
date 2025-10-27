@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from kardex.forms.prevision import FormPrevision
 from kardex.mixin import DataTableMixin
 from kardex.models import Prevision
+from kardex.views.history import GenericHistoryListView
 
 MODULE_NAME = 'Previsiones'
 
@@ -155,3 +156,9 @@ class PrevisionDeleteView(PermissionRequiredMixin, DeleteView):
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
+
+
+class PrevisionHistoryListView(GenericHistoryListView):
+    base_model = Prevision
+    permission_required = 'kardex.view_prevision'
+    template_name = 'kardex/history/list.html'

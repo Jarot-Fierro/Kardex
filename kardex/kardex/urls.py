@@ -22,6 +22,7 @@ urlpatterns = [
     path('paises/<int:pk>/editar/', PaisUpdateView.as_view(), name='pais_update'),
     path('paises/<int:pk>/eliminar/', PaisDeleteView.as_view(), name='pais_delete'),
     path('paises/<int:pk>/detalle/', PaisDetailView.as_view(), name='pais_detail'),
+    path('paises/historial/', PaisHistoryListView.as_view(), name='pais_history'),
 
     # Vistas básicas para Comunas
     path('comunas/', ComunaListView.as_view(), name='comuna_list'),
@@ -29,7 +30,7 @@ urlpatterns = [
     path('comunas/<int:pk>/editar/', ComunaUpdateView.as_view(), name='comuna_update'),
     path('comunas/<int:pk>/eliminar/', ComunaDeleteView.as_view(), name='comuna_delete'),
     path('comunas/<int:pk>/detalle/', ComunaDetailView.as_view(), name='comuna_detail'),
-    path('comunas/historial/', ComunaHistoryListView.as_view(), name='comuna_historyl'),
+    path('comunas/historial/', ComunaHistoryListView.as_view(), name='comuna_history'),
 
     # Vistas básicas para Establecimientos
     path('establecimientos/', EstablecimientoListView.as_view(), name='establecimiento_list'),
@@ -37,7 +38,7 @@ urlpatterns = [
     path('establecimientos/<int:pk>/editar/', EstablecimientoUpdateView.as_view(), name='establecimiento_update'),
     path('establecimientos/<int:pk>/eliminar/', EstablecimientoDeleteView.as_view(), name='establecimiento_delete'),
     path('establecimientos/<int:pk>/detalle/', EstablecimientoDetailView.as_view(), name='establecimiento_detail'),
-    path('establecimientos/historial/', EstablecimientoHistoryListView.as_view(), name='establecimiento_historyl'),
+    path('establecimientos/historial/', EstablecimientoHistoryListView.as_view(), name='establecimiento_history'),
 
     # Vistas básicas para Profesiones
     path('profesiones/', ProfesionListView.as_view(), name='profesion_list'),
@@ -45,6 +46,7 @@ urlpatterns = [
     path('profesiones/<int:pk>/editar/', ProfesionUpdateView.as_view(), name='profesion_update'),
     path('profesiones/<int:pk>/eliminar/', ProfesionDeleteView.as_view(), name='profesion_delete'),
     path('profesiones/<int:pk>/detalle/', ProfesionDetailView.as_view(), name='profesion_detail'),
+    path('profesiones/historial/', ProfesionalHistoryListView.as_view(), name='profesion_history'),
 
     # Vistas básicas para Profesionales
     path('profesionales/', ProfesionalListView.as_view(), name='profesional_list'),
@@ -52,6 +54,7 @@ urlpatterns = [
     path('profesionales/<int:pk>/editar/', ProfesionalUpdateView.as_view(), name='profesional_update'),
     path('profesionales/<int:pk>/eliminar/', ProfesionalDeleteView.as_view(), name='profesional_delete'),
     path('profesionales/<int:pk>/detalle/', ProfesionalDetailView.as_view(), name='profesional_detail'),
+    path('profesionales/history/', ProfesionalHistoryListView.as_view(), name='profesional_history'),
 
     # Vistas básicas para Prevision
     path('prevision/', PrevisionListView.as_view(), name='prevision_list'),
@@ -59,6 +62,7 @@ urlpatterns = [
     path('prevision/<int:pk>/editar/', PrevisionUpdateView.as_view(), name='prevision_update'),
     path('prevision/<int:pk>/eliminar/', PrevisionDeleteView.as_view(), name='prevision_delete'),
     path('prevision/<int:pk>/detalle/', PrevisionDetailView.as_view(), name='prevision_detail'),
+    path('prevision/historial', PrevisionHistoryListView.as_view(), name='prevision_history'),
 
     # Vistas básicas para Pacientes
     path('pacientes/', PacienteListView.as_view(), name='paciente_list'),
@@ -71,6 +75,7 @@ urlpatterns = [
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
     path('consulta-pacientes/', PacienteQueryView.as_view(), name='paciente_query'),
     path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
+    path('pacientes/historial', PacientesHistoryListView.as_view(), name='paciente_history'),
 
     # Vistas básicas para Fichas
     path('fichas/', FichaListView.as_view(), name='ficha_list'),
@@ -79,7 +84,7 @@ urlpatterns = [
     path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
     path('fichas/<int:pk>/toggle-pasivar/', TogglePasivadoFichaView.as_view(), name='ficha_toggle_pasivar'),
-    path('fichas/historial/', FichaHistoryListView.as_view(), name='ficha_historyl'),
+    path('fichas/historial/', FichaHistoryListView.as_view(), name='ficha_history'),
 
     # Vistas básicas para Movimientos de Ficha
     path('movimientos-ficha/', MovimientoFichaListView.as_view(), name='movimiento_ficha_list'),
@@ -87,7 +92,7 @@ urlpatterns = [
     path('movimientos-ficha/<int:pk>/editar/', MovimientoFichaUpdateView.as_view(), name='movimiento_ficha_update'),
     path('movimientos-ficha/<int:pk>/eliminar/', MovimientoFichaDeleteView.as_view(), name='movimiento_ficha_delete'),
     path('movimientos-ficha/<int:pk>/detalle/', MovimientoFichaDetailView.as_view(), name='movimiento_ficha_detail'),
-    path('movimientos-ficha/historial/', MovimientosFichasHistoryListView.as_view(), name='movimiento_ficha_historyl'),
+    path('movimientos-ficha/historial/', MovimientosFichasHistoryListView.as_view(), name='movimiento_ficha_history'),
 
     # Vistas básicas para Servicios Clínicos
     path('servicios-clinicos/', ServicioClinicoListView.as_view(), name='servicio_clinico_list'),
@@ -95,6 +100,8 @@ urlpatterns = [
     path('servicios-clinicos/<int:pk>/editar/', ServicioClinicoUpdateView.as_view(), name='servicio_clinico_update'),
     path('servicios-clinicos/<int:pk>/eliminar/', ServicioClinicoDeleteView.as_view(), name='servicio_clinico_delete'),
     path('servicios-clinicos/<int:pk>/detalle/', ServicioClinicoDetailView.as_view(), name='servicio_clinico_detail'),
+    path('servicios-clinicos/historial/', ServicioClinicoHistoryListView.as_view(), name='servicio_clinico_history'),
+
     path('pdf/', pdf_index, name='pdf_prueba'),
     path('pdfs/paciente/<int:paciente_id>/', pdf_index, name='pdf_paciente'),
     path('pdfs/ficha/<int:ficha_id>/', pdf_index, name='pdf_ficha'),

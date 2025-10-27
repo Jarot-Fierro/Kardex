@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from kardex.forms.profesionales import FormProfesional
 from kardex.mixin import DataTableMixin
 from kardex.models import Profesional
+from kardex.views.history import GenericHistoryListView
 
 MODULE_NAME = 'Profesionales'
 
@@ -164,3 +165,9 @@ class ProfesionalDeleteView(PermissionRequiredMixin, DeleteView):
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
+
+
+class ProfesionalHistoryListView(GenericHistoryListView):
+    base_model = Profesional
+    permission_required = 'kardex.view_profesional'
+    template_name = 'kardex/history/list.html'

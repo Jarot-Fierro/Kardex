@@ -63,7 +63,35 @@ $(function () {
           $('#id_ficha').empty().trigger('change');
         }
 
-        if (data.servicio_clinico_recepcion) $('#servicio_clinico_ficha').val(data.servicio_clinico_recepcion).trigger('change');
+        // Servicio clínico de recepción puede ser un select (id) o un input de texto (nombre)
+        (function(){
+          const $svc = $('#servicio_clinico_ficha');
+          if ($svc.length) {
+            const tag = ($svc.prop('tagName') || '').toLowerCase();
+            const type = ($svc.attr('type') || '').toLowerCase();
+            const isSelect = tag === 'select';
+            const isTextInput = tag === 'input' && (type === 'text' || type === 'search' || type === '');
+            if (isSelect) {
+              if (typeof data.servicio_clinico_recepcion !== 'undefined' && data.servicio_clinico_recepcion !== null) {
+                $svc.val(data.servicio_clinico_recepcion).trigger('change');
+              }
+            } else if (isTextInput) {
+              const nombreServicio =
+                data.servicio_clinico_recepcion_nombre ||
+                data.servicio_clinico_recepcion_text ||
+                data.servicio_clinico_recepcion_label ||
+                data.servicio_clinico_recepcion_name ||
+                (typeof data.servicio_clinico_recepcion === 'string' ? data.servicio_clinico_recepcion : '') ||
+                (data.servicio_clinico && data.servicio_clinico.nombre ? data.servicio_clinico.nombre : '');
+              $svc.val(nombreServicio || '');
+            } else {
+              const valor =
+                data.servicio_clinico_recepcion_nombre ||
+                data.servicio_clinico_recepcion || '';
+              $svc.val(valor);
+            }
+          }
+        })();
         // No preseleccionamos profesional_recepcion; lo debe escoger el usuario
         if (typeof data.observacion_recepcion !== 'undefined') $('#observacion_recepcion_ficha').val(data.observacion_recepcion || '');
       },

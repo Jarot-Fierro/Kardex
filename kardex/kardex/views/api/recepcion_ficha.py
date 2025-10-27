@@ -19,8 +19,6 @@ class PacienteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-
 class FichaSerializer(serializers.ModelSerializer):
     paciente = PacienteSerializer()
     establecimiento = EstablecimientoSerializer()
@@ -32,13 +30,18 @@ class FichaSerializer(serializers.ModelSerializer):
 
 class MovimientoFichaSerializer(serializers.ModelSerializer):
     ficha = FichaSerializer(read_only=True)
+    servicio_clinico_recepcion = serializers.CharField(
+        source='servicio_clinico_recepcion.nombre', read_only=True
+    )
 
     class Meta:
         model = MovimientoFicha
         fields = '__all__'
         read_only_fields = (
-            'fecha_envio','observacion_envio','estado_envio','servicio_clinico_envio','usuario_envio','profesional_envio',
-            'ficha','estado_recepcion','usuario_recepcion','fecha_recepcion','servicio_clinico_recepcion','observacion_recepcion','profesional_recepcion'
+            'fecha_envio', 'observacion_envio', 'estado_envio', 'servicio_clinico_envio', 'usuario_envio',
+            'profesional_envio',
+            'ficha', 'estado_recepcion', 'usuario_recepcion', 'fecha_recepcion', 'servicio_clinico_recepcion',
+            'observacion_recepcion', 'profesional_recepcion'
         )
 
 
@@ -72,7 +75,8 @@ class RecepcionFichaViewSet(viewsets.ModelViewSet):
             return Response({'ok': False, 'error': 'No encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         if m.estado_recepcion == 'RECIBIDO':
-            return Response({'ok': False, 'error': 'El movimiento ya fue recepcionado.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'ok': False, 'error': 'El movimiento ya fue recepcionado.'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         fecha_recepcion = request.data.get('fecha_recepcion')
         obs = request.data.get('observacion_recepcion')

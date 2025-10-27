@@ -12,6 +12,7 @@ from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.mixin import DataTableMixin
 from kardex.models import Ficha
 from kardex.models import Paciente
+from kardex.views.history import GenericHistoryListView
 
 MODULE_NAME = 'Pacientes'
 
@@ -392,3 +393,9 @@ class PacienteQueryView(PermissionRequiredMixin, CreateView):
         if 'form' not in kwargs and is_update:
             context['form'] = self.form_class(instance=instance)
         return context
+
+
+class PacientesHistoryListView(GenericHistoryListView):
+    base_model = Paciente
+    permission_required = 'kardex.view_paciente'
+    template_name = 'kardex/history/list.html'
