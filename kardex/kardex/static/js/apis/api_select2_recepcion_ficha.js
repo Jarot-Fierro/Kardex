@@ -63,6 +63,36 @@ $(function () {
           $('#id_ficha').empty().trigger('change');
         }
 
+        // Servicio clínico de envío (origen) puede ser un select (id) o un input de texto (nombre)
+        (function(){
+          const $svcEnvio = $('#servicio_clinico_envio_ficha');
+          if ($svcEnvio.length) {
+            const tag = ($svcEnvio.prop('tagName') || '').toLowerCase();
+            const type = ($svcEnvio.attr('type') || '').toLowerCase();
+            const isSelect = tag === 'select';
+            const isTextInput = tag === 'input' && (type === 'text' || type === 'search' || type === '');
+            if (isSelect) {
+              if (typeof data.servicio_clinico_envio !== 'undefined' && data.servicio_clinico_envio !== null) {
+                $svcEnvio.val(data.servicio_clinico_envio).trigger('change');
+              }
+            } else if (isTextInput) {
+              const nombreServicioEnvio =
+                data.servicio_clinico_envio_nombre ||
+                data.servicio_clinico_envio_text ||
+                data.servicio_clinico_envio_label ||
+                data.servicio_clinico_envio_name ||
+                (typeof data.servicio_clinico_envio === 'string' ? data.servicio_clinico_envio : '') ||
+                (data.servicio_clinico_envio && data.servicio_clinico_envio.nombre ? data.servicio_clinico_envio.nombre : '');
+              $svcEnvio.val(nombreServicioEnvio || '');
+            } else {
+              const valorEnvio =
+                data.servicio_clinico_envio_nombre ||
+                data.servicio_clinico_envio || '';
+              $svcEnvio.val(valorEnvio);
+            }
+          }
+        })();
+
         // Servicio clínico de recepción puede ser un select (id) o un input de texto (nombre)
         (function(){
           const $svc = $('#servicio_clinico_ficha');
@@ -82,7 +112,7 @@ $(function () {
                 data.servicio_clinico_recepcion_label ||
                 data.servicio_clinico_recepcion_name ||
                 (typeof data.servicio_clinico_recepcion === 'string' ? data.servicio_clinico_recepcion : '') ||
-                (data.servicio_clinico && data.servicio_clinico.nombre ? data.servicio_clinico.nombre : '');
+                (data.servicio_clinico_recepcion && data.servicio_clinico_recepcion.nombre ? data.servicio_clinico_recepcion.nombre : '');
               $svc.val(nombreServicio || '');
             } else {
               const valor =

@@ -84,9 +84,9 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.servicio_clinico_recepcion.label }}</label>
-                                    {{ form.servicio_clinico_recepcion }}
-                                    {% for error in form.servicio_clinico_recepcion.errors %}
+                                    <label class="form-check-label">{{ form.servicio_clinico_envio.label }}</label>
+                                    {{ form.servicio_clinico_envio }}
+                                    {% for error in form.servicio_clinico_envio.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
@@ -100,6 +100,18 @@
                                     {% endfor %}
                                 </div>
                             </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <label class="form-check-label">{{ form.servicio_clinico_recepcion.label }}</label>
+                                    {{ form.servicio_clinico_recepcion }}
+                                    {% for error in form.servicio_clinico_recepcion.errors %}
+                                    <span class="text-danger small d-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-8"></div>
                         </div>
                         <div class="form-row">
                             <div class="col-md-12">
@@ -162,6 +174,7 @@
 <script>
     // Marcar campos de envío como solo lectura en UI (rut y nombre ya tienen readonly en los widgets)
     $('#servicio_clinico_ficha').prop('readonly', true);
+    $('#servicio_clinico_envio_ficha').prop('readonly', true);
     // Importante: no deshabilitar #id_ficha para que el valor se envíe en el POST
     $('#id_ficha').prop('disabled', false);
     $('#nombre_mov').prop('readonly', true);

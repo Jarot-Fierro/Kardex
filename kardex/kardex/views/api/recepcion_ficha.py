@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from kardex.models import MovimientoFicha, Ficha, Paciente, Establecimiento
+from kardex.models import MovimientoFicha, Ficha, Paciente, Establecimiento, ServicioClinico
 
 
 class EstablecimientoSerializer(serializers.ModelSerializer):
@@ -28,11 +28,19 @@ class FichaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ServicioClinicoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServicioClinico
+        fields = ('id', 'nombre')
+
+
 class MovimientoFichaSerializer(serializers.ModelSerializer):
     ficha = FichaSerializer(read_only=True)
-    servicio_clinico_recepcion = serializers.CharField(
-        source='servicio_clinico_recepcion.nombre', read_only=True
-    )
+    servicio_clinico_envio = ServicioClinicoSerializer(read_only=True)
+    servicio_clinico_recepcion = ServicioClinicoSerializer(read_only=True)
+
+    print(servicio_clinico_recepcion)
+    print(servicio_clinico_envio)
 
     class Meta:
         model = MovimientoFicha

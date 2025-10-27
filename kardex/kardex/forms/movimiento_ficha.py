@@ -34,6 +34,19 @@ class FormEntradaFicha(forms.ModelForm):
         })
     )
 
+    # Nuevo campo de solo lectura para mostrar el Servicio Clínico de Envío (origen)
+    servicio_clinico_envio = forms.CharField(
+        label='Servicio Clínico de Envío',
+        widget=forms.TextInput(
+            attrs={
+                'id': 'servicio_clinico_envio_ficha',
+                'class': 'form-control',
+                'readonly': 'readonly',
+            }
+        ),
+        required=False
+    )
+
     servicio_clinico_recepcion = forms.CharField(
         label='Servicio Clínico de Recepción',
         widget=forms.TextInput(

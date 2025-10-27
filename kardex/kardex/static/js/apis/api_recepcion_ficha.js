@@ -26,6 +26,32 @@
 
     if (f.numero_ficha_sistema) setVal('#id_ficha', f.numero_ficha_sistema);
 
+    // Servicio Clínico de envío (origen) puede ser texto (input) o select
+    const $svcEnvio = $('#servicio_clinico_envio_ficha');
+    if ($svcEnvio.length) {
+      const tag = ($svcEnvio.prop('tagName') || '').toLowerCase();
+      const type = ($svcEnvio.attr('type') || '').toLowerCase();
+      const isSelect = tag === 'select';
+      const isTextInput = tag === 'input' && (type === 'text' || type === 'search' || type === '');
+      if (isSelect) {
+        if (typeof data.servicio_clinico_envio !== 'undefined' && data.servicio_clinico_envio !== null) {
+          $svcEnvio.val(data.servicio_clinico_envio).trigger('change');
+        }
+      } else if (isTextInput) {
+        const nombreServicioEnvio =
+          data.servicio_clinico_envio_nombre ||
+          data.servicio_clinico_envio_text ||
+          data.servicio_clinico_envio_label ||
+          data.servicio_clinico_envio_name ||
+          (typeof data.servicio_clinico_envio === 'string' ? data.servicio_clinico_envio : '') ||
+          (data.servicio_clinico_envio && data.servicio_clinico_envio.nombre ? data.servicio_clinico_envio.nombre : '');
+        $svcEnvio.val(nombreServicioEnvio || '');
+      } else {
+        const valorEnvio = data.servicio_clinico_envio_nombre || data.servicio_clinico_envio || '';
+        $svcEnvio.val(valorEnvio);
+      }
+    }
+
     // Servicio clínico de recepción puede ser texto (input) o un select
     const $svc = $('#servicio_clinico_ficha');
     if ($svc.length) {
@@ -47,7 +73,7 @@
           data.servicio_clinico_recepcion_label ||
           data.servicio_clinico_recepcion_name ||
           (typeof data.servicio_clinico_recepcion === 'string' ? data.servicio_clinico_recepcion : '') ||
-          (data.servicio_clinico && data.servicio_clinico.nombre ? data.servicio_clinico.nombre : '');
+          (data.servicio_clinico_recepcion && data.servicio_clinico_recepcion.nombre ? data.servicio_clinico_recepcion.nombre : '');
         $svc.val(nombreServicio || '');
       } else {
         // Para cualquier otro caso, intentar asignar algo razonable
