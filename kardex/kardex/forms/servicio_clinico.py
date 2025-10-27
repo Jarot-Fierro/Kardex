@@ -14,16 +14,6 @@ class FormServicioClinico(forms.ModelForm):
         required=True
     )
 
-    tiempo_horas = forms.IntegerField(
-        label='Tiempo en Horas',
-        widget=forms.NumberInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Cantidad de horas asignadas',
-            'id': 'tiempo_horas_servicioclinico'
-        }),
-        required=True
-    )
-
     correo_jefe = forms.EmailField(
         label='Correo del Jefe a Cargo',
         widget=forms.EmailInput(attrs={
@@ -37,7 +27,7 @@ class FormServicioClinico(forms.ModelForm):
     telefono = forms.CharField(
         label='Teléfono',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control telefono_personal',
             'placeholder': '+56912345678',
             'id': 'telefono_servicioclinico'
         }),
@@ -59,7 +49,6 @@ class FormServicioClinico(forms.ModelForm):
         model = ServicioClinico
         fields = [
             'nombre',
-            'tiempo_horas',
             'correo_jefe',
             'telefono',
             'establecimiento'

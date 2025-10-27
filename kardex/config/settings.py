@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.8.85.141', '127.0.0.1']
+ALLOWED_HOSTS = ['10.8.85.141', '127.0.0.1', '192.168.1.6']
 
 AUTH_USER_MODEL = 'usuarios.UsuarioPersonalizado'
 LOGIN_URL = '/usuarios/login/'
@@ -66,17 +66,15 @@ AUTHENTICATION_BACKENDS = [
 # settings.py
 
 REST_FRAMEWORK = {
-    # ... tus configuraciones previas
-
-    # Forzar una URL base para los hipervínculos generados
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
-
-    # Base URL para los links absolutos
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
-    'PAGE_SIZE': 50
+
+    # 👇 agrega esto
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
 }
 
 # settings.py

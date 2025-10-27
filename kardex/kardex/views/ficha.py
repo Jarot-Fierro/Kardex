@@ -1,15 +1,16 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
-from django.views import View
-from django.shortcuts import redirect
-from django.contrib import messages
 
 from kardex.forms.fichas import FormFicha
 from kardex.mixin import DataTableMixin
 from kardex.models import Ficha
+from kardex.views.history import GenericHistoryListView
 
 MODULE_NAME = 'Fichas'
 
@@ -239,3 +240,9 @@ class FichaDeleteView(PermissionRequiredMixin, DeleteView):
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
+
+
+class FichaHistoryListView(GenericHistoryListView):
+    base_model = Ficha
+    permission_required = 'kardex.view_ficha'
+    template_name = 'kardex/history/list.html'

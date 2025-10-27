@@ -11,7 +11,7 @@
     function buscarFichaPorNumero(numero){
         numero = String(numero || '').trim();
         if(!numero) return;
-        const url = 'http://127.0.0.1:8000/api/ingreso-paciente-ficha/';
+        const url = '/api/ingreso-paciente-ficha/';
         const params = new URLSearchParams({ search: numero, tipo: 'ficha' });
         return fetch(url + '?' + params.toString(), { headers: { 'Accept': 'application/json' }})
             .then(function(res){ return res.json().catch(function(){ return {}; }); })
@@ -29,7 +29,7 @@
 
     window.cargarDatosSalidaFicha = function(fichaId){
         $.ajax({
-            url: `http://127.0.0.1:8000/api/ingreso-paciente-ficha/${fichaId}/`,
+            url: `/api/ingreso-paciente-ficha/${fichaId}/`,
             method: 'GET',
             success: function (data) {
                 const paciente = data.paciente || {};

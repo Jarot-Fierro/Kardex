@@ -29,6 +29,7 @@ urlpatterns = [
     path('comunas/<int:pk>/editar/', ComunaUpdateView.as_view(), name='comuna_update'),
     path('comunas/<int:pk>/eliminar/', ComunaDeleteView.as_view(), name='comuna_delete'),
     path('comunas/<int:pk>/detalle/', ComunaDetailView.as_view(), name='comuna_detail'),
+    path('comunas/historial/', ComunaHistoryListView.as_view(), name='comuna_historyl'),
 
     # Vistas básicas para Establecimientos
     path('establecimientos/', EstablecimientoListView.as_view(), name='establecimiento_list'),
@@ -36,6 +37,7 @@ urlpatterns = [
     path('establecimientos/<int:pk>/editar/', EstablecimientoUpdateView.as_view(), name='establecimiento_update'),
     path('establecimientos/<int:pk>/eliminar/', EstablecimientoDeleteView.as_view(), name='establecimiento_delete'),
     path('establecimientos/<int:pk>/detalle/', EstablecimientoDetailView.as_view(), name='establecimiento_detail'),
+    path('establecimientos/historial/', EstablecimientoHistoryListView.as_view(), name='establecimiento_historyl'),
 
     # Vistas básicas para Profesiones
     path('profesiones/', ProfesionListView.as_view(), name='profesion_list'),
@@ -77,6 +79,7 @@ urlpatterns = [
     path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
     path('fichas/<int:pk>/toggle-pasivar/', TogglePasivadoFichaView.as_view(), name='ficha_toggle_pasivar'),
+    path('fichas/historial/', FichaHistoryListView.as_view(), name='ficha_historyl'),
 
     # Vistas básicas para Movimientos de Ficha
     path('movimientos-ficha/', MovimientoFichaListView.as_view(), name='movimiento_ficha_list'),
@@ -84,6 +87,7 @@ urlpatterns = [
     path('movimientos-ficha/<int:pk>/editar/', MovimientoFichaUpdateView.as_view(), name='movimiento_ficha_update'),
     path('movimientos-ficha/<int:pk>/eliminar/', MovimientoFichaDeleteView.as_view(), name='movimiento_ficha_delete'),
     path('movimientos-ficha/<int:pk>/detalle/', MovimientoFichaDetailView.as_view(), name='movimiento_ficha_detail'),
+    path('movimientos-ficha/historial/', MovimientosFichasHistoryListView.as_view(), name='movimiento_ficha_historyl'),
 
     # Vistas básicas para Servicios Clínicos
     path('servicios-clinicos/', ServicioClinicoListView.as_view(), name='servicio_clinico_list'),

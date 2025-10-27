@@ -14,6 +14,7 @@ from kardex.forms.movimiento_ficha import FormTraspasoFicha
 from kardex.mixin import DataTableMixin
 from kardex.models import MovimientoFicha
 from kardex.models import Profesional
+from kardex.views.history import GenericHistoryListView
 
 
 class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixin, TemplateView):
@@ -333,7 +334,8 @@ class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
 
             if not mov:
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'ok': False, 'errors': {'ficha': ['No existe un envío previo para esta ficha.']}}, status=400)
+                    return JsonResponse(
+                        {'ok': False, 'errors': {'ficha': ['No existe un envío previo para esta ficha.']}}, status=400)
                 messages.error(request, 'No existe un envío previo para esta ficha.')
                 context = self.get_context_data(form=form)
                 return self.render_to_response(context)
@@ -376,7 +378,8 @@ class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateV
     template_name = 'kardex/movimiento_ficha/list.html'
     model = MovimientoFicha
     datatable_columns = ['ID', 'Ficha', 'Servicio Clínico', 'Estado', 'Fecha Movimiento']
-    datatable_order_fields = ['id', None, 'ficha__numero_ficha_sistema', 'servicio_clinico_envio__nombre', 'estado_envio',
+    datatable_order_fields = ['id', None, 'ficha__numero_ficha_sistema', 'servicio_clinico_envio__nombre',
+                              'estado_envio',
                               'fecha_envio']
     datatable_search_fields = [
         'ficha__numero_ficha_sistema__icontains', 'servicio_clinico_envio__nombre__icontains', 'estado_envio__icontains'
@@ -545,3 +548,9 @@ class MovimientoFichaDeleteView(PermissionRequiredMixin, DeleteView):
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
+
+
+class MovimientosFichasHistoryListView(GenericHistoryListView):
+    base_model = MovimientoFicha
+    permission_required = 'kardex.view_movimiento_ficha'
+    template_name = 'kardex/history/list.html'

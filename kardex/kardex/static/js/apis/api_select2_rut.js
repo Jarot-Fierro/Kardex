@@ -1,60 +1,53 @@
+
 $(document).ready(function () {
     const $rutField = $('#id_rut');
     if ($rutField.length === 0) return;
 
-    // Modo edición (select): mantener Select2 con búsqueda por RUT
-    if ($rutField.is('select')) {
-        $rutField.select2({
-            placeholder: 'Buscar por RUT',
-            width: '100%',
-            ajax: {
-                url: 'http://10.8.85.141:8000/api/ingreso-paciente-ficha/',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        search: params.term,
-                        tipo: 'rut'
-                    };
-                },
-                processResults: function (data) {
-                    const items = Array.isArray(data) ? data : (data.results || []);
-                    return {
-                        results: items.map(item => ({
-                            id: item.id,
-                            text: item.paciente && item.paciente.rut ? item.paciente.rut : 'Sin RUT'
-                        }))
-                    };
-                }
-            },
-            minimumInputLength: 1
-        });
-        return;
+    let lastRut = null;
+
+    function normalizeRut(rut) {
+        return String(rut || '').trim().toUpperCase();
     }
 
-    // Modo creación (input): consumir API al perder foco (blur)
-    let lastQueriedRut = null;
+    // Evitar que ENTER envíe el formulario
+    $rutField.on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Evento al salir del campo
     $rutField.on('blur', function () {
-        const rut = ($rutField.val() || '').trim();
-        if (!rut) return;
-        if (rut === lastQueriedRut) return; // evita consultas repetidas innecesarias
-        lastQueriedRut = rut;
+        const rut = normalizeRut($rutField.val());
+        if (!rut || rut === lastRut) return;
+
+        lastRut = rut;
+
+        console.log('[rut_scan] Consultando RUT:', rut);
 
         $.ajax({
-            url: 'http://10.8.85.141:8000/api/ingreso-paciente-ficha/',
-            method: 'GET',
+            url: '/api/ingreso-paciente-ficha/',
+            type: 'GET',
             dataType: 'json',
             data: { search: rut, tipo: 'rut' },
-            success: function (response) {
-                const items = Array.isArray(response) ? response : (response.results || []);
-                if (!items.length) return;
-                const ficha = items[0];
-                if (window.cargarDatosFicha && ficha && ficha.id) {
-                    try { window.cargarDatosFicha(ficha.id); } catch (e) {}
+            success: function (data) {
+                console.log('[rut_scan] Respuesta API:', data);
+                const items = Array.isArray(data) ? data : (data.results || []);
+                if (items.length > 0) {
+                    const first = items[0];
+                    if (first && typeof first.id !== 'undefined') {
+                        console.log('[rut_scan] Cargando ficha:', first.id);
+                        if (typeof window.cargarDatosFicha === 'function') {
+                            window.cargarDatosFicha(first.id);
+                        }
+                    }
+                } else {
+                    console.log('[rut_scan] No se encontró ficha para RUT:', rut);
                 }
             },
-            error: function () {
-                // Silencioso: se puede agregar un toast si se requiere
+            error: function (xhr, status, error) {
+                console.error('[rut_scan] Error en AJAX:', status, error);
             }
         });
     });

@@ -54,7 +54,7 @@
       if(!rut) return;
       lastInputTs = Date.now();
 
-      var url = 'http://127.0.0.1:8000/api/ingreso-paciente-ficha/';
+      var url = '/api/ingreso-paciente-ficha/';
       var params = new URLSearchParams({ search: rut, tipo: 'rut' });
       fetch(url + '?' + params.toString(), {
         method: 'GET',

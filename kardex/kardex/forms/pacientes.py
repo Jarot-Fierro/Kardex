@@ -193,7 +193,7 @@ class FormPaciente(forms.ModelForm):
     numero_telefono1 = forms.CharField(
         label='Teléfono 1',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control telefono_personal',
             'placeholder': '+56912345678',
             'id': 'telefono_personal'
         }),
@@ -203,7 +203,7 @@ class FormPaciente(forms.ModelForm):
     numero_telefono2 = forms.CharField(
         label='Teléfono 2',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control telefono_personal',
             'placeholder': 'Opcional',
             'id': 'numero_telefono2_paciente'
         }),

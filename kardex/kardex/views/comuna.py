@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from kardex.forms.comunas import FormComuna
 from kardex.mixin import DataTableMixin
 from kardex.models import Comuna
+from kardex.views.history import GenericHistoryListView
 
 MODULE_NAME = 'Comunas'
 
@@ -155,3 +156,9 @@ class ComunaDeleteView(PermissionRequiredMixin, DeleteView):
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
+
+
+class ComunaHistoryListView(GenericHistoryListView):
+    base_model = Comuna
+    permission_required = 'kardex.view_comuna'
+    template_name = 'kardex/history/list.html'

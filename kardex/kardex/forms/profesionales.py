@@ -37,7 +37,7 @@ class FormProfesional(forms.ModelForm):
     telefono = forms.CharField(
         label='Teléfono',
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control telefono_personal',
             'placeholder': '+569 1234 5678',
             'id': 'telefono_personal'
         }),
