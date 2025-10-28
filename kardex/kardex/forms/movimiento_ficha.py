@@ -332,6 +332,7 @@ class FormTraspasoFicha(forms.ModelForm):
         required=False
     )
 
+    # Campos auxiliares de búsqueda/visualización
     rut = forms.CharField(
         label='RUT',
         required=False,
@@ -352,17 +353,34 @@ class FormTraspasoFicha(forms.ModelForm):
         })
     )
 
-    servicio_clinico_traspaso = forms.ModelChoiceField(
+    # Mostrar como texto (la API lo rellenará)
+    servicio_clinico_envio = forms.CharField(
+        label='Servicio Clínico de Envío',
+        required=False,
+        widget=forms.TextInput(attrs={
+            'id': 'servicio_clinico_envio_ficha',
+            'class': 'form-control',
+            'readonly': 'readonly'
+        })
+    )
+
+    servicio_clinico_recepcion = forms.CharField(
+        label='Servicio Clínico de Recepción',
+        required=False,
+        widget=forms.TextInput(attrs={
+            'id': 'servicio_clinico_recepcion_ficha',
+            'class': 'form-control',
+            'readonly': 'readonly'
+        })
+    )
+
+    servicio_clinico_traspaso = forms.CharField(
         label='Servicio Clínico de Traspaso',
-        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
-        empty_label="Seleccione un Servicio Clínico",
-        widget=forms.Select(
-            attrs={
-                'id': 'servicio_clinico_ficha',
-                'class': 'form-control select2',
-            }
-        ),
-        required=True
+        required=False,
+        widget=forms.TextInput(attrs={
+            'id': 'servicio_clinico_ficha',
+            'class': 'form-control',
+        })
     )
 
     ficha = forms.CharField(
@@ -376,6 +394,29 @@ class FormTraspasoFicha(forms.ModelForm):
         required=True
     )
 
+    # Estados como texto
+    estado_envio = forms.CharField(label='Estado Envío', required=False,
+                                   widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
+    estado_recepcion = forms.CharField(label='Estado Recepción', required=False,
+                                       widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
+    estado_traspaso = forms.CharField(label='Estado Traspaso', required=False,
+                                      widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}))
+
+    # Observaciones como texto
+    observacion_envio = forms.CharField(label='Observación Envío', required=False,
+                                        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'readonly': 'readonly'}))
+    observacion_recepcion = forms.CharField(label='Observación Recepción', required=False,
+                                            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'readonly': 'readonly'}))
+    observacion_traspaso = forms.CharField(label='Observación Traspaso', required=False,
+                                           widget=forms.Textarea(attrs={'id': 'observacion_traspaso_ficha', 'class': 'form-control', 'rows': 2}))
+
+    # Fechas como texto/fecha
+    fecha_envio = forms.DateTimeField(label='Fecha Envío', required=False,
+                                      widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local', 'readonly': 'readonly'}))
+    fecha_recepcion = forms.DateTimeField(label='Fecha Recepción', required=False,
+                                          widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local', 'readonly': 'readonly'}))
+
+    # Profesional traspaso mostrado como texto para la API; el sistema puede usar select si fuese necesario
     profesional_traspaso = forms.ModelChoiceField(
         label='Profesional que traslada',
         empty_label="Seleccione un Profesional",
@@ -408,11 +449,11 @@ class FormTraspasoFicha(forms.ModelForm):
         model = MovimientoFicha
         fields = [
             'fecha_traspaso',
-            'servicio_clinico_traspaso',
             'ficha',
             'profesional_traspaso',
             'rut',
             'nombre',
+            'observacion_traspaso',
         ]
 
 
