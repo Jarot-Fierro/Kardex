@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
 
-from kardex.forms.fichas import FormFicha
+from kardex.forms.fichas import FormFicha, FormFichaTarjeta
 from kardex.mixin import DataTableMixin
 from kardex.models import Ficha
 from kardex.views.history import GenericHistoryListView
@@ -18,11 +18,12 @@ MODULE_NAME = 'Fichas'
 class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/ficha/list.html'
     model = Ficha
-    datatable_columns = ['ID', 'Número', 'Establecimiento', 'RUT', 'Código', 'Paciente', 'Fecha Creación']
-    datatable_order_fields = ['id', 'numero_ficha_sistema', 'establecimiento__nombre',
+    datatable_columns = ['ID', 'Número', 'N° Tarjeta', 'Establecimiento', 'RUT', 'Código', 'Paciente', 'Fecha Creación']
+    datatable_order_fields = ['id', 'numero_ficha_sistema', 'numero_ficha_tarjeta', 'establecimiento__nombre',
                               'paciente__rut', 'paciente__codigo', None, 'created_at']
     datatable_search_fields = [
-        'numero_ficha_sistema__icontains',
+        'numero_ficha_sistema__exact',
+        'numero_ficha_tarjeta__exact',
         'profesional__nombres__icontains',
         'usuario__username__icontains',
         'paciente__rut__icontains',
@@ -48,6 +49,7 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
         return {
             'ID': obj.id,
             'Número': obj.numero_ficha_sistema,
+            'N° Tarjeta': obj.numero_ficha_tarjeta,
             'Establecimiento': (getattr(est, 'nombre', '') or '').upper(),
             'RUT': getattr(pac, 'rut', '') if pac else '',
             'Código': getattr(pac, 'codigo', '') if pac else '',
@@ -213,6 +215,23 @@ class TogglePasivadoFichaView(PermissionRequiredMixin, View):
             messages.success(request, 'La ficha fue despasivada correctamente.')
         # Volver a la pantalla de consulta/creación
         return redirect('kardex:paciente_query')
+
+
+class FichaTarjetaView(PermissionRequiredMixin, UpdateView):
+    template_name = 'kardex/ficha/form_numero_ficha.html'
+    model = Ficha
+    form_class = FormFichaTarjeta
+    success_url = reverse_lazy('kardex:ficha_list')
+    permission_required = 'kardex.change_ficha'
+    raise_exception = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Asignar N° de Ficha de Tarjeta'
+        context['list_url'] = self.success_url
+        context['action'] = 'edit'  # siempre modo actualizar
+        context['module_name'] = MODULE_NAME
+        return context
 
 
 class FichaDeleteView(PermissionRequiredMixin, DeleteView):

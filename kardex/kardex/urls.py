@@ -84,6 +84,7 @@ urlpatterns = [
     path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
     path('fichas/<int:pk>/toggle-pasivar/', TogglePasivadoFichaView.as_view(), name='ficha_toggle_pasivar'),
+    path('fichas/<int:pk>/tarjeta/', FichaTarjetaView.as_view(), name='ficha_tarjeta'),
     path('fichas/historial/', FichaHistoryListView.as_view(), name='ficha_history'),
 
     # Vistas básicas para Movimientos de Ficha

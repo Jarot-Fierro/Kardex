@@ -71,7 +71,7 @@ function cargarDatosFicha(fichaId) {
             const fichaOption = new Option(data.numero_ficha_sistema || data.numero_ficha || data.id, data.id, true, true);
             $('#id_ficha').append(fichaOption).trigger('change');
             // Hidden ficha id y modo
-            $('#ficha_id_hidden').val(data.id || '');
+            $('#ficha_id_hidden').val(data.id || '').trigger('change');
             $('#form_action_hidden').val('edit');
 
             // RUT

@@ -370,7 +370,8 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label" for="paciente_pasivar">Asignar N° Ficha de Tarjeta</label>
-                        <a class="btn btn-warning form-control">Ficha en Tarjeta</a>
+                        <a id="btn-ficha-tarjeta" class="btn btn-warning form-control disabled" href="#"
+                           aria-disabled="true">Ficha en Tarjeta</a>
                     </div>
                 </div>
             </div>
@@ -402,5 +403,24 @@
 <script src="{% static 'js/apis/api_select2_rut.js' %}"></script>
 <script src="{% static 'js/apis/handle_fichas.js' %}"></script>
 <script src="{% static 'js/fields_form_paciente.js' %}"></script>
+<script>
+    // Habilitar botón "Ficha en Tarjeta" con la PK dinámica proveniente de la API
+    (function(){
+      const $btn = $('#btn-ficha-tarjeta');
+      const updateHref = function(){
+        const fichaId = ($('#ficha_id_hidden').val() || '').trim();
+        if (fichaId) {
+          const url = window.location.origin + '/kardex/fichas/' + fichaId + '/tarjeta/';
+          $btn.attr('href', url).removeClass('disabled').removeAttr('aria-disabled');
+        } else {
+          $btn.attr('href', '#').addClass('disabled').attr('aria-disabled','true');
+        }
+      };
+      // Inicial y cuando cambie (la API cambia hidden dinámicamente)
+      updateHref();
+      $(document).on('change', '#ficha_id_hidden', updateHref);
+    })();
+</script>
 <script src="{% static 'js/apis/rut_scan_control.js' %}"></script>
+
 {% endblock %}
