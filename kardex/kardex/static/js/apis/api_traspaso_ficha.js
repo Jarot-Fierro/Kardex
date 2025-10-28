@@ -169,15 +169,31 @@ $(function () {
         function toLocalInput(dtStr) {
           if (!dtStr) return '';
           try {
-            // Intentar ISO, si viene otro formato DRF (already ISO)
+            // 1) Si viene en ISO con offset o Z, extraemos la parte local sin aplicar desfase
+            // Ej: 2025-10-27T12:43:00-03:00 -> 2025-10-27T12:43
+            const m = String(dtStr).match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})(?::\d{2}(?:\.\d{1,6})?)?(?:Z|[+-]\d{2}:?\d{2})?$/);
+            if (m) {
+              return `${m[1]}T${m[2]}`; // YYYY-MM-DDTHH:MM
+            }
+            // 2) Intentar parsear cualquier otro formato con Date y formatear a datetime-local
             const d = new Date(dtStr);
-            const pad = n => String(n).padStart(2, '0');
-            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            if (!isNaN(d.getTime())) {
+              const pad = n => String(n).padStart(2, '0');
+              return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            }
+            return '';
           } catch (e) { return ''; }
         }
-        setVal('#fecha_envio_ficha', toLocalInput(data.fecha_envio));
-        setVal('#fecha_recepcion_ficha', toLocalInput(data.fecha_recepcion));
-        setVal('#fecha_traspaso_ficha', toLocalInput(data.fecha_traspaso));
+        const vEnv = toLocalInput(data.fecha_envio);
+        const vRec = toLocalInput(data.fecha_recepcion);
+        const vTra = toLocalInput(data.fecha_traspaso);
+        // Intentar con IDs usados en otras pantallas y los IDs por defecto de Django
+        setVal('#fecha_envio_ficha', vEnv);  // usado en salida
+        setVal('#id_fecha_envio', vEnv);     // id por defecto en este form
+        setVal('#fecha_recepcion_ficha', vRec); // usado en recepción
+        setVal('#id_fecha_recepcion', vRec);
+        setVal('#fecha_traspaso_ficha', vTra);   // id personalizado en este form
+        setVal('#id_fecha_traspaso', vTra);
 
         // Profesional traspaso si viene
         if (data.profesional_traspaso && data.profesional_traspaso.id) {

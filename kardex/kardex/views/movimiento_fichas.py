@@ -326,7 +326,7 @@ class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
     raise_exception = True
 
     def post(self, request, *args, **kwargs):
-        form = FormTraspasoFicha(request.POST)
+        form = FormTraspasoFicha(request.POST, request=request, user=request.user)
         if form.is_valid():
             ficha = form.cleaned_data.get('ficha')
             profesional_traspaso = form.cleaned_data.get('profesional_traspaso')
@@ -354,7 +354,8 @@ class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
             mov.profesional_traspaso = profesional_traspaso
             mov.servicio_clinico_traspaso = servicio_clinico_traspaso
             mov.fecha_traspaso = fecha_traspaso or now()
-            # El estado_traspaso se mantiene según la lógica del modelo (no modificarlo aquí)
+            # Cambiar estado de traspaso a TRASPASDO (según choices) al registrar traspaso
+            mov.estado_traspaso = 'TRASPASDO'
             mov.save()
 
             messages.success(request, 'Traspaso registrado correctamente.')
@@ -370,7 +371,7 @@ class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = kwargs.get('form') or FormTraspasoFicha()
+        form = kwargs.get('form') or FormTraspasoFicha(request=self.request, user=self.request.user)
         establecimiento = getattr(self.request.user, 'establecimiento', None)
         if establecimiento and 'profesional_traspaso' in form.fields:
             form.fields['profesional_traspaso'].queryset = Profesional.objects.filter(establecimiento=establecimiento)

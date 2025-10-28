@@ -133,7 +133,8 @@ class FormEntradaFicha(forms.ModelForm):
         if not qs.exists():
             raise forms.ValidationError("Ficha no encontrada en su establecimiento.")
         if qs.count() > 1:
-            raise forms.ValidationError("Existen múltiples fichas con ese número en su establecimiento. Contacte al administrador.")
+            raise forms.ValidationError(
+                "Existen múltiples fichas con ese número en su establecimiento. Contacte al administrador.")
         return qs.get()
 
     class Meta:
@@ -322,6 +323,14 @@ class FormSalidaFicha(forms.ModelForm):
 
 
 class FormTraspasoFicha(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        # Permite acceder al usuario/solicitud desde el form
+        self.request = kwargs.pop('request', None)
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.user is None and self.request is not None:
+            self.user = getattr(self.request, 'user', None)
+
     fecha_traspaso = forms.DateTimeField(
         label='Fecha de Traspaso',
         widget=forms.DateTimeInput(attrs={
@@ -374,12 +383,14 @@ class FormTraspasoFicha(forms.ModelForm):
         })
     )
 
-    servicio_clinico_traspaso = forms.CharField(
+    servicio_clinico_traspaso = forms.ModelChoiceField(
         label='Servicio Clínico de Traspaso',
-        required=False,
-        widget=forms.TextInput(attrs={
+        empty_label='Seleccione un Servicio Clínico',
+        queryset=ServicioClinico.objects.filter(status='ACTIVE').all(),
+        required=True,
+        widget=forms.Select(attrs={
             'id': 'servicio_clinico_ficha',
-            'class': 'form-control',
+            'class': 'form-control select2',
         })
     )
 
@@ -404,17 +415,25 @@ class FormTraspasoFicha(forms.ModelForm):
 
     # Observaciones como texto
     observacion_envio = forms.CharField(label='Observación Envío', required=False,
-                                        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'readonly': 'readonly'}))
+                                        widget=forms.Textarea(
+                                            attrs={'class': 'form-control', 'rows': 2, 'readonly': 'readonly'}))
     observacion_recepcion = forms.CharField(label='Observación Recepción', required=False,
-                                            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'readonly': 'readonly'}))
+                                            widget=forms.Textarea(
+                                                attrs={'class': 'form-control', 'rows': 2, 'readonly': 'readonly'}))
     observacion_traspaso = forms.CharField(label='Observación Traspaso', required=False,
-                                           widget=forms.Textarea(attrs={'id': 'observacion_traspaso_ficha', 'class': 'form-control', 'rows': 2}))
+                                           widget=forms.Textarea(
+                                               attrs={'id': 'observacion_traspaso_ficha', 'class': 'form-control',
+                                                      'rows': 2}))
 
     # Fechas como texto/fecha
     fecha_envio = forms.DateTimeField(label='Fecha Envío', required=False,
-                                      widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local', 'readonly': 'readonly'}))
+                                      widget=forms.DateTimeInput(
+                                          attrs={'class': 'form-control', 'type': 'datetime-local',
+                                                 'readonly': 'readonly'}))
     fecha_recepcion = forms.DateTimeField(label='Fecha Recepción', required=False,
-                                          widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local', 'readonly': 'readonly'}))
+                                          widget=forms.DateTimeInput(
+                                              attrs={'class': 'form-control', 'type': 'datetime-local',
+                                                     'readonly': 'readonly'}))
 
     # Profesional traspaso mostrado como texto para la API; el sistema puede usar select si fuese necesario
     profesional_traspaso = forms.ModelChoiceField(
@@ -431,18 +450,29 @@ class FormTraspasoFicha(forms.ModelForm):
     )
 
     def clean_ficha(self):
-        ficha_value = self.cleaned_data['ficha']
-        # Validación robusta para evitar múltiples coincidencias
+        ficha_value = self.cleaned_data.get('ficha')
+        # Obtener usuario (desde atributo seteado por la vista o desde request si existiera)
+        user = getattr(self, 'user', None)
+        if user is None and hasattr(self, 'request'):
+            user = getattr(self.request, 'user', None)
+
+        # Validar usuario y establecimiento
+        if not user or not hasattr(user, 'establecimiento') or user.establecimiento is None:
+            raise forms.ValidationError("No se pudo determinar el establecimiento del usuario.")
+
+        # Parsear número de ficha con validación
         try:
-            numero = int(ficha_value)
+            numero = int(str(ficha_value).strip())
         except (TypeError, ValueError):
             raise forms.ValidationError("Ficha no válida o no encontrada.")
-        qs = Ficha.objects.filter(numero_ficha_sistema=numero)
+
+        # Filtrar por número y establecimiento del usuario logueado
+        qs = Ficha.objects.filter(numero_ficha_sistema=numero, establecimiento=user.establecimiento)
         if not qs.exists():
             raise forms.ValidationError("Ficha no válida o no encontrada.")
         if qs.count() > 1:
             raise forms.ValidationError(
-                "La búsqueda de ficha es ambigua (existen varias con ese número). Use el RUT para cargar o contacte al administrador.")
+                "La búsqueda de ficha es ambigua (existen varias con ese número en su establecimiento). Use el RUT para cargar o contacte al administrador.")
         return qs.get()
 
     class Meta:
