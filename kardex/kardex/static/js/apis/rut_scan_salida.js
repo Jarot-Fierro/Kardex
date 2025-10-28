@@ -1,26 +1,18 @@
 $(document).ready(function () {
     const $rutField = $('#id_rut');
+    const $form = $('#form-salida');
     if ($rutField.length === 0) return;
 
     let lastRut = null;
+    let autoSubmitting = false;
 
     function normalizeRut(rut) {
         return String(rut || '').trim().toUpperCase();
     }
 
-    // Evitar que ENTER envíe el formulario
-    $rutField.on('keydown', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    // Evento al salir del campo
-    $rutField.on('blur', function () {
+    function procesarRut() {
         const rut = normalizeRut($rutField.val());
-        if (!rut || rut === lastRut) return;
-
+        if (!rut || rut === lastRut || autoSubmitting) return;
         lastRut = rut;
 
         console.log('[rut_scan_salida] Consultando RUT:', rut);
@@ -43,6 +35,20 @@ $(document).ready(function () {
                             // Fallback si no existe la función específica
                             window.cargarDatosFicha(first.id);
                         }
+                        // Enviar el formulario automáticamente luego de cargar datos
+                        if ($form.length) {
+                            autoSubmitting = true;
+                            // Dar un pequeño margen para que la función de carga complete
+                            setTimeout(function () {
+                                try {
+                                    console.log('[rut_scan_salida] Enviando formulario de salida automáticamente');
+                                    $form.trigger('submit');
+                                } finally {
+                                    // Permite nuevos escaneos después de un breve lapso
+                                    setTimeout(function(){ autoSubmitting = false; }, 1000);
+                                }
+                            }, 400);
+                        }
                     }
                 } else {
                     console.log('[rut_scan_salida] No se encontró ficha para RUT:', rut);
@@ -52,5 +58,15 @@ $(document).ready(function () {
                 console.error('[rut_scan_salida] Error en AJAX:', status, error);
             }
         });
+    }
+
+    // Evento al salir del campo
+    $rutField.on('blur', function () {
+        procesarRut();
+    });
+
+    // Manejar pegado desde la pistola/portapapeles
+    $rutField.on('paste', function () {
+        setTimeout(procesarRut, 50);
     });
 });

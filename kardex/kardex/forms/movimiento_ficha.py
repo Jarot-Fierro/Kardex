@@ -11,7 +11,7 @@ class FormEntradaFicha(forms.ModelForm):
             'class': 'form-control',
             'type': 'datetime-local'
         }),
-        required=False
+        required=True
     )
 
     rut = forms.CharField(
@@ -94,19 +94,47 @@ class FormEntradaFicha(forms.ModelForm):
         required=True
     )
 
+    def __init__(self, *args, **kwargs):
+        # Permite acceder al usuario/solicitud desde el form
+        self.request = kwargs.pop('request', None)
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.user is None and self.request is not None:
+            self.user = getattr(self.request, 'user', None)
+
     def get_initial(self):
         initial = super().get_initial()
-        user = self.request.user
-        if hasattr(user, 'servicio_clinico'):
+        user = getattr(self, 'user', None)
+        if user and hasattr(user, 'servicio_clinico') and user.servicio_clinico:
             initial['servicio_clinico_recepcion'] = user.servicio_clinico.nombre
         return initial
 
     def clean_ficha(self):
-        ficha_id = self.cleaned_data['ficha']
+        raw = self.cleaned_data.get('ficha')
+        user = getattr(self, 'user', None)
+        if user is None and getattr(self, 'request', None) is not None:
+            user = getattr(self.request, 'user', None)
+
+        # Validar usuario y establecimiento
+        if not user or not hasattr(user, 'establecimiento') or user.establecimiento is None:
+            raise forms.ValidationError("No se pudo determinar el establecimiento del usuario.")
+
+        # Normalizar y validar número de ficha
         try:
-            return Ficha.objects.get(pk=ficha_id)
-        except Ficha.DoesNotExist:
-            raise forms.ValidationError("Ficha no encontrada")
+            numero = int(str(raw).strip())
+        except (TypeError, ValueError):
+            raise forms.ValidationError("El número de ficha debe ser numérico válido.")
+
+        # Filtrar por ficha y establecimiento del usuario
+        qs = Ficha.objects.filter(numero_ficha_sistema=numero, establecimiento=user.establecimiento)
+        print(f"[FormEntradaFicha.clean_ficha] filtro -> numero={numero}, establecimiento={user.establecimiento}")
+        print(f"[FormEntradaFicha.clean_ficha] encontrados: {qs.count()}")
+
+        if not qs.exists():
+            raise forms.ValidationError("Ficha no encontrada en su establecimiento.")
+        if qs.count() > 1:
+            raise forms.ValidationError("Existen múltiples fichas con ese número en su establecimiento. Contacte al administrador.")
+        return qs.get()
 
     class Meta:
         model = MovimientoFicha
@@ -195,7 +223,7 @@ class FormSalidaFicha(forms.ModelForm):
             'class': 'form-control',
             'type': 'datetime-local'
         }),
-        required=False
+        required=True
     )
 
     observacion_envio = forms.CharField(

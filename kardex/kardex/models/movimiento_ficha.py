@@ -124,7 +124,7 @@ class MovimientoFicha(StandardModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Movimiento de Ficha #{self.ficha.id if self.ficha else 'N/A'}"
+        return f"Movimiento de Ficha #{self.ficha.numero_ficha_sistema if self.ficha else 'N/A'}"
 
     class Meta:
         verbose_name = 'Movimiento Ficha'

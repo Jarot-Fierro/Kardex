@@ -12,7 +12,7 @@ from kardex.forms.movimiento_ficha import FormEntradaFicha, FiltroSalidaFichaFor
 from kardex.forms.movimiento_ficha import FormSalidaFicha
 from kardex.forms.movimiento_ficha import FormTraspasoFicha
 from kardex.mixin import DataTableMixin
-from kardex.models import MovimientoFicha
+from kardex.models import MovimientoFicha, Ficha
 from kardex.models import Profesional
 from kardex.views.history import GenericHistoryListView
 
@@ -47,7 +47,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        form = FormEntradaFicha(request.POST)
+        form = FormEntradaFicha(request.POST, request=request)
         if form.is_valid():
             # La recepción debe ACTUALIZAR el último movimiento de la ficha seleccionada
             ficha = form.cleaned_data.get('ficha')
@@ -56,10 +56,13 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             observacion_recepcion = form.cleaned_data.get('observacion_recepcion')
             fecha_recepcion = form.cleaned_data.get('fecha_recepcion')
 
+            user = request.user
+            ficha_instance = Ficha.objects.filter(numero_ficha_sistema=ficha.numero_ficha_sistema,
+                                                  establecimiento=user.establecimiento).first()
+
             try:
                 mov = MovimientoFicha.objects.filter(
-                    ficha=ficha,
-                    fecha_envio__isnull=False
+                    ficha=ficha_instance
                 ).order_by('-fecha_envio').first()
             except Exception:
                 mov = None
@@ -84,7 +87,8 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
 
             mov.usuario_recepcion = request.user
             mov.profesional_recepcion = profesional_recepcion
-            mov.servicio_clinico_recepcion = servicio_clinico_recepcion
+            # Asignar instancia real de ServicioClinico desde el usuario (el campo del form es solo display)
+            mov.servicio_clinico_recepcion = getattr(request.user, 'servicio_clinico', None)
             mov.observacion_recepcion = observacion_recepcion
             mov.fecha_recepcion = fecha_recepcion or now()
             # No es necesario setear explícitamente estado a RECIBIDO; el modelo lo ajusta al guardar
@@ -103,7 +107,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = kwargs.get('form') or FormEntradaFicha()
+        form = kwargs.get('form') or FormEntradaFicha(request=self.request)
         establecimiento = getattr(self.request.user, 'establecimiento', None)
         if establecimiento and 'profesional_recepcion' in form.fields:
             form.fields['profesional_recepcion'].queryset = Profesional.objects.filter(establecimiento=establecimiento)
