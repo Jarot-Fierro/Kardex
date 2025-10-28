@@ -120,6 +120,12 @@ function cargarDatosFicha(fichaId) {
             $('#fallecido_paciente')
                 .prop('checked', !!paciente.fallecido)
                 .trigger('change');
+            // Sin teléfono: reflejar estado desde la API y disparar change para reglas
+            if (typeof paciente.sin_telefono !== 'undefined') {
+                $('#sin_telefono_paciente')
+                    .prop('checked', !!paciente.sin_telefono)
+                    .trigger('change');
+            }
 
             // Fecha de fallecimiento si existe
             if (paciente.fecha_fallecimiento) {

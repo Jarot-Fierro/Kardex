@@ -1,0 +1,505 @@
+﻿establecimiento,rut_profesional,nombre_profesional,mail_profesional,fono_profesional,inactivo,medico,anestesista,enfermera,administrativo,matrona,otro_prof_clinico
+1,0,Sin Profesional,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+1,10.919.933-8,Christian Castro Guajardo ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,11.756.467-3,Adriana Olivo Miranda ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,12.114.934-6,Paulina Opazo Basaur ,informaticaharauco@gmail.com,,1,1,0,0,0,0,0
+1,12.304.498-3,Manuel Padilla Gonzalez,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,12.327.368-0,Pradelia Campos Pino ,informaticaharauco@gmail.com,,0,0,0,0,0,0,1
+1,13.021.430-4,Erick Mendoza Munizaga ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,13.122.109-6,Cristian Uribe Jara,sss@gmail.com,,0,0,0,0,0,0,1
+1,13.311.249-9,Liliete Rumnitot Chavez,SASASAS@GMAIL.COM,,0,1,0,0,0,0,0
+1,13.352.345-6,Laura Fuentealba Fantuzzi,laura.fuentealba.fantuzzi@gmail.com,,0,0,0,1,0,0,0
+1,13.451.907-K,Pilar Fuertes Cortes ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,13.508.266-K,Adel Olivares Garcia Huidobro ,informaticaharauco@gmail.com,,0,0,0,0,0,0,1
+1,13.606.378-2,Marcia Medina Cifuente ,informaticaharauco@gmail.com,,0,0,0,0,1,0,0
+1,13.802.801-1,Yenny Fuentes Carrasco,yennyfuentes181@gmail.com,,0,0,0,1,0,0,0
+1,13.959.002-3,Maria Gabriela Salas Parra,gabysalasp@gmail.com,,0,0,0,1,0,0,0
+1,14.130.815-7,Claudia Arroyo Zuniga ,informaticaharauco@gmail.com,,0,0,0,0,0,0,1
+1,14.610.408-8,Marcia Morales Soto ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,15.186.271-3,Roberto Correa Díaz ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,15.191.998-7,Karen Ulloa Arriagada,karencita_ulloa@yahoo.es,,0,0,0,0,0,0,1
+1,15.194.027-7,Claudia Poza Asken ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,15.613.593-3,Karen Uribe Neira ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,15.676.510-4,Veronica Alejandra Yañez Morales,aaa@gmail.com,,0,1,0,0,0,0,0
+1,15.677.257-7,Francisca Javiera Arpón Garrido,dadad@gmail.com,,0,0,0,0,0,0,0
+1,15.756.227-4,Vivian Jara Araneda,vivianjara.a@gmail.com,,0,0,0,0,0,0,0
+1,15.998.871-6,Francisco Molina Soto,francisco.molina@hospitalarauco.cl,977652638,0,0,0,0,0,0,1
+1,16.282.887-8,Daniela Mella Jerez ,daniela.mella@hospitaldearauco.cl,,0,1,0,0,0,0,0
+1,16.380.703-3,Carla Jimenez Saez ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,16.490.650-7,Maria Jose Fuentealba Ortega ,informaticaharauco@gmail.com,,0,0,0,0,0,0,1
+1,16.567.392-1,Yessenia Rodriguez Delgado ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,16.593.482-2,Gonzalo Ortega Flores ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,16.601.506-5,Carlos Osses Sandoval ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,16.726.331-3,Maria Jose Leal Werner,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,16.765.511-4,Aracely Figueroa Daiy,aracelyfigueroadaiy@gmail.com,,0,0,0,1,0,0,0
+1,16.769.338-5,Gianfranco Pio Repetto,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,16.840.772-6,Rodrigo Carvajal Alvarez,aaaaa@gsghsg.cl,,1,1,0,0,0,0,0
+1,16.999.536-2,Rainier Zapata Jimenez ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.042.755-6,Alejandra Vasquez Gonzalez ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,17.045.789-7,Ivan Moraga Saez,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,17.060.331-1,Susana Fernandez Salgado ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,17.076.309-2,Carla Eriz Araneda ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.332.256-9,Paz Gonzalez Gonzalez,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.343.716-1,Claudia Neira,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.343.721-8,Eduardo Rozas Cerda,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,17.366.023-5,Felipe Reyes Santana ,aaaa@gmail.com,,0,0,0,0,0,0,1
+1,17.445.462-0,Catherine Renca Diaz ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.453.856-5,Camila Vergara Azocar,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.453.983-9,Graciela Torres Vergara,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,17.541.477-0,Yoselyn Parra Merino ,informaticaharauco@gmail.com,,0,0,0,0,0,0,1
+1,17.862.826-7,Guissele Riquelme Molina,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,18.155.701-K,Hernan Quintana Ibacache ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,18.230.295-3,Daniela Cisterna Llaupi ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,18.298.645-3,Luca Mansueto Soto,sdmhospital.arauco@gmail.com,,0,1,0,0,0,0,0
+1,18.413.970-7,Nicole Mardones Duran ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,18.446.597-3,Rocio Carrasco Cornejo,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,18.500.500-3,Tania Perales Cruces,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,18.505.500-3,Tania Perales Cruces,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,18.686.972-9,Andrea Castro Beltran ,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,18.798.679-6,Diego Orellana Cordova,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,19.680.872-8,Carla Reyes Arellano,informaticaharauco@gmail.com,,0,0,0,0,0,0,1
+1,19.813.962-9,Camila Beltran Gallardo ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,19.827.290-6,G. Javiera Aviles Ulloa,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+1,25.726.028-3,Gabriela Siso Garcia,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,26.372.286-8,Dormary Pacheco Griman,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,26.415.391-3,Manuel Octavio Borrego Chique,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,26.679.496-7,Griselda Cordero Lucena,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,26.713.392-1,Karines Salas Rivas,informaticaharauco@gmail.com,,0,1,0,0,0,0,0
+1,8.559.209-2,Fabiola Gatica Vasquez,aaaa@gmai.com,,0,0,0,0,0,0,1
+1,9.251.274-6,Maria Gladiz Aguilera Hidalgo,dsddsd@gmail.com,,0,0,0,0,0,0,1
+1,9.372.290-6,Tatiana Fuentes Figueroa ,informaticaharauco@gmail.com,,0,0,0,1,0,0,0
+2,0,Archivar,kkk@gmail.com,,1,0,0,0,0,0,0
+2,1,    ,zzzz@gmail.com,,1,1,1,1,1,1,1
+2,10.145.586-6,Soto Labra Patricio,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,10.365.344-4,Urra Picero Claudio,claudio.urra@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,10.591.855-0,Torres Claudia,claudia.torres@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,10.619.796-2,Soto Cecilia,cecilia.soto@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,10.755.653-2,Rojas Nunez Guillermo,guillermo.rojas@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,10.861.671-7,Pavlov Reyes Nosimir Fernando,archivo.some@hrav.cl,,0,0,1,0,0,0,0
+2,10.866.821-0,Ulloa Jenny,jenny.ulloa@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,10.949.958-7,Barra Dinamarca Emilio,emilio.barra@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,10.951.575-2,Mena Cuevas Pamela,pamela.mena@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,11.236.235-5,Fuentes Susana,susana.fuentes@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,11.908.577-2,Cardenas Ramirez Cristian,cristian.cardenas@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,11.963.741-4,Zapata Abel,abel.zapata@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,12.114.934-6,Opazo Basaur Paulina,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.181.642-3,Saez Maria Soledad,soledad.saez@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,12.265.500-8,Jorquera Escanilla Andres,andres.jorquera@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.290.522-5,Valenzuela Alexis,alexis.valenzuela@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.329.544-7,PEÑA PEÑA FLOR LIDIA,archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,12.560.845-0,NAVARRO ALARCON MARISOL ,archivo.some@hra.cl,,0,0,0,0,0,0,1
+2,12.562.685-8,Viveros Garay Paola,paola.viveros@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.590.344-4,Concha Nunez Mariela,mariela.concha@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.702.892-3,Beltran Quezada Jorge,jorge.beltran@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.732.193-0,Marlene Castro Sepulveda,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,12.732.651-7,Medina Carola,carola.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,12.776.824-2,Torres Munoz Ariel,ariel.torres@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,12.793.498-3,Guzman Munoz Rodrigo,rodrigo.guzman@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.122.109-6,Uribe Jara Cristian,cristian.uribe@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.132.992-K,Jerez Sanchez Juan,jujerez@gmail.com,,0,1,0,0,0,0,0
+2,13.307.265-9,Caceres Gonzalez Rodrigo,rodrigo.caceres@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.311.249-9,Ruminot Chavez Liliette,liliete.ruminot@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.389.217-6,Tatiana Ramirez Vera,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,13.455.445-2,Roblero Figueroa Paola,abigait.iturrieta@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,13.461.118-9,Taylor Montoya Susan,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.506.482-3,Munoz Guajardo Sergio,sergio.munoz@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,13.580.171-2,Toro Torres Bernardita,bernrdita.torres@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,13.613.936-3,Rojas Sergio,sergio.rojas@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,13.627.582-8,Cartes Yara,yara.cartes@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,13.697.894-2,Rodrigo Flores Opazo,rodrigojhgfdsa@gmail.com,,0,0,1,0,0,0,0
+2,13.722.583-2,Maltes Parada Mariana,mariana.maltes@hospitaldecuranilahue.cl,,0,0,1,0,0,0,0
+2,13.723.551-K,Mendoza Oyarse Paulina,paulina.mendoza@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.725.782-3,Flores Claudia,claudia.flores@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,13.727.555-4,Sepulveda Reuca Miriam,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,13.803.087-3,Varela Rocha Victor,victor.varela@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,13.844.484-8,Silva Beltran Jorge Antonio,jorge.silva@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.865.820-1,Duran Montero Pablo,pablo@gmail.com,,0,0,0,0,0,0,1
+2,13.952.536-1,Guzman De La Harpe Alejandro,alejandro.guzman@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.954.091-3,Aguayo Juan Pablo,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,13.955.094-3,Montero Maria Jose,mariajose.montero@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,13.955.198-2,Muñoz Jerez Daniel,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,13.957.842-2,Silva Cabezas Alejandra,alejandra.silva@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,14.060.428-3,Agurto Neira Loreto,lorato.agurto@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,14.071.152-7,Raul Alarcon Ramirez,ralarcon_1981@yahoo.es,,0,0,0,0,1,0,0
+2,14.071.194-2,Medina Evelyn,evelyn.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,14.207.616-0,Vielma Ramos Paula,paula.vielma@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,14.208.496-1,Oñate Zuñiga Lilian,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,14.209.905-5,Ortiz Garcia Patrick,patrick.ortiz@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,14.210.398-2,Zapata Catherine,catherinne.zapata@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,14.271.411-6,Torres Arias Paola,paola.torres@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,14.352.761-1,Torres Esteban,esteban.torres@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,14.352.909-6,Zapata Molina Mario,mario.zapata@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,14.356.049-K,Gatica Sobarzo Sandra,sandra.gatica@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,14.410.478-1,Barahona Andrea,andrea.barahona@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.119.054-5,Henriquez Zamorado Felipe,some@hospitaldecuranilahue.cl,,0,0,1,0,0,0,0
+2,15.161.784-0,Calderon Solis Cristian,cristian.calderon@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.174.498-2,Villagran Muñoz Felipe,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.177.025-8,Gatica Sobarzo Jorge,jorge.gatica@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,15.182.069-7,Diaz Gutierrez Patricia,patricia.diaz@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.183.417-5,Goecke Hochberger Bernardo,bernardo.goecke@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.184.305-0,Figueroa Grant Maria Cecilia,maria.figueroa@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.184.394-8,Valenzuela Zambrano Karen,karen.valenzuela@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.186.878-9,Diaz Torres Alfredo,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,15.188.326-5,"RODRIGUEZ SANHUEZA, BERNARDO (Anestesista)",archivo.some@hrav.cl,,0,0,1,0,0,0,0
+2,15.196.895-3,Rivera Natalie,natalie.rivera@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.197.887-8,Morales Macarena,macarena.morales@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,15.201.760-K,Jenny Flores Saravia,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,15.220.627-5,Salas Castillo Andrea ,andrea.salas@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,15.223.117-2,Monrroy Gonzalez Gaston,SOME@HOSPITALDECURANILAHUE.CL,,0,0,0,0,0,0,1
+2,15.302.880-K,Harvez Cea Leonardo,leonardo.harvez@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,15.328.128-9,Erices Maria Jose,pabellon@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,15.376.584-7,Manoli Mitchell Juan Carlos,juancarlos.manoli@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.499.061-5,Pinto Yacir,yacir.pinto@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.517.278-9,"BARRA MORA, VERONICA",archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,15.529.070-6,San Martin Sanzana Nelson,nelson.sanmartin@hospitaldcuranilahue.cl,,0,0,0,0,0,0,1
+2,15.591.070-4,Barroso Cynthia,cynthia.barroso@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.591.713-K,Vergara Inostroza Nicolas,nicolas.vergara@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.627.123-3,Rivera Alex,abigail.iturrieta@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.659.710-4,Gallardo Macarena,macarena.gallardo@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.659.746-5,Acuna Jeniffer,jeniffer.acuna@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.671.841-6,Neira Salazar Luis,luis.neira@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.676.510-4,Yañez Morales Veronica,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.676.727-1,Riquelme Urrutia Alejandra,alejandra.riquelme@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.677.009-4,Ojeda Vial Astrid,astrid.ojeda@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.677.257-7,Arpon Garrido Francisca,francisca.arpon@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.685.274-0,Silva Diaz Julio Enrique,julio.silva@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.782.272-1,Sepulveda Ortiz Viviana,viviana.sepulveda@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,15.822.339-2,Navarrete Varas Marcos,marcos.navarrete@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.854.680-9,Riquelme Villar Evelyn,somehra@hrav.cl,,0,0,0,1,0,0,0
+2,15.879.598-1,Valderrama Felipe,felipe.valderrama@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,15.911.961-0,Ojeda Lillo Gonzalo,gonzalo.ojeda@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,15.936.423-2,TORRES CANCINO MARIA FERNANDA,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,15.996.312-8,Quilodran Hernandez Maria Mercedes,maria@gmail.com,,0,0,0,0,0,0,1
+2,15.998.724-8,Medina Veronica,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.009.242-4,Reyes Sanhueza Paola,paola.reyes@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.009.515-6,Epelde-Aguirre Islas Javier,some@hospitaldecuranulahue.cl,,0,1,0,0,0,0,0
+2,16.048.379-2,Carcamo Hales Karina,karina.carcamo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.152.108-6,Agurto Neira Rodolfo,rodolfo.agurto@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.152.488-3,Correa Jara Sebastian,sebastian.correa@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,16.152.983-4,Toledo Munoz Franz,franz.toledo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.153.033-6,Labbe Ibañez Francisco,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.154.280-6,MONSALVEZ V. DANIELA,archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,16.154.888-K,Baeza Marcelo,marcelo.baeza@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.156.499-0,Villar Enkarine,enkarine.villar@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.157.097-4,Ochar Judith,judith.ochar@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.163.345-3,Ariz Katy,katy.ariz@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.215.483-4,Hugo Flores Jorquera ,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,16.215.863-5,Saez Jocelyn,jocelyn.saez@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.216.187-3,Chavez  Figueroa Leonardo,Leonardo.chavez@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,16.239.684-6,Cerda Vidal Francisco,francisco.cerda@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.283.780-K,Duran Weisse Maria Ignacia,maria@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.346.429-2,Sturione Juan Humberto,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.348.286-K,Zambrano Jacqueline,jacqueline.zambrano@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.360.669-0,"OCARES TAPIA, RUTH",archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,16.390.145-5,Estrada Jusselit,jusselit.estrada@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.496.587-2,Ojeda Zambrano Claudia,claudia.ojeda@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.579.765-5,Quilodran Cerda Sandra,sandra.quilodran@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.601.200-7,Gutierrez Elena,elena.gutierrez@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.609.555-7,Diaz Troncoso Rodrigo,rodrigo.diaz@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.635.013-1,Paleo Medina Lorena,lorena.paleo@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,16.669.387-K,Saez Lucas,lucas.saez@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.676.755-5,Lagos Dianela,dianela.lagos@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.707.051-5,Rodriguez Sanzana Danilo,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,16.707.485-5,Pedro Cisterna Perez,secretariapiso4@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,16.766.224-2,Muñoz Fernanda,mariafernanda.munoz@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,16.766.623-K,Aguayo Rocco Felipe,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.767.790-8,Acuña Rivera Nayadeth,Nayadeth.Acuna@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,16.768.335-5,Romero Gonzalez Claudio,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.768.513-7,Antezana Ray Kyrie Elisa,kyrie.antezana@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.806.185-4,Paz Torres Zambrano,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,16.813.921-7,Gonzalez Arriagada Fernando,fernando.gonzalez@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,16.837.035-0,Jimenez Bravo Nicolas,nicolas.jimenez@hospitaldecuranilahue.cl,,0,0,0,0,1,0,0
+2,16.840.772-6,Carvajal Alvarez Rodrigo,rodrigo.carvajal@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,16.869.773-2,Sanhueza Candia Vanesa,vanesa.sanhueza@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,16.894.361-K,"Ortloff Vidal, Kareen ",archivo.some@hrav.cl,,0,1,0,0,0,0,0
+2,16.930.630-3,Martinez Lopez Jaime,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,16.931.198-6,Madelyn Escobar Rojas,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,16.947.698-5,Espinoza Sanchez Francisca,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,16.979.873-7,Iturrieta Abigail,abigail.iturrieta@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.000.364-0,Mella Rebolledo Maria Jose,mariajose.mella@hospitaldecuranilahue.cl,,0,0,0,0,1,0,0
+2,17.025.854-1,Castro Gaete Nicolas,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.043.398-K,Paredes Valdebenito Nathalie,nata.paredes@gmail.com,,0,0,0,0,0,0,1
+2,17.044.612-7,Concha Murua Giovanni,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.061.140-3,Quezada Jara Constanza,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.083.751-7,Trujillo Juan Francisco,juan.trujillo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.087.160-K,Fernandez Peñafiel Rafael,rafael@gmail.com,,0,1,0,0,0,0,0
+2,17.199.551-5,Rojas Gonzalez Antonella,antonella.rojas@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.206.860-K,Mella Espinoza Mario,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.207.914-8,Venegas Maria Fernanda,mariafernanda.venegas@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.213.587-0,Konig Petit-laurent Alex,alex.konig@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.247.066-1,Mesa Valentina,valentina.mesa@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.265.051-1,Galvez Silva Daniela,daniela.galvez@hospitaldecuranilahue.vl,,0,1,0,0,0,0,0
+2,17.291.268-0,Castillo Natalia,natalia.castillo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.291.362-8,Ruiz Acevedo Alvaro,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.291.940-5,Raul Azocar Burgos,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,17.311.735-3,Quezada Riquelme Francisca,francisca.quezada@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.343.255-0,Ortiz Patricia,patricia.ortiz@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.343.721-8,Rozas Cerda Eduardo,eduardo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.344.311-0,Blümel Ruiz German,german@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.346.265-4,Escauriaza Ruiz Camila,camila@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.346.318-9,Villagran Gayoso Ximena,ximena.villagran@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.347.140-8,Roa Amas Maria Fernanda,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,17.347.984-0,Cifuentes Cerro Valentina,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.348.104-7,Niño Yevilao Ricardo,abigail.iturrieta@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.445.404-3,Vergara Toledo Alejandro,alejandro.vergara@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.453.568-K,Castro Yanina,some@gmail.com,,0,0,0,0,0,0,1
+2,17.453.946-4,Iturra Paulina,paulina.iturra@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.515.644-5,Verdugo Venegas Tamara,tamara.verdugo@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.544.621-4,Ayala Jose,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.548.459-0,Varela Coloma Claudia,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.548.768-9,Rojas Ruiz Diego,diego.rojas@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.548.864-2,Robles Chamorro Raquel,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.548.948-7,Perez Herrera Jeissi,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.548.990-8,Del Campo Mera Pamela,pamela.delcampo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.573.896-7,Ahumada Jasna,unacess@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.599.998-1,Peñailillo Lizama Amanda Maria Valentina,some@hospitaldecuraniahue.cl,,0,0,0,0,0,0,1
+2,17.601.232-0,Valderrama Natalia,natalia.valderrama@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.607.475-2,Ramirez Burgos Andrea,andrea.ramirez@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.607.581-3,Cisterna Campos Susana,susana.cisterna@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.613.826-2,Rojas Fernanda,fernanda.rojas@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.613.910-2,Placencia Villarroel Josianne,Josianne.Villarroel@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.616.870-6,Martinez Erik,erik.martinez@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.647.639-7,Nuñez Nahuelhual Maricel,maricel.nunez@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.701.974-7,Acuña Sandoval Ignacio,ignacio.acuna@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.703.262-K,Passalacqua Castro Miguel Angel,miguel@gmail.com,,0,1,0,0,0,0,0
+2,17.744.326-3,Lillo Diego,diego.lillo@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.750.508-0,"SAN MARTIN CARRASCO, ILSE",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,17.754.745-K,Benedetti Acuña Carolina,carolina@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.845.181-2,"JIMENEZ SALGADO, DANILO ",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,17.858.002-7,Salinas David,david.salinas@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.862.336-2,Opazo Rioseco Dayenu,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,17.896.453-4,Jara Riquelme Daniela,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.899.854-4,Valdes Daniela,daniela.valdes@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,17.900.219-1,Bustos Aguilera Stephanie,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,17.912.978-7,Masualto Maria Jose,mariajose.masualto@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,17.957.140-4,Piquer Alliende Maria Paz,maria.piquer@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,17.992.485-4,Cardenas Sandoval Tania,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.001.276-1,Rodriguez Marilyn,marilyn.rodriguez@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,18.017.306-4,Reyes Bustos Claudia,tamara.verdugo@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.142.768-K,Ortiz Pablo,pablo.ortiz@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,18.143.657-3,Peña Herrera Julian,julian.pena@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.144.076-7,Burgos Benitez Felipe Andres,felipe.burgos@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.145.278-1,Gonzalez Herrera Pilar,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.145.971-9,Quezada Gonzalez Consuelo,consuleo@gmail.com,,0,1,0,0,0,0,0
+2,18.146.307-4,Pastorini Mariangel Marcela,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.149.923-0,"SANCHEZ FERNANDEZ, YESSENIA",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,18.241.986-9,Valeska Carrasco Elgueta,somehrav@hrav.cl,,0,0,0,0,0,0,1
+2,18.304.458-3,Correa Polyschuk Pablo,pablo.correa@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.369.224-0,Aguilera Antilao Maria Jose,maria.aguilera@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.369.283-6,Acuña Fuentealba Diego,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,18.387.634-1,Riffo Cortes Jessica,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.393.019-2,Garcia Fernandez Hernan,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.411.769-K,Home Mendoza Lilian,some@hospitaldecurnilahue.cl,,0,0,0,1,0,0,0
+2,18.412.298-7,Acuña Escalona Rafael,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.413.281-8,De La Sotta Asencio Constanza,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.417.477-4,Rubilar Katherine,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,18.433.314-7,Villagran Gayoso Jorge,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,18.436.718-1,Abarzua Henriquez Jose Luis,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.443.598-0,Seguel Saez Diana,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,18.462.295-5,Diaz Gutierrez Maximiliano,max.diazgu@gmail.com,,0,1,0,0,0,0,0
+2,18.500.226-8,Martinez Hugo,somehrav@hrav.cl,,0,0,0,1,0,0,0
+2,18.523.620-K,Almendras Vial Nicol,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,18.570.919-1,Leal Sporman Catalina,veronica.medina@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.592.440-8,PATRICIO LOBOS,SOME@HOSPITALDECURANILAHUE.CL,,0,0,0,0,0,1,0
+2,18.621.836-1,Cerrutti Gallardo Dante,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.745.376-3,Cid Rodriguez Maripaula,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.771.424-9,Jara Carrasco Ambar,ambar.jara@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,18.807.603-3,Sura Cifuentes Pamela,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.807.849-4,Valdebenito Sharp Carla,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.809.002-8,Padilla Cisternas Julio,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.810.815-6,Manzarraga Atkinson Constanza,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.812.932-3,NEIRA RODRIGUEZ MARIA JOSE CALIDAD,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,18.813.006-2,Alejandra Cruces Jara,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,18.893.254-1,"BEZAMAT MUÑOZ, STELLA",archivo.some@hrav.cl,,0,1,0,0,0,0,0
+2,18.899.121-1,Patricia Leiva Sepulveda,archivo.some@hrav.cl,,0,0,0,0,0,1,0
+2,18.938.696-6,Lartiga Andres,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,18.944.084-7,Vanessa Mora Cayulao,somehrav@hrav.cl,,0,0,0,0,0,1,0
+2,18.965.304-2,Gallardo San Martin Marlene,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,18.987.536-3,"SANHUEZA FUENTES, YAMILET",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,19.077.145-8,De la Maza Vera Florencia,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,19.088.520-8,Muñoz Espinoza Natasha,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,19.089.661-7,Valenzuela Parada Pacsy,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,19.089.740-0,"Sepulveda Schuler, Tatiana",archivo.some@hrav.cl,,0,0,1,0,0,0,0
+2,19.091.019-9,"VERA CEBALLOS, CAMILA",archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,19.140.154-9,Álvarez Cereceda Camila ,archivo.some@hrav.cl,,0,0,0,0,0,1,0
+2,19.142.169-8,Gracia Gonzalez Xuriguera,somehrav@hrav.cl,,0,1,0,0,0,0,0
+2,19.173.133-6,Fuentes Ubilla Ricardo,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,19.222.615-5,Villegas Muñoz Valentina,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,19.373.252-6,Lissete Walker Jimenez,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,19.387.239-5,"Benavente Fernandez, Jose",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,19.387.244-1,"PALMA GONZALEZ, ARIEL ",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,19.510.289-9,"JARAMILLO NAHUELHUAL, DANITZA",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,19.521.153-1,Figueroa Abraham Hans Mauricio,archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,19.530.747-4,Martinez Bravo Paula,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,19.534.725-5,Olivares Carvajal Javiera,some@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,19.714.447-5,"PACHECO CAAMAÑO, CONSTANZA",archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,19.812.903-8,Alarcon Retamal Paulina,some@hospitaldecuranilahue.cl,,0,0,0,0,0,1,0
+2,19.815.136-K,TORRES PEREZ NATALIA (Eu. sup UPC),archivo.some@hrav.cl,,0,0,0,1,0,0,0
+2,19.868.177-6,"BURDILES FERNANDEZ, MABEL",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,2,Recaudacion HRAV,SOMEHRAV@HRAV.CL,,0,0,0,0,1,0,0
+2,20.020.952-4,GODOY TAPIA VIVIANA (Matrona),archivo.some@hrav.cl,,0,0,0,0,0,1,0
+2,20.088.093-5,"YANCAMAN CEBALLOS, OSVALDO (KINE)",archivo.some@hrav.com,,0,0,0,0,0,0,1
+2,20.154.159-K,"OLAVE, CATALINA",archivo.some@hrav.cl,,0,0,0,0,0,1,0
+2,20.258.386-5,"Cabrera, Saray",archivo.some@gmail.com,,0,0,0,1,0,0,0
+2,20.441.368-1,Bahamondes Olave Nayadet,some@hospitaldecuranilahue.cl,,0,0,0,0,1,0,0
+2,20.441.394-0,"MORALES CEBALLOS, RONAL",archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,21.150.475-7,Gonzalez Chong Gina,gina.gonzalez@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,21.772.915-7,Trujillo Robert Felipe,felipe.trujillo@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,21.879.881-0,zzzzzzz,zzzzzz@gmail.com,,0,0,0,0,0,0,0
+2,21.904.427-5,Renteria Lina,lina.renteria@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,23.279.285-K,"MEJIAS HERRERA, CARLOS",archivo.some@gmail.cl,,0,0,1,0,0,0,0
+2,25.806.804-1,Carreño Zavarce Maryam,maryan.carreno@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,26.350.744-4,Riera Osdelys,some@hrav.cl,,0,1,0,0,0,0,0
+2,26.435.358-0,Rodriguez Alfonzo Uviledy,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,27.036.040-8,Zamora Fuentes Mary,some@hospitaldecuranilahue.cl,,0,0,1,0,0,0,0
+2,27.283.489-K,Jeziel Vilchez Urdaneta,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,3,Pre Quirurgico,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,4,Hospitalizado,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,4.674.632-5,Zuniga De-spirito Jorge,jorge.zuniga@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,47-0,ACREDITACION (Estudio),archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,48.191.922-3,Yeanny Marquez Rodriguez,somehrav@hrav.cl,,0,1,0,0,0,0,0
+2,48.195.639-0,Rodriguez Villanueva Marco,marco.rodriguez@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,48.197.142-K,Escalante Gonzalez Darcy,darcy.escalante@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,48.207.605-K,Moret Castillo Gustavo,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,5,Secretaria Servicio,somehrav@hrav.cl,,0,0,0,0,1,0,0
+2,5.555.555-5,Medico Amarillo,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,5.998.752-6,Madariaga Burrows Jorge,jorge.madariaga@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,6,AYUDAS TECNICAS,archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,6.837.166-K,Cardenas Sotomayor Renato,renato.cardenas@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,6.901.066-0,Jaramillo Zapata Aida,aida.jaramillo@hospitaldecuranilahue.cl,,0,0,0,1,0,0,0
+2,66.666.666-6,DIALISIS,archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,7.777.777-7,Medico Azul,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,77.777.777-7,RN ,archivo.some@hrav.cl,,0,0,0,0,0,0,1
+2,8.025.476-8,Salgado Oyarzun Julio,julio.salgado@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,8.559.209-2,Gatica Fabiola,fabiola.gatica@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,8.888.888-8,Medico Rojo,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,88.888.888-8,Some fotocopias,some@hospitaldecuranilahue.cl,,0,0,0,0,1,0,0
+2,9.160.095-1,Bastias Sandra,sandra.bastias@hospitaldecuranilahue.cl,,0,0,0,0,0,0,0
+2,9.186.342-1,Villablanca Martinez Nelson,nelson.villablanca@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,9.251.274-6,Aguilera Hidalgo Gladys,gladys.aguilera@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+2,9.431.177-2,Etchepare Ibarra Tania,tania.etchepare@hospitaldecuranilahue.cl,,1,1,0,0,0,0,0
+2,9.563.764-7,Plummer Venegas Eduardo,eduardo.plummer@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,9.654.923-7,Urrea Correa Luis,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,9.804.195-8,Araneda Galvez Jhon,jhon.araneda@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,9.999.999-9,Medico Verde,some@hospitaldecuranilahue.cl,,0,1,0,0,0,0,0
+2,99.999.999-9,Segun tarjeton,some@hospitaldecuranilahue.cl,,0,0,0,0,0,0,1
+3,0,Sin Profesional,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+3,10.071.784-0,Rosa Varela Sepulveda,mamitota.vase@gmail.com,95152041,0,0,0,0,1,0,0
+3,12.043.375-K,Lorena Carvajal Estuardo,lorecarvajal24@gmail.com,418790,0,0,0,1,0,0,0
+3,12.063.476-3,Ximena San Martin Villa,ximenasanmartin44@gmail.com,419042,0,0,0,0,1,0,0
+3,12.362.823-3,Indira Salinas Mendez,ejemplo@gmail.com,,0,0,0,0,0,0,1
+3,12.362.877-2,Patricio Soto Toledo,patriciosototoledo@gmail.com,,0,0,0,0,0,0,1
+3,12.734.389-6,Carol Muñoz Jimenez,someadmisionkallvullanka@gmail.com,,0,0,0,0,1,0,0
+3,12.769.782-5,Brigida Peña,brigidaester09@gmail.com,,0,0,0,0,0,0,1
+3,12.932.937-8,Jessica Kuschel,jessi.kuschel@gmail.com,,1,0,0,0,0,0,1
+3,13.210.178-7,Marisol Nuñez,Marnuher@hotmail.com,,1,0,0,0,0,0,1
+3,13.629.143-2,Karen Sierra Espinoza,secretaria.somecanete@gmail.com,418763,0,0,0,0,1,0,0
+3,14.368.972-7,Cristina Elizabeth Fernandez Caniupan ,cristinaelizabethf7@gmail.com,,0,0,0,0,1,0,0
+3,14.536.156-7,Nancy Yanett Carbullanca Cuevas ,yanett7777@hotmail.com,,0,0,0,0,1,0,0
+3,15.201.195-4,Celia Pichuman Contreras,celiapichumancontreras@gmail.com,,0,0,0,0,1,0,0
+3,15.201.696-4,Mariela Bastias Burgos,marielabastiasburgos@gmail.com,,0,0,0,0,1,0,0
+3,15.202.284-0,Jessica Mariela Fernandez Huenuman,uapo@hospitalcanete.cl,418796,0,0,0,0,1,0,0
+3,15.203.186-6,Delia Millahual,dennykim@hotmail.es,,0,0,0,0,0,0,1
+3,15.203.832-1,Elizabeth Jovana Peña Mariñan ,elizabethyovanap@gmail.com,+56981807476,0,0,0,0,1,0,0
+3,15.658.731-1,Carolina Radonich Galilea,caroradonich@gmail.com,,0,0,0,0,0,0,1
+3,15.880.256-2,Olga Fuentealba,Ofabenja@yahoo.es,,1,0,0,0,0,0,1
+3,15.880.517-0,Karen Andrea Neira Neira,jefesomecanete@gmail.com,948428872,0,0,0,0,1,0,0
+3,16.209.262-6,LIZETH PEREIRA DE LA OZ,policlinico.gine.arocanete@gmail.com,,0,0,0,0,0,1,0
+3,16.229.106-8,Paulina Palma Godoy ,supervisionmatercanete@gmail.com,418719,0,0,0,0,0,1,0
+3,16.295.028-2,Monica Millahual ,monicamillahual86@gmail.com,76578371,0,0,0,0,0,0,1
+3,16.295.257-9,Andrea Sanhueza Mora,andrea.sanhueza@hotmail.com,418717,0,0,0,1,0,0,0
+3,16.668.776-4,Maria José Espinoza Perez ,poliprequirurgico@hospitalcanete.cl,,0,0,0,1,0,0,0
+3,16.897.242-3,Ivan Luengo Ortega,supervisor.uhcip@hospitalcanete.cl,,0,0,0,1,0,0,0
+3,16.980.372-2,Joselyn Lara Silva,remcanete@gmail.com,,0,0,0,0,1,0,0
+3,17.075.752-1,José Suazo Bueno,jose.suazo@hospitalkallvullanka.cl,,0,0,0,1,0,0,0
+3,17.344.155-K,YASIN MELITA GUERRERO,some.especialidades@hospitalcanete.cl,,0,0,0,0,1,0,0
+3,17.371.437-8,Fernanda Navarro Fuentealba ,supervision.urgencia@hospitalcanete.cl,,0,0,0,1,0,0,0
+3,17.371.440-8,Polet Neira,polett.n@gmail.com,,0,0,0,0,0,0,1
+3,17.453.857-3,Pamela Vera Lara,jefe.ges@hospitalcanete.cl,,0,0,0,1,0,0,0
+3,17.460.779-6,Paulina Alejandra Dominguez Neira,paulaadn@gmail.com,419045,0,0,0,0,0,1,0
+3,17.630.944-K,Rodolfo Vergara Quinchagual,neurohikll@gmail.com,,0,1,0,0,0,0,0
+3,17.750.207-3,Contanza Monsalvez Gonzalez,contanza.monsalvezg@gmail.com,419043,1,0,0,0,1,0,0
+3,17.750.818-7,María Victoria Gomez,mvgomezneira@gmail.com,418824,0,0,0,1,0,0,0
+3,18.107.880-4,Sofia pilquiman,hdomiciliaria.canete@gmail.com,418751,0,0,0,1,0,0,0
+3,18.166.680-3,Maria Hernandez,ejemplo@gmail.com,,0,1,0,0,0,0,0
+3,18.433.447-K,Rosa Escalona,Rosaescalonamartinez@gmail.com,,0,0,0,0,1,0,0
+3,18.570.919-1,Catalina Leal Sporman,clealsporman@gmail.com,,0,0,0,1,0,0,0
+3,18.670.921-7,Constanza Ramirez Rivera,supervisionmq.canete@gmail.com,,0,0,0,1,0,0,0
+3,18.670.940-3,Nicol Soto (Pabellón),some.pabellon@gmail.com,419060,0,0,0,0,0,0,1
+3,18.671.412-1,Tatiana Antihuay Marileo,vilma.antihuay@gmaail.com,418824,0,0,0,0,1,0,0
+3,19.273.110-0,Camila Ormeño Arce,camilha.arce@gmail.com,,0,0,0,0,0,0,0
+3,19.898.150-8,198981508,pediatria.mqz@hospitalcanete.cl,418340,0,0,0,1,0,0,0
+3,20.194.460-0,Juan Luis Barrera Correa,barrerajuanluis1999@gmail.com,,0,0,0,0,0,0,0
+5,0,Sin Profesional,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+5,11.964.720-7,ERICA ENRIQUEZ,E@dominio.pop,,0,0,0,0,0,0,1
+5,12.329.794-6,KARINA SARAVIA,k@dominio.pop,,0,0,0,0,1,0,0
+5,12.924.486-0,LETICIA ANDRADE BERNAL,l@dominio.pop,,0,0,0,1,0,0,0
+5,13.268.376-K,MARIA ISABEL JEREZ SOTO,mi@dominio.pop,,0,0,0,0,1,0,0
+5,13.390.357-7,VERONICA BUSTOS ALARCON ,vluz1@gmail.com,414601,0,0,0,0,1,0,0
+5,14.071.967-6,FERNANDA LEAL FUENTEALBA,F@dominio.pop,,0,0,0,1,0,0,0
+5,14.083.775-K,RICARDO ARANDA,w@dominio.pop,,0,0,0,0,0,0,1
+5,14.311.531-3,SOLANGE SARAVIA MUÑOZ,solangealejandra.saraviam@gmail.com,933463720,0,0,0,0,1,0,0
+5,14.621.638-2,CESIA CONDEZA CAYUPE,w@dominio.pop,956934460,0,0,0,0,0,1,0
+5,14.631.362-0,ANDREAS RUBILAR ,SUBDIRECTORMEDICO@HOSPITALSANTAISABEL.CL,,0,1,0,0,0,0,0
+5,14.758.880-1,JUAN PEÑA CEVALLOS,w@dominio.pop,,0,1,0,0,0,0,0
+5,15.185.012-K,ESMERALDA CARDENAS BURGOS,e@dominio.pop,,0,0,0,1,0,0,0
+5,15.198.705-2,ROXANA MONSALVEZ,roxybet@gmail.com,999158585,0,0,0,0,0,0,1
+5,15.199.855-0,WANDA CASTRO AGUILAR,w@dominio.pop,,0,0,0,1,0,0,0
+5,15.199.929-8,LUIS ALBORNOZ HERRERA,alexalbornozz@gmail.com,,0,0,0,0,0,1,0
+5,15.200.109-6,BERNANRDO CISTERNA SARAVIA,b@dominio.pop,,0,0,0,1,0,0,0
+5,15.220.340-3,MACARENA VALENZUELA B,makavalenzuela.mvb@gmail.com,,0,0,0,1,0,0,0
+5,15.590.628-6,VANESA MARTINES LAGOS,VMARTINESLAGOS@GMAIL.COM,,0,0,0,0,1,0,0
+5,15.765.763-0,ALDO ROCHA CUEVAS,AAROCHA@MEDICINAUCSC.CL,,0,1,0,0,0,0,0
+5,16.010.979-3,carlos bustamente conteras,w@dominio.pop,,0,0,0,1,0,0,0
+5,16.215.851-1,paula  arratia peña,w@dominio.pop,,0,0,0,0,0,0,1
+5,16.294.801-6,KATHERINE SILVA ESCOBAR,katherine.silva.escobar@gmail.com,419411,0,0,0,0,1,0,0
+5,16.931.248-6,GABRIEL RODRIGUEZ LEIVA,w@dominio.pop,,0,0,0,0,0,1,0
+5,17.043.976-7,CAMILA CHAVEZ FUENTES,C@dominio.pop,,0,0,0,1,0,0,0
+5,17.247.132-3,SELMA ROCHA SAEZ,SELMAVROCHASAEZ@GMAIL.COM,,0,0,0,1,0,0,0
+5,17.570.554-6,MARIA JESUS CARCAMO CASTILLO,mj@dominio.pop,,0,0,0,1,0,0,0
+5,17.573.627-1,MARIELA CARRASCO C,m@dominio.pop,,0,0,0,0,0,1,0
+5,17.607.389-6,MANUEL ARAVENA HUENCHUMAN,MANUEL.E.ARAVENA.H@GAMIL.COM,,0,0,0,0,1,0,0
+5,17.607.635-6,KATHERIN ARAVENA FUENTES,KATHERINARAVENAFUENTES@GMAIL.COM,956934460,0,0,0,1,0,0,0
+5,17.909.837-7,NICOLE DELGADO LUNA,n@dominio.pop,,0,0,0,1,0,0,0
+5,17.913.029-7,YESSICA MATAMALA,y@dominio.pop,,0,0,0,0,0,1,0
+5,18.146.863-7,natalia carrillo lobos,w@dominio.pop,,0,0,0,1,0,0,0
+5,18.230.149-3,SERGIO CASTILLIO,w@dominio.pop,,0,1,0,0,0,0,0
+5,18.243.521-K,NICOLE SOLANGE URRA PILGRIN,Ns@dominio.pop,,0,0,0,0,1,0,0
+5,18.322.104-3,BARBARA VELIZ SALAZAR,b@dominio.pop,,0,0,0,1,0,0,0
+5,18.433.304-K,CARINA ALARCON HIDALGO,w@dominio.pop,,0,0,0,0,0,1,0
+5,18.543.530-K,CAMILA GONZALEZ ORTIZ,S@DOMINIO.POP,,0,0,0,1,0,0,0
+5,18.677.966-5,MARCELO CATRIEN CARRILLO,w@dominio.pop,,0,0,0,0,0,1,0
+5,18.815.733-5,jacqueline riffo azocar,w@dominio.pop,,0,0,0,1,0,0,0
+5,18.840.689-0,NICOLE GOMEZ  AZOCAR,w@dominio.pop,,0,0,0,1,0,0,0
+5,18.943.944-K,NATALIA MARCHANT ARAVENA,w@dominio.pop,956934460,0,0,0,1,0,0,0
+5,18.943.987-3,BARBARA SAN MARTIN RIOS,w@dominio.pop,,0,0,0,1,0,0,0
+5,18.944.328-5,MARIA PAZ ACUÑA SOTO,mp@dominio.pop,,0,0,0,1,0,0,0
+5,18.944.397-8,NICOLE GUZMAN VENEGAS,n@dominio.pop,,0,0,0,0,0,1,0
+5,19.364.078-8,YARITZA VILLAR PILGRIN,ya@dominio.pop,,0,0,0,1,0,0,0
+5,19.867.869-4,RODRIGO RIQUELME ,w@dominio.pop,,0,0,0,1,0,0,0
+5,19.867.885-6,VALERIA SAN MARTIN CUEVAS,VALERIASANMATINCUEVAS@GMAIL.COM,,0,0,0,0,0,1,0
+5,19.867.945-3,MARCELA HUENCHUMAN,M@DOMINIO.POP,,0,0,0,1,0,0,0
+5,19.906.676-5,MAYTE RODRIGUEZ  AGUILAR,w@dominio.pop,,0,0,0,0,0,1,0
+5,20.014.650-6,VANESSA MARINAO FUENTES,SIN@MAIL.COM,,0,0,0,1,0,0,0
+5,20.022.543-0,SOFIA SALAZAR SOTOMAYOR,SIN@MAIL.COM,,0,0,0,1,0,0,0
+5,20.155.427-6,GERSON OJEDA ARANEDA,G@dominio.pop,,0,0,0,1,0,0,0
+5,20.160.357-9,NELSON ALARCON A,k@dominio.pop,,0,0,0,1,0,0,0
+5,20.196.943-3,IGNACIA LEIVA SAEZ,I@dominio.pop,,0,0,0,0,0,1,0
+5,20.197.565-4,FRANCISCO GONZALEZ CARES,F@dominio.pop,,0,0,0,1,0,0,0
+5,20.232.416-9,CATALINA NEIRA MONSALVEZ,SIN@MAIL.COM,,0,0,0,1,0,0,0
+5,20.255.238-2,MARGARETH FUENTES,M@dominio.pop,,0,0,0,0,0,0,0
+5,23.775.405-0,KAREN RODRIGUEZ PINO,K@DOMINIO.POP,,0,0,0,1,0,0,0
+6,0,Sin Profesional,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+7,10.333.187-0,Paola Reyes Cea,paolalilianareyes@yahoo.es,412724517,0,0,0,0,0,0,1
+7,13.309.042-8,Claudia Luengo Cuevas,claudiaalejandraluengo@gmail.com,412724517,0,0,0,0,0,0,1
+7,13.622.668-1,Andrea Altamirano Arriagada,andrea.lebu@gmail.com,412724517,0,0,0,0,0,0,1
+7,16.010.979-3,Carlos Bustamante Contreras,carlosbustamante85@gmail.com,+56984533998,0,0,0,1,0,0,0
+7,16.649.776-0,Pablo Monsalvez Flores,pa.monsalvez@gmail.com,412724517,0,0,0,0,0,0,1
+7,16.931.286-9,Deisy Meza Chamblas,deisy.tens.lebu@gmail.com,412724517,0,0,0,0,0,0,1
+7,17.045.865-6,Barnardita Lastra Concha,mbernarditalastra@gmail.com,412724517,0,1,0,0,0,0,0
+7,17.247.251-6,Dayana Morales Correa,dayananirales.to@gmail.com,4142724517,0,0,0,0,0,0,1
+7,17.406.857-7,Carlos Kattan Cartagena,dr.kattanpsq@gmail.com,412724517,0,1,0,0,0,0,0
+7,17.662.471-7,Marcela Pavez Abarca,marcelita.new@gmail.com,412724517,0,0,0,0,0,0,1
+7,18.965.189-9,Patricia Luengo Cisterna,patricialuengocisternas@gmail.com,412724517,0,0,0,0,0,0,1
+7,19.868.122-9,Maribel Rivera Aguayo,maribelrivera.aguayo@gmail.com,412724517,0,0,0,0,0,0,1
+8,16.707.185-6,Luis Vega,preuab@gmail.com,,0,0,0,1,0,0,0

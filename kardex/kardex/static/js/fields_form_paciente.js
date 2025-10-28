@@ -14,6 +14,10 @@
         extranjero: qid('extranjero_paciente'),
         fallecido: qid('fallecido_paciente'),
         fecha_fallecimiento: qid('fecha_fallecimiento_paciente'),
+        sin_telefono: qid('sin_telefono_paciente'),
+        telefono_personal: qid('telefono_personal'),
+        numero_telefono2_paciente: qid('numero_telefono2_paciente'),
+
     };
 
 
@@ -40,6 +44,7 @@
         const rn = !!(el.recien_nacido && el.recien_nacido.checked);
         const ext = !!(el.extranjero && el.extranjero.checked);
         const fal = !!(el.fallecido && el.fallecido.checked);
+        const sn = !!(el.sin_telefono && el.sin_telefono.checked);
 
         // Reset defaults: enable general fields
         setEnabled([el.rut, el.pasaporte, el.nip, el.ocupacion, el.nombre_pareja, el.rut_resp_temp, el.usar_rut_madre, el.fecha_fallecimiento]);
@@ -115,6 +120,18 @@
             setRequired([el.rut_resp_temp], false);
             setRequired([el.rut], false);
         }
+
+        // Regla independiente: Sin Teléfono
+        if (sn) {
+            // Si está marcado, deshabilitar ambos y quitar requeridos
+            setDisabled([el.telefono_personal, el.numero_telefono2_paciente], true);
+        } else {
+            // Si no está marcado, habilitar ambos; solo teléfono personal es requerido
+            setEnabled([el.telefono_personal, el.numero_telefono2_paciente]);
+            setRequired([el.telefono_personal], true);
+            setRequired([el.numero_telefono2_paciente], false);
+        }
+
     }
 
     function onSubmit(e) {
@@ -168,7 +185,7 @@
     document.addEventListener('change', function (ev) {
         if (!ev.target) return;
         const id = ev.target.id;
-        if (['recien_nacido_paciente', 'extranjero_paciente', 'fallecido_paciente'].includes(id)) {
+        if (['recien_nacido_paciente', 'extranjero_paciente', 'fallecido_paciente', 'sin_telefono_paciente', 'usar_rut_madre_como_responsable_paciente'].includes(id)) {
             applyRules();
         }
     });

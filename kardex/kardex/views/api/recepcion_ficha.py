@@ -39,9 +39,6 @@ class MovimientoFichaSerializer(serializers.ModelSerializer):
     servicio_clinico_envio = ServicioClinicoSerializer(read_only=True)
     servicio_clinico_recepcion = ServicioClinicoSerializer(read_only=True)
 
-    print(servicio_clinico_recepcion)
-    print(servicio_clinico_envio)
-
     class Meta:
         model = MovimientoFicha
         fields = '__all__'

@@ -17,14 +17,14 @@
                         <div class="col-7">
                             <span>N° FICHA:</span><br>
                             <input name="ficha" class="form-control" placeholder="N° Ficha" id="id_ficha"
-                                   style="min-width: 100px;" disabled>
-                            </input>
+                                   style="min-width: 100px;" value="{{ ficha_numero|default:'' }}" disabled/>
                         </div>
                         <div class="col-4">
                             <div class="text-muted small">
                                 <div>
-                                    F. creación: <span id="ficha_created_at_text"></span><br>
-                                    F. modificación: <span id="ficha_updated_at_text"></span>
+                                    F. creación: <span
+                                        id="ficha_created_at_text">{{ ficha_created_at_text|default:'' }}</span><br>
+                                    F. modificación: <span id="ficha_updated_at_text">{{ ficha_updated_at_text|default:'' }}</span>
 
                                 </div>
                             </div>
@@ -35,17 +35,25 @@
             <div class="col-md-3 text-md-end ficha-header">
                 <span>N° Código:</span><br>
                 <input name="codigo" class="form-control"
-                       placeholder="Código" id="id_codigo" disabled>
-                </input>
-                <input type="hidden" id="codigo_inicial" value="{{ paciente.codigo }}">
+                       placeholder="Código" id="id_codigo" value="{{ paciente_codigo|default:'' }}" disabled/>
+                <input type="hidden" id="codigo_inicial" value="{{ paciente_codigo|default:'' }}">
             </div>
 
             <div class="col-md-3 text-md-end">
                 <div class="btn-group w-100 no-print" role="group" aria-label="Impresión y Acciones">
+                    {% if ficha %}
+                    <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50" href="{{ caratula_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">Carátula</a>
+                    <a id="btn-stickers" class="btn btn-outline-secondary btn-sm w-50" href="{{ stickers_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">Stickers</a>
+                    {% else %}
                     <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank"
                        aria-disabled="true" rel="noopener noreferrer">Carátula</a>
                     <a id="btn-stickers" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank"
                        aria-disabled="true" rel="noopener noreferrer">Stickers</a>
+                    {% endif %}
                 </div>
             </div>
 
@@ -110,10 +118,7 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
-
         <!-- IDENTIFICACIÓN -->
         <div class="card mb-2">
             <div class="card-header">
@@ -319,7 +324,16 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        {{ form.sin_telefono }}
+                        <label class="form-label" for="sin_telefono_paciente">
+                            {{ form.sin_telefono.label }}
+                        </label>
+                        {% for error in form.sin_telefono.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label" for="numero_telefono1_paciente">
                             {{ form.numero_telefono1.label }}</label>
                         {{ form.numero_telefono1 }}
@@ -327,7 +341,7 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label" for="numero_telefono2_paciente">
                             {{ form.numero_telefono2.label }}</label>
                         {{ form.numero_telefono2 }}
@@ -335,10 +349,17 @@
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label" for="ocupacion_paciente">{{ form.ocupacion.label }}</label>
                         {{ form.ocupacion }}
                         {% for error in form.ocupacion.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label" for="alergico_a_paciente">{{ form.alergico_a.label }}</label>
+                        {{ form.alergico_a }}
+                        {% for error in form.alergico_a.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
@@ -362,13 +383,25 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label" for="paciente_pasivar">Pasivar</label>
+                        {% if ficha %}
+                        <a id="btn-pasivar-gestion"
+                           class="btn {% if ficha_pasivado %}btn-danger{% else %}btn-info{% endif %} form-control"
+                           href="{{ pasivar_url }}"
+                           rel="noopener noreferrer">{% if ficha_pasivado %}Despasivar{% else %}Pasivar{% endif %}</a>
+                        {% else %}
                         <a id="btn-pasivar-gestion" class="btn btn-info form-control disabled" href="#"
                            aria-disabled="true" rel="noopener noreferrer">Pasivar</a>
+                        {% endif %}
                     </div>
                     <div class="col-md-3">
                         <label class="form-label" for="paciente_pasivar">Asignar N° Ficha de Tarjeta</label>
+                        {% if ficha %}
+                        <a id="btn-ficha-tarjeta" class="btn btn-warning form-control" href="{{ ficha_tarjeta_url }}">Ficha
+                            en Tarjeta</a>
+                        {% else %}
                         <a id="btn-ficha-tarjeta" class="btn btn-warning form-control disabled" href="#"
                            aria-disabled="true">Ficha en Tarjeta</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -395,7 +428,6 @@
         width: '100%'
     });
 </script>
-<script src="{% static 'js/apis/handle_fichas.js' %}"></script>
 <script src="{% static 'js/fields_form_paciente.js' %}"></script>
 
 {% endblock %}

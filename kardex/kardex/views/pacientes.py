@@ -7,7 +7,7 @@ from django.utils.dateparse import parse_date
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 from django.views.generic import TemplateView, FormView
 
-from kardex.forms.pacientes import FormPacienteCreacion, FormPaciente
+from kardex.forms.pacientes import FormPacienteCreacion, FormPaciente2
 from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.mixin import DataTableMixin
 from kardex.models import Ficha
@@ -105,7 +105,7 @@ class PacienteDetailView(PermissionRequiredMixin, DetailView):
 class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/paciente/form_update.html'
     model = Paciente
-    form_class = FormPaciente
+    form_class = FormPaciente2
     success_url = reverse_lazy('kardex:paciente_list')
     permission_required = 'kardex.change_paciente'
     raise_exception = True
@@ -134,10 +134,9 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
         user = getattr(self.request, 'user', None)
         establecimiento = getattr(user, 'establecimiento', None) if user else None
 
-        ingreso = None  # Mantener en contexto por compatibilidad, pero no consultar reverse inexistente
+        ingreso = None  # Mantener en contexto por compatibilidad
         ficha = None
         if establecimiento:
-            # Evitar dependencia a ingresopaciente_set (no existe el reverse en el modelo actual)
             ficha = Ficha.objects.filter(paciente=self.object, establecimiento=establecimiento).first()
             if ficha is None:
                 from django.contrib import messages
@@ -146,10 +145,43 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
             from django.contrib import messages
             messages.warning(self.request, 'El usuario no tiene un establecimiento asociado.')
 
+        # Datos derivados para el template (sin consumir API)
+        paciente = self.object
+        def fmt_dt(dt):
+            try:
+                return dt.strftime('%d/%m/%Y') if dt else ''
+            except Exception:
+                return ''
+
+        ficha_numero = getattr(ficha, 'numero_ficha_sistema', '') if ficha else ''
+        ficha_created_at_text = fmt_dt(getattr(ficha, 'created_at', None)) if ficha else ''
+        ficha_updated_at_text = fmt_dt(getattr(ficha, 'updated_at', None)) if ficha else ''
+        paciente_codigo = getattr(paciente, 'codigo', '')
+
+        # URLs para botones (Carátula, Stickers, Pasivar, Ficha Tarjeta)
+        caratula_url = stickers_url = pasivar_url = ficha_tarjeta_url = ''
+        ficha_pasivado = False
+        if ficha and getattr(ficha, 'id', None):
+            fid = ficha.id
+            caratula_url = f"/kardex/pdfs/ficha/{fid}/"
+            stickers_url = f"/kardex/pdfs/stickers/ficha/{fid}/"
+            pasivar_url = f"/kardex/fichas/{fid}/toggle-pasivar/"
+            ficha_tarjeta_url = f"/kardex/fichas/{fid}/tarjeta/"
+            ficha_pasivado = bool(getattr(ficha, 'pasivado', False))
+
         # Exponer objetos esperados por el template
-        context['paciente'] = self.object
+        context['paciente'] = paciente
         context['ingreso'] = ingreso
         context['ficha'] = ficha
+        context['ficha_numero'] = ficha_numero
+        context['ficha_created_at_text'] = ficha_created_at_text
+        context['ficha_updated_at_text'] = ficha_updated_at_text
+        context['paciente_codigo'] = paciente_codigo
+        context['caratula_url'] = caratula_url
+        context['stickers_url'] = stickers_url
+        context['pasivar_url'] = pasivar_url
+        context['ficha_tarjeta_url'] = ficha_tarjeta_url
+        context['ficha_pasivado'] = ficha_pasivado
 
         return context
 
