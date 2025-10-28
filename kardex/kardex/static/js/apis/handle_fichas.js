@@ -105,7 +105,7 @@ function cargarDatosFicha(fichaId) {
             $('#telefono_personal').val(paciente.numero_telefono1 || '');
             $('#numero_telefono2_paciente').val(paciente.numero_telefono2 || '');
             $('#pasaporte_paciente').val(paciente.pasaporte || '');
-            $('#nie_paciente').val(paciente.nip || paciente.nie || '');
+            $('#nip_paciente').val(paciente.nip || paciente.nip || '');
             $('#rut_responsable_temporal_paciente').val(paciente.rut_responsable_temporal || '');
 
             $('#usar_rut_madre_como_responsable_paciente')

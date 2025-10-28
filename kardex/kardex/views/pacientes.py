@@ -103,7 +103,7 @@ class PacienteDetailView(PermissionRequiredMixin, DetailView):
 
 
 class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
-    template_name = 'kardex/paciente/form.html'
+    template_name = 'kardex/paciente/form_update.html'
     model = Paciente
     form_class = FormPaciente
     success_url = reverse_lazy('kardex:paciente_list')
@@ -130,26 +130,21 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
         context['action'] = 'edit'
         context['module_name'] = MODULE_NAME
 
-        # Obtener el ingreso del paciente asociado al establecimiento del usuario logueado
+        # Obtener la ficha del paciente asociada al establecimiento del usuario logueado
         user = getattr(self.request, 'user', None)
         establecimiento = getattr(user, 'establecimiento', None) if user else None
 
-        ingreso = None
+        ingreso = None  # Mantener en contexto por compatibilidad, pero no consultar reverse inexistente
+        ficha = None
         if establecimiento:
-            ingreso = self.object.ingresopaciente_set.filter(establecimiento=establecimiento).first()
+            # Evitar dependencia a ingresopaciente_set (no existe el reverse en el modelo actual)
+            ficha = Ficha.objects.filter(paciente=self.object, establecimiento=establecimiento).first()
+            if ficha is None:
+                from django.contrib import messages
+                messages.info(self.request, 'No existe ficha asociada a este paciente en su establecimiento.')
         else:
             from django.contrib import messages
             messages.warning(self.request, 'El usuario no tiene un establecimiento asociado.')
-
-        ficha = None
-        if ingreso:
-            ficha = Ficha.objects.filter(ingreso_paciente=ingreso).first()
-            if ficha is None:
-                from django.contrib import messages
-                messages.info(self.request, 'No existe ficha asociada al ingreso en su establecimiento.')
-        else:
-            from django.contrib import messages
-            messages.info(self.request, 'El paciente no tiene ingreso en su establecimiento.')
 
         # Exponer objetos esperados por el template
         context['paciente'] = self.object

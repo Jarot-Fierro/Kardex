@@ -308,6 +308,21 @@ class FormPaciente(forms.ModelForm):
         }),
         required=False
     )
+    alergico_a = forms.CharField(
+        label='Alergico a',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Opcional (Componente separado por comas)',
+            'id': 'alergico_a_paciente'
+        }),
+        required=False
+    )
+
+    sin_telefono = forms.BooleanField(
+        label='Sin Teléfono',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'id': 'sin_telefono_paciente'})
+    )
 
     comuna = forms.ModelChoiceField(
         label='Comuna',
