@@ -261,6 +261,20 @@ class FichaDeleteView(PermissionRequiredMixin, DeleteView):
         return context
 
 
+class PacientePasivadosListView(FichaListView):
+
+    def get_base_queryset(self):
+        return Ficha.objects.filter(pasivado=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Fichas Pasivadas',
+            'list_url': reverse_lazy('kardex:ficha_pasivados_list'),
+        })
+        return context
+
+
 class FichaHistoryListView(GenericHistoryListView):
     base_model = Ficha
     permission_required = 'kardex.view_ficha'

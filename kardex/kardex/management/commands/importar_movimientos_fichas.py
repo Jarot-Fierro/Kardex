@@ -60,8 +60,7 @@ class Command(BaseCommand):
             # === Estado ===
             estado_raw = str(row.get('estado_recepcion', '')).strip().upper()
             estado_recepcion = self.map_estado(estado_raw)
-            # Si no hay valor en Excel, lo deja "EN ESPERA", pero si hay algo reconocible, lo respeta.
-            estado_envio = 'ENVIADO' if estado_recepcion != 'RECIBIDO' else 'ENVIADO'
+            estado_envio = 'ENVIADO'
             estado_traspaso = 'SIN TRASPASO'
 
             # === Relaciones ===
@@ -79,8 +78,14 @@ class Command(BaseCommand):
                                                           'usuario_envio_anterior', index)
             usuario_recepcion_anterior = self.safe_get_by_rut(UsuarioAnterior, usuario_recepcion_anterior_rut,
                                                               'usuario_recepcion_anterior', index)
+
+            # === Lógica especial para profesional_recepcion ===
             profesional_recepcion = self.safe_get_by_rut(Profesional, profesional_recepcion_rut,
                                                          'profesional_recepcion', index)
+            if not profesional_recepcion and profesional_recepcion_rut not in ('', '0', 'SIN RUT', 'NULL'):
+                rut_anterior_profesional = profesional_recepcion_rut
+            else:
+                rut_anterior_profesional = 'SIN RUT'
 
             # === Crear o actualizar ===
             obj, created = MovimientoFicha.objects.update_or_create(
@@ -100,6 +105,7 @@ class Command(BaseCommand):
                     'profesional_recepcion': profesional_recepcion,
                     'establecimiento': establecimiento,
                     'rut_anterior': rut_anterior or 'SIN RUT',
+                    'rut_anterior_profesional': rut_anterior_profesional,  # 👈 SE AGREGA AQUÍ
                 },
             )
 
@@ -129,7 +135,7 @@ class Command(BaseCommand):
             return None
         obj = model.objects.filter(rut=rut.strip()).first()
         if not obj:
-            self.stdout.write(self.style.WARNING(f'⚠️ Fila {index + 2}: {nombre} con RUT {rut} no encontrado.'))
+            self.stdout.write(self.style.WARNING(f'⚠️ Fila {index + 2}: {nombre} con RUT {rut} no encontrado. {model}'))
         return obj
 
     def parse_fecha(self, value):
@@ -141,7 +147,6 @@ class Command(BaseCommand):
                 dt = value.to_pydatetime()
             else:
                 dt = pd.to_datetime(value)
-            # Si es una fecha naive, agregar zona horaria
             if timezone.is_naive(dt):
                 dt = make_aware(dt, timezone.get_current_timezone())
             return dt
@@ -158,7 +163,6 @@ class Command(BaseCommand):
 
     def map_estado(self, estado):
         """Mapea las letras o abreviaciones del Excel a tus choices con debug."""
-        # Convertir a string y limpiar
         estado_str = str(estado).upper().strip()
 
         if estado_str in ['R', 'RECIBIDO']:

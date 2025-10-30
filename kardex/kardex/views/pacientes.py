@@ -147,6 +147,7 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
 
         # Datos derivados para el template (sin consumir API)
         paciente = self.object
+
         def fmt_dt(dt):
             try:
                 return dt.strftime('%d/%m/%Y') if dt else ''
@@ -255,6 +256,20 @@ class PacienteExtranjeroListView(PacienteListView):
         context.update({
             'title': 'Pacientes Extranjeros',
             'list_url': reverse_lazy('kardex:paciente_extranjero_list'),
+        })
+        return context
+
+
+class PacienteRutMadreListView(PacienteListView):
+
+    def get_base_queryset(self):
+        return Paciente.objects.filter(usar_rut_madre_como_responsable=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Pacientes que utilizan el rut de la madre como reponsable',
+            'list_url': reverse_lazy('kardex:paciente_rut_madre_list'),
         })
         return context
 

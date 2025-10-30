@@ -88,7 +88,10 @@ class MovimientoFicha(StandardModel):
                                         related_name='movimientos_fichas_establecimientos')
 
     rut_anterior = models.CharField(max_length=50, default='SIN RUT', null=True, blank=True,
-                                    verbose_name='RUT Anterior')
+                                    verbose_name='RUT Anterior del Usuario')
+
+    rut_anterior_profesional = models.CharField(max_length=50, default='SIN RUT', null=True, blank=True,
+                                                verbose_name='RUT Anterior del Profesional')
 
     ficha = models.ForeignKey('kardex.Ficha', null=True, blank=True, on_delete=models.PROTECT,
                               verbose_name='Ficha')
@@ -117,13 +120,6 @@ class MovimientoFicha(StandardModel):
                         changed.append(f)
             except type(self).DoesNotExist:
                 pass
-            # Si el estado previo no era RECIBIDO, estamos marcando recepción ahora; no bloquear
-            try:
-                old_estado = type(self).objects.get(pk=self.pk).estado_recepcion
-            except type(self).DoesNotExist:
-                old_estado = None
-            if changed and old_estado == 'RECIBIDO':
-                raise ValidationError('No se puede editar un movimiento ya recibido.')
 
     def save(self, *args, **kwargs):
         creating = self.pk is None

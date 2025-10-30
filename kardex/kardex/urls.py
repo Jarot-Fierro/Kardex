@@ -68,6 +68,7 @@ urlpatterns = [
     path('pacientes/', PacienteListView.as_view(), name='paciente_list'),
     path('pacientes/recien-nacidos/', PacienteRecienNacidoListView.as_view(), name='paciente_recien_nacido_list'),
     path('pacientes/extranjeros/', PacienteExtranjeroListView.as_view(), name='paciente_extranjero_list'),
+    path('pacientes/rut-madre-reponsable/', PacienteRutMadreListView.as_view(), name='paciente_rut_madre_list'),
     path('pacientes/fallecidos/', PacienteFallecidoListView.as_view(), name='paciente_fallecido_list'),
     path('pacientes/por-fecha/', PacientePorFechaListView.as_view(), name='paciente_por_fecha_list'),
     path('pacientes/por-fecha/form/', PacienteFechaFormView.as_view(), name='paciente_fecha_form'),
@@ -85,6 +86,7 @@ urlpatterns = [
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
     path('fichas/<int:pk>/toggle-pasivar/', TogglePasivadoFichaView.as_view(), name='ficha_toggle_pasivar'),
     path('fichas/<int:pk>/tarjeta/', FichaTarjetaView.as_view(), name='ficha_tarjeta'),
+    path('fichas/pasivadas/', PacientePasivadosListView.as_view(), name='ficha_pasivados_list'),
     path('fichas/historial/', FichaHistoryListView.as_view(), name='ficha_history'),
 
     # Vistas básicas para Movimientos de Ficha

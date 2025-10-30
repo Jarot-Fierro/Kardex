@@ -71,16 +71,38 @@
                     <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true"
                        aria-expanded="false" class="nav-link dropdown-toggle">Consultas</a>
                     <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
-                        <li><a href="{% url 'kardex:paciente_fecha_form' %}" class="dropdown-item">Ingresos por rango de
-                            fechas</a></li>
+                        <li>
+                            <a href="{% url 'kardex:paciente_fecha_form' %}" class="dropdown-item">Ingresos por rango de
+                                fechas
+                            </a>
+                        </li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:paciente_recien_nacido_list' %}" class="dropdown-item">Consulta
-                            recien nacidos</a></li>
-                        <li><a href="{% url 'kardex:paciente_extranjero_list' %}" class="dropdown-item">Consulta
-                            extranjeros</a></li>
-                        <li><a href="{% url 'kardex:paciente_fallecido_list' %}" class="dropdown-item">Consulta
-                            fallecidos</a></li>
+                        <li>
+                            <a href="{% url 'kardex:paciente_recien_nacido_list' %}" class="dropdown-item">Consulta
+                                recien nacidos
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'kardex:paciente_extranjero_list' %}" class="dropdown-item">Consulta
+                                extranjeros
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'kardex:paciente_fallecido_list' %}" class="dropdown-item">Consulta
+                                fallecidos
+                            </a>
+                        </li>
 
+                        <li>
+                            <a href="{% url 'kardex:paciente_rut_madre_list' %}" class="dropdown-item">Consulta
+                                Rut Madre Paciente
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'kardex:ficha_pasivados_list' %}" class="dropdown-item">Consulta
+                                Fichas Pasivadas
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -94,7 +116,8 @@
                         <li class="dropdown-divider"></li>
                         <li><a href="#" class="dropdown-item">Ficha en transito</a></li>
                         <li class="dropdown-divider"></li>
-                        <li><a href="{% url 'kardex:traspaso_ficha' %}" class="dropdown-item">Traspaso de Fichas</a></li>
+                        <li><a href="{% url 'kardex:traspaso_ficha' %}" class="dropdown-item">Traspaso de Fichas</a>
+                        </li>
                     </ul>
                 </li>
             </ul>
