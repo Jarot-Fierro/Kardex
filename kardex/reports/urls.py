@@ -18,6 +18,7 @@ urlpatterns = [
     # FICHAS
     path('export/ficha/', views.export_ficha, name='export_ficha'),
     path('export/ficha_pasivada/', views.export_ficha_pasivada, name='export_ficha_pasivada'),
+    path('export/fichas_fast/', views.export_ficha_fast, name='export_ficha_fast'),
 
     # MOVIMIENTOS FICHAS
     path('export/movimiento_ficha/', views.export_movimiento_ficha, name='export_movimiento_ficha'),

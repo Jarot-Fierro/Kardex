@@ -1,7 +1,11 @@
+import io
 from datetime import date, datetime
+from time import timezone
 
 import openpyxl
 from django.http import HttpResponse
+from django.http import StreamingHttpResponse
+from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
 
@@ -165,4 +169,72 @@ def export_extended_queryset_to_excel(queryset, fields, filename='reporte', shee
     )
     response['Content-Disposition'] = f'attachment; filename={filename}.xlsx'
     wb.save(response)
+    return response
+
+
+def export_queryset_to_excel_advance(queryset, filename='reporte', excluded_fields=None):
+    """
+    Exporta un queryset grande a Excel (.xlsx) de forma eficiente usando openpyxl en modo write_only.
+    - Evita sobrecargar la RAM.
+    - Normaliza datetimes timezone-aware a timezone-naive.
+    """
+    model = queryset.model
+    opts = model._meta
+    excluded_fields = excluded_fields or []
+
+    # === Crear workbook optimizado ===
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet(title="Reporte")
+
+    # === Título ===
+    title = opts.verbose_name_plural.title()
+    ws.append([title])
+    ws.append([])  # fila vacía
+
+    # === Encabezados ===
+    fields = [f for f in opts.concrete_fields if f.name not in excluded_fields]
+    headers = [f.verbose_name.title() for f in fields]
+    ws.append(headers)
+
+    # === Escribir filas (sin cargar all en memoria) ===
+    for obj in queryset.iterator(chunk_size=10000):
+        row = []
+        for field in fields:
+            # Si el campo tiene choices → usar display
+            if field.choices:
+                value = getattr(obj, f"get_{field.name}_display")()
+            else:
+                value = getattr(obj, field.name)
+
+            # Normalizar valores
+            if value is None:
+                row.append('')
+            elif isinstance(value, (str, int, float, bool)):
+                row.append(value)
+            elif isinstance(value, datetime):
+                # Convertir timezone-aware a naive de forma segura
+                if value.tzinfo is not None:
+                    try:
+                        value = value.astimezone(timezone.utc).replace(tzinfo=None)
+                    except Exception:
+                        # fallback seguro: ignorar tzinfo
+                        value = value.replace(tzinfo=None)
+                row.append(value.strftime("%d-%m-%Y %H:%M"))
+            elif isinstance(value, date):
+                row.append(value.strftime("%d-%m-%Y"))
+            else:
+                row.append(str(value))
+
+        ws.append(row)
+
+    # === Guardar en memoria y enviar ===
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    response = StreamingHttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename={filename}.xlsx'
     return response

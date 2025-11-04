@@ -1,5 +1,5 @@
 from kardex.models import *
-from .utils import export_queryset_to_excel
+from .utils import export_queryset_to_excel, export_queryset_to_excel_advance
 
 
 def export_comuna(request):
@@ -13,8 +13,44 @@ def export_establecimiento(request):
 
 
 def export_ficha(request):
-    queryset = Ficha.objects.filter(establecimiento=request.user.establecimiento).order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='fichas')
+    queryset = Ficha.objects.filter(
+        establecimiento=request.user.establecimiento
+    )
+    return export_queryset_to_excel_advance(queryset, filename='fichas')
+
+
+import pandas as pd
+from django.http import HttpResponse
+
+
+def export_ficha_fast(request):
+    # Traemos solo los campos necesarios
+    qs = Ficha.objects.filter(
+        establecimiento=request.user.establecimiento
+    ).values(
+        'id', 'numero_ficha_sistema', 'numero_ficha_tarjeta', 'pasivado', 'observacion', 'usuario__username',
+        'profesional__nombres', 'fecha_creacion_anterior', 'paciente__rut', 'sector__color',
+        'establecimiento__nombre', 'updated_at'
+    )
+
+    df = pd.DataFrame.from_records(qs)
+
+    # Convertir datetime con zona horaria a naive (compatible con Excel)
+    for col in df.columns:
+        if pd.api.types.is_datetime64_any_dtype(df[col]):
+            # Si es tz-aware, lo hacemos naive
+            if df[col].dt.tz is not None:
+                df[col] = df[col].dt.tz_convert(None)
+            else:
+                df[col] = df[col]
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=fichas.xlsx'
+
+    df.to_excel(response, index=False, engine='xlsxwriter')
+    return response
 
 
 def export_ficha_pasivada(request):

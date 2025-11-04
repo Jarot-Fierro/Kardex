@@ -39,6 +39,7 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     url_detail = 'kardex:ficha_detail'
     url_update = 'kardex:ficha_update'
     url_delete = 'kardex:ficha_delete'
+    export_report_url_name = 'reports:export_ficha'
 
     def render_row(self, obj):
         pac = getattr(obj, 'paciente', None)
@@ -68,7 +69,7 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
             'title': 'Listado de Fichas',
             'list_url': reverse_lazy('kardex:ficha_list'),
             'create_url': reverse_lazy('kardex:ficha_create'),
-            'export_url': reverse_lazy('reports:export_ficha'),
+            'export_report_url_name': self.export_report_url_name,
             'datatable_enabled': True,
             'datatable_order': [[0, 'asc']],
             'datatable_page_length': 100,
@@ -263,6 +264,7 @@ class FichaDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class PacientePasivadosListView(FichaListView):
+    export_report_url_name = 'reports:export_ficha_pasivada'
 
     def get_base_queryset(self):
         return Ficha.objects.filter(pasivado=True)
@@ -272,7 +274,6 @@ class PacientePasivadosListView(FichaListView):
         context.update({
             'title': 'Fichas Pasivadas',
             'list_url': reverse_lazy('kardex:ficha_pasivados_list'),
-            'export_url': reverse_lazy('reports:export_ficha_pasivada'),
         })
         return context
 
