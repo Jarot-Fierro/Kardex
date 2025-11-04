@@ -24,6 +24,9 @@ class Ficha(StandardModel):
     establecimiento = models.ForeignKey('kardex.Establecimiento', on_delete=models.PROTECT, null=True, blank=True,
                                         verbose_name='Establecimiento', related_name='fichas_establecimientos')
 
+    sector = models.ForeignKey('kardex.Sector', on_delete=models.PROTECT, null=True, blank=True,
+                               verbose_name='Sector', related_name='fichas_sectores')
+
     history = HistoricalRecords()
 
     def __str__(self):

@@ -11,6 +11,7 @@ from kardex.views.pdfs import pdf_index, pdf_stickers
 from kardex.views.prevision import *
 from kardex.views.profesion import *
 from kardex.views.profesionales import *
+from kardex.views.sectores import *
 from kardex.views.servicio_clinico import *
 
 app_name = 'kardex'
@@ -76,6 +77,7 @@ urlpatterns = [
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
     path('consulta-pacientes/', PacienteQueryView.as_view(), name='paciente_query'),
     path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
+    path('pacientes-pueblo_indigena/', PacientePuebloIndigenaListView.as_view(), name='paciente_pueblo_indigena_list'),
     path('pacientes/historial', PacientesHistoryListView.as_view(), name='paciente_history'),
 
     # Vistas básicas para Fichas
@@ -104,6 +106,14 @@ urlpatterns = [
     path('servicios-clinicos/<int:pk>/eliminar/', ServicioClinicoDeleteView.as_view(), name='servicio_clinico_delete'),
     path('servicios-clinicos/<int:pk>/detalle/', ServicioClinicoDetailView.as_view(), name='servicio_clinico_detail'),
     path('servicios-clinicos/historial/', ServicioClinicoHistoryListView.as_view(), name='servicio_clinico_history'),
+
+    # Vistas para sectores
+    path('sectores/', SectorListView.as_view(), name='sector_list'),
+    path('sectores/nuevo/', SectorCreateView.as_view(), name='sector_create'),
+    path('sectores/<int:pk>/', SectorDetailView.as_view(), name='sector_detail'),
+    path('sectores/<int:pk>/editar/', SectorUpdateView.as_view(), name='sector_update'),
+    path('sectores/<int:pk>/eliminar/', SectorDeleteView.as_view(), name='sector_delete'),
+    path('sectores/historial/', SectorHistoryListView.as_view(), name='sector_history'),
 
     path('pdf/', pdf_index, name='pdf_prueba'),
     path('pdfs/paciente/<int:paciente_id>/', pdf_index, name='pdf_paciente'),

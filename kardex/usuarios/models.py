@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from kardex.choices import TIPO_PERFIL
 
@@ -10,6 +11,7 @@ class UsuarioPersonalizado(AbstractUser):
     establecimiento = models.ForeignKey('kardex.Establecimiento', on_delete=models.PROTECT, null=True, blank=True,
                                         verbose_name='Establecimiento'
                                         )
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.username

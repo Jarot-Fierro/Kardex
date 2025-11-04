@@ -46,3 +46,26 @@ GENERO_CHOICES = [
     ('PREFIERO NO DECIRLO', 'Prefiero no decirlo'),
     ('OTRO', 'Otro'),
 ]
+
+SECTOR_COLORS = [
+    ('ROJO', 'Rojo'),
+    ('AZUL', 'Azul'),
+    ('VERDE', 'Verde'),
+    ('AMARILLO', 'Amarillo'),
+    ('NARANJA', 'Naranja'),
+    ('MORADO', 'Morado'),
+    ('ROSA', 'Rosa'),
+    ('MARRÓN', 'Marrón'),
+    ('GRIS', 'Gris'),
+    ('NEGRO', 'Negro'),
+    ('CIAN', 'Cian'),
+    ('MAGENTA', 'Magenta'),
+    ('LIMA', 'Lima'),
+    ('VERDE AZULADO', 'Verde azulado'),
+    ('AZUL MARINO', 'Azul marino'),
+    ('GRANATE', 'Granate'),
+    ('OLIVA', 'Oliva'),
+    ('DORADO', 'Dorado'),
+    ('PLATEADO', 'Plateado'),
+    ('BEIGE', 'Beige'),
+]

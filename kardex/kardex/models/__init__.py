@@ -7,5 +7,6 @@ from .pais import Pais
 from .prevision import Prevision
 from .profesion import Profesion
 from .profesionales import Profesional
+from .sectores import Sector
 from .servicio_clinico import ServicioClinico
 from .usuario_anterior import UsuarioAnterior

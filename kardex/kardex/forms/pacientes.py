@@ -1,7 +1,7 @@
 from django import forms
 
 from kardex.choices import GENERO_CHOICES
-from kardex.models import Paciente, Comuna, Prevision
+from kardex.models import Paciente, Comuna, Prevision, Sector
 from usuarios.models import UsuarioPersonalizado
 
 
@@ -245,6 +245,11 @@ class FormPaciente(forms.ModelForm):
         required=False,
         widget=forms.CheckboxInput(attrs={'id': 'usar_rut_madre_como_responsable_paciente'})
     )
+    pueblo_indigena = forms.BooleanField(
+        label='¿Pueblo Indigena?',
+        required=False,
+        widget=forms.CheckboxInput(attrs={'id': 'pueblo_indigena_paciente'})
+    )
 
     recien_nacido = forms.BooleanField(
         label='¿Es recién nacido?',
@@ -333,7 +338,7 @@ class FormPaciente(forms.ModelForm):
     )
 
     genero = forms.ChoiceField(
-        label='Estado Civil',
+        label='Genero',
         choices=GENERO_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control', 'id': 'genero_paciente'}),
         required=True
@@ -352,6 +357,14 @@ class FormPaciente(forms.ModelForm):
         empty_label='Seleccione un Usuario',
         queryset=UsuarioPersonalizado.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'usuario_paciente'}),
+        required=False
+    )
+
+    sector = forms.ModelChoiceField(
+        label='Sector',
+        empty_label='Seleccione un Sector',
+        queryset=Sector.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'sector_paciente'}),
         required=False
     )
 
@@ -399,6 +412,7 @@ class FormPaciente(forms.ModelForm):
             'prevision',
             'usuario',
             'genero',
+            'sector',
         ]
 
 
@@ -822,4 +836,5 @@ class FormPaciente2(forms.ModelForm):
             'prevision',
             'usuario',
             'genero',
+            'pueblo_indigena',
         ]

@@ -68,7 +68,7 @@
             <div class="card-body">
                 <div class="row g-2">
                     <!-- Checkbox 1 -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-check mt-2">
                             {{ form.recien_nacido }}
                             <label class="form-check-label" for="recien_nacido_paciente">
@@ -81,7 +81,7 @@
                     </div>
 
                     <!-- Checkbox 2 -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-check mt-2">
                             {{ form.extranjero }}
                             <label class="form-check-label" for="extranjero_paciente">
@@ -93,8 +93,21 @@
                         </div>
                     </div>
 
+                    <!-- Checkbox 2 -->
+                    <div class="col-md-3">
+                        <div class="form-check mt-2">
+                            {{ form.pueblo_indigena }}
+                            <label class="form-check-label" for="pueblo_indigena_paciente">
+                                {{ form.pueblo_indigena.label }}
+                            </label>
+                            {% for error in form.pueblo_indigena.errors %}
+                            <span class="text-danger small d-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
                     <!-- Checkbox 3 + input date -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-check mt-2">
                             {{ form.fallecido }}
                             <label class="form-check-label" for="fallecido_paciente">
@@ -374,10 +387,17 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label class="form-label" for="prevision_paciente">{{ form.prevision.label }}</label>
                         {{ form.prevision }}
                         {% for error in form.prevision.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="sector_paciente">{{ form.sector.label }}</label>
+                        {{ form.sector }}
+                        {% for error in form.sector.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>

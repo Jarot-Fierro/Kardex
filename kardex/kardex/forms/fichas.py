@@ -1,7 +1,6 @@
 from django import forms
 
-from kardex.models import Ficha, Establecimiento, Profesional, Paciente
-from usuarios.models import UsuarioPersonalizado
+from kardex.models import Ficha, Establecimiento, Profesional, Paciente, Sector
 
 
 class FormFicha(forms.ModelForm):
@@ -10,7 +9,7 @@ class FormFicha(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'id': 'id_numero_ficha_sistema',
             'class': 'form-control',
-            'placeholder': 'Ingrese el número de numero_ficha_sistema',
+            'placeholder': 'Ingrese el número de numero de ficha',
             'autocomplete': 'off'
         }),
         required=True
@@ -26,27 +25,19 @@ class FormFicha(forms.ModelForm):
         required=False
     )
 
-    fecha_mov = forms.DateField(
-        label='Fecha de Movimiento',
-        widget=forms.DateInput(attrs={
-            'id': 'fecha_mov_numero_ficha_sistema',
-            'class': 'form-control',
-            'type': 'date'
-        }),
-        required=False
-    )
-
     establecimiento = forms.ModelChoiceField(
         label='Establecimiento',
+        empty_label='Seleccione un Establecimiento',
         queryset=Establecimiento.objects.filter(status='ACTIVE').all(),
         widget=forms.Select(attrs={
             'id': 'establecimiento_numero_ficha_sistema',
-            'class': 'form-control'
+            'class': 'form-control select2'
         }),
         required=False
     )
     paciente = forms.ModelChoiceField(
         label='Paciente',
+        empty_label='Seleccione un Paciente',
         queryset=Paciente.objects.filter(nombre='SILVIA').all(),
         widget=forms.Select(attrs={
             'id': 'paciente_numero_ficha_sistema',
@@ -57,20 +48,22 @@ class FormFicha(forms.ModelForm):
 
     profesional = forms.ModelChoiceField(
         label='Profesional',
+        empty_label='Seleccione un Profesional',
         queryset=Profesional.objects.filter(status='ACTIVE').all(),
         widget=forms.Select(attrs={
             'id': 'profesional_numero_ficha_sistema',
-            'class': 'form-control'
+            'class': 'form-control select2'
         }),
         required=False
     )
 
-    usuario = forms.ModelChoiceField(
-        label='Usuario Login',
-        queryset=UsuarioPersonalizado.objects.all(),
+    sector = forms.ModelChoiceField(
+        label='Sector',
+        empty_label='Seleccione un Sector',
+        queryset=Sector.objects.all(),
         widget=forms.Select(attrs={
-            'id': 'usuario_numero_ficha_sistema',
-            'class': 'form-control'
+            'id': 'sector_ficha_sistema',
+            'class': 'form-control select2'
         }),
         required=False
     )
@@ -81,10 +74,9 @@ class FormFicha(forms.ModelForm):
             'numero_ficha_sistema',
             'paciente',
             'observacion',
-            'fecha_mov',
             'establecimiento',
             'profesional',
-            'usuario',
+            'sector',
         ]
 
 

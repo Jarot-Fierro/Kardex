@@ -14,6 +14,7 @@ class Paciente(StandardModel):
     rut_madre = models.CharField(max_length=100, null=True, blank=True, verbose_name='R.U.T. Madre')
     apellido_paterno = models.CharField(max_length=100, null=False, verbose_name='Apellido Paterno')
     apellido_materno = models.CharField(max_length=100, null=False, verbose_name='Apellido Materno')
+    pueblo_indigena = models.BooleanField(default=False, verbose_name='Pueblo Indigena')
 
     rut_responsable_temporal = models.CharField(max_length=100, null=True, blank=True,
                                                 verbose_name='RUT Responsable Temporal'

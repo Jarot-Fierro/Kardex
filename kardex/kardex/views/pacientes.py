@@ -212,11 +212,13 @@ class PacienteDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class PacienteRecienNacidoListView(PacienteListView):
-    datatable_columns = ['ID', 'RUT', 'Nombre', 'Sexo', 'Rut Responsable', 'Comuna', 'Previsión']
+    datatable_columns = ['ID', 'Código', 'Nombre', 'Sexo', 'Rut Responsable', 'Comuna', 'Previsión']
     datatable_order_fields = [
         'id',
         None,
         None,
+        'codigo',
+        'nombre',
         'sexo',
         'rut_responsable_temporal',
         'comuna__nombre',
@@ -224,6 +226,7 @@ class PacienteRecienNacidoListView(PacienteListView):
     ]
 
     datatable_search_fields = [
+        'codigo__icontains',
         'rut__icontains',
         'nombre__icontains',
         'apellido_paterno__icontains',
@@ -233,6 +236,17 @@ class PacienteRecienNacidoListView(PacienteListView):
         'comuna__nombre__icontains',
         'prevision__nombre__icontains'
     ]
+
+    def render_row(self, obj):
+        return {
+            'ID': obj.id,
+            'Código': obj.codigo.upper(),
+            'Nombre': obj.nombre.upper(),
+            'Sexo': obj.sexo.upper(),
+            'Rut Responsable': obj.rut_responsable_temporal if obj.rut_responsable_temporal == 'nan' else 'Sin RUT',
+            'Comuna': (getattr(obj.comuna, 'nombre', '') or '').upper(),
+            'Previsión': (getattr(obj.prevision, 'prevision', '') or '').upper(),
+        }
 
     def get_base_queryset(self):
         return Paciente.objects.filter(recien_nacido=True)
@@ -247,6 +261,50 @@ class PacienteRecienNacidoListView(PacienteListView):
 
 
 class PacienteExtranjeroListView(PacienteListView):
+    datatable_columns = ['ID', 'Código', 'RUT', 'Nombre', 'NIP', 'Pasaporte', 'Sexo', 'Estado Civil', 'Comuna',
+                         'Previsión']
+    datatable_order_fields = [
+        'id',
+        None,
+        None,
+        'codigo',
+        'rut',
+        'nombre',
+        'nip',
+        'pasaporte',
+        'sexo',
+        'estado_civil',
+        'comuna__nombre',
+        'prevision__nombre'
+    ]
+
+    datatable_search_fields = [
+        'codigo__icontains',
+        'rut__icontains',
+        'nombre__icontains',
+        'nip__icontains',
+        'pasaporte__icontains',
+        'apellido_paterno__icontains',
+        'apellido_materno__icontains',
+        'sexo__icontains',
+        'estado_civil__icontains',
+        'comuna__nombre__icontains',
+        'prevision__nombre__icontains'
+    ]
+
+    def render_row(self, obj):
+        return {
+            'ID': obj.id,
+            'Código': (obj.codigo or '').upper(),
+            'RUT': (obj.rut or '').upper(),
+            'Nombre': (obj.nombre or '').upper(),
+            'NIP': (obj.nip or '').upper(),
+            'Pasaporte': (obj.pasaporte or '').upper(),
+            'Sexo': (obj.sexo or '').upper(),
+            'Estado Civil': (obj.estado_civil or '').upper(),
+            'Comuna': (getattr(obj.comuna, 'nombre', '') or '').upper(),
+            'Previsión': (getattr(obj.prevision, 'nombre', '') or '').upper(),
+        }
 
     def get_base_queryset(self):
         return Paciente.objects.filter(extranjero=True)
@@ -261,6 +319,41 @@ class PacienteExtranjeroListView(PacienteListView):
 
 
 class PacienteRutMadreListView(PacienteListView):
+    datatable_columns = ['ID', 'Código', 'Nombre', 'Sexo', 'Rut Responsable', 'Comuna', 'Previsión']
+    datatable_order_fields = [
+        'id',
+        None,
+        None,
+        'codigo',
+        'nombre',
+        'sexo',
+        'rut_responsable_temporal',
+        'comuna__nombre',
+        'prevision__nombre'
+    ]
+
+    datatable_search_fields = [
+        'codigo__icontains',
+        'rut__icontains',
+        'nombre__icontains',
+        'apellido_paterno__icontains',
+        'apellido_materno__icontains',
+        'sexo__icontains',
+        'rut_responsable_temporal_icontains',
+        'comuna__nombre__icontains',
+        'prevision__nombre__icontains'
+    ]
+
+    def render_row(self, obj):
+        return {
+            'ID': obj.id,
+            'Código': obj.codigo.upper(),
+            'Nombre': obj.nombre.upper(),
+            'Sexo': obj.sexo.upper(),
+            'Rut Responsable': obj.rut_responsable_temporal if obj.rut_responsable_temporal == 'nan' else 'Sin RUT',
+            'Comuna': (getattr(obj.comuna, 'nombre', '') or '').upper(),
+            'Previsión': (getattr(obj.prevision, 'prevision', '') or '').upper(),
+        }
 
     def get_base_queryset(self):
         return Paciente.objects.filter(usar_rut_madre_como_responsable=True)
@@ -284,6 +377,20 @@ class PacienteFallecidoListView(PacienteListView):
         context.update({
             'title': 'Pacientes Fallecidos',
             'list_url': reverse_lazy('kardex:paciente_fallecido_list'),
+        })
+        return context
+
+
+class PacientePuebloIndigenaListView(PacienteListView):
+
+    def get_base_queryset(self):
+        return Paciente.objects.filter(pueblo_indigena=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Pacientes Pertenecientes a Pueblos Indigenas',
+            'list_url': reverse_lazy('kardex:paciente_pueblo_indigena_list'),
         })
         return context
 
