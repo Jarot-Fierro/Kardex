@@ -1,36 +1,38 @@
 from django.urls import path
 
-from .views import *
+from . import views
 
 app_name = 'reports'
 
 urlpatterns = [
-    # ---- MODELOS PRINCIPALES ---- #
-    path('reportes/articulos/exportar-excel/', export_article, name='export_article'),
-    path('reportes/marcas/exportar-excel/', export_brand, name='export_brand'),
-    path('reportes/categorias/exportar-excel/', export_category, name='export_category'),
-    path('reportes/subcategorias/exportar-excel/', export_subcategory, name='export_subcategory'),
-    path('reportes/modelos/exportar-excel/', export_model, name='export_model'),
-    path('reportes/lideres/exportar-excel/', export_leadership, name='export_leadership'),
-    path('reportes/sistemas-operativos/exportar-excel/', export_operative_system, name='export_operative_system'),
-    path('reportes/propietarios-dispositivos/exportar-excel/', export_device_owner, name='export_device_owner'),
-    path('reportes/planes/exportar-excel/', export_plan, name='export_plan'),
-    path('reportes/chips/exportar-excel/', export_chip, name='export_chip'),
-    path('reportes/funcionarios/exportar-excel/', export_official, name='export_official'),
-    path('reportes/telefonos/exportar-excel/', export_phone, name='export_phone'),
-    path('reportes/licencias-sistemas/exportar-excel/', export_licence_os, name='export_licence_os'),
-    path('reportes/microsoft-office/exportar-excel/', export_microsoft_office, name='export_microsoft_office'),
-    path('reportes/computadores/exportar-excel/', export_computer, name='export_computer'),
-    path('reportes/tintas/exportar-excel/', export_inks, name='export_inks'),
-    path('reportes/impresoras/exportar-excel/', export_printer, name='export_printer'),
-    path('reportes/establecimientos/exportar-excel/', export_establishment, name='export_establishment'),
-    path('reportes/departamentos/exportar-excel/', export_departament, name='export_departament'),
+    # MANTENEDORES
+    path('export/pais/', views.export_pais, name='export_pais'),
+    path('export/comuna/', views.export_comuna, name='export_comuna'),
+    path('export/establecimiento/', views.export_establecimiento, name='export_establecimiento'),
+    path('export/prevision/', views.export_prevision, name='export_prevision'),
+    path('export/profesion/', views.export_profesion, name='export_profesion'),
+    path('export/profesional/', views.export_profesional, name='export_profesional'),
+    path('export/sector/', views.export_sector, name='export_sector'),
+    path('export/servicio_clinico/', views.export_servicio_clinico, name='export_servicio_clinico'),
 
-    # -------- TRANSACCIONES------------#
+    # FICHAS
+    path('export/ficha/', views.export_ficha, name='export_ficha'),
+    path('export/ficha_pasivada/', views.export_ficha_pasivada, name='export_ficha_pasivada'),
 
-    path('reportes/transacciones/entrada/exportar-excel/', export_transaction_entry, name='export_transaction_entry'),
-    path('reportes/transacciones/salida/exportar-excel/', export_transaction_output, name='export_transaction_output'),
-    path('reportes/transacciones/soporte/exportar-excel/', export_transaction_support,
-         name='export_transaction_support'),
+    # MOVIMIENTOS FICHAS
+    path('export/movimiento_ficha/', views.export_movimiento_ficha, name='export_movimiento_ficha'),
+    path('export/movimiento_ficha_envio/', views.export_movimiento_ficha_envio, name='export_movimiento_ficha_envio'),
+    path('export/movimiento_ficha_recepcion/', views.export_movimiento_ficha_recepcion,
+         name='export_movimiento_ficha_recepcion'),
+    path('export/movimiento_ficha_traspaso/', views.export_movimiento_ficha_traspaso,
+         name='export_movimiento_ficha_traspaso'),
+
+    # PACIENTES
+    path('export/paciente/', views.export_paciente, name='export_paciente'),
+    path('export/paciente_recien_nacido/', views.export_paciente_recien_nacido, name='export_paciente_recien_nacido'),
+    path('export/paciente_extranjero/', views.export_paciente_extranjero, name='export_paciente_extranjero'),
+    path('export/paciente_fallecido/', views.export_paciente_fallecido, name='export_paciente_fallecido'),
+    path('export/paciente_pueblo_indigena/', views.export_paciente_pueblo_indigena,
+         name='export_paciente_pueblo_indigena'),
 
 ]

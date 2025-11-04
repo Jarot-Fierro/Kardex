@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'kardex',
     'usuarios',
-    'simple_history'
+    'simple_history',
+    'reports',
 ]
 
 MIDDLEWARE = [

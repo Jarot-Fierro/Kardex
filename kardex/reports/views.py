@@ -1,156 +1,108 @@
-from inventory.models import *
-from .utils import export_queryset_to_excel, export_extended_queryset_to_excel
+from kardex.models import *
+from .utils import export_queryset_to_excel
 
 
-def export_brand(request):
-    queryset = Brand.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='marcas')
+def export_comuna(request):
+    queryset = Comuna.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='comunas')
 
 
-def export_category(request):
-    queryset = Category.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='categorias')
-
-
-def export_subcategory(request):
-    queryset = SubCategory.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='subcategorias')
-
-
-def export_model(request):
-    queryset = Model.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='modelos')
-
-
-def export_leadership(request):
-    queryset = Leadership.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='lideres')
-
-
-def export_operative_system(request):
-    queryset = OperativeSystem.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='sistemas_operativos')
-
-
-def export_device_owner(request):
-    queryset = DeviceOwner.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='propietarios_dispositivos')
-
-
-def export_plan(request):
-    queryset = Plan.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='planes')
-
-
-def export_chip(request):
-    queryset = Chip.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='chips')
-
-
-def export_official(request):
-    queryset = Official.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='funcionarios')
-
-
-def export_phone(request):
-    queryset = Phone.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='telefonos')
-
-
-def export_licence_os(request):
-    queryset = LicenceOs.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='licencias_sistemas')
-
-
-def export_microsoft_office(request):
-    queryset = MicrosoftOffice.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='microsoft_office')
-
-
-def export_computer(request):
-    queryset = Computer.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='computadores')
-
-
-def export_inks(request):
-    queryset = Inks.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='tintas')
-
-
-def export_printer(request):
-    queryset = Printer.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='impresoras')
-
-
-def export_article(request):
-    queryset = Article.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='articulos')
-
-
-def export_establishment(request):
-    queryset = Establishment.objects.all().order_by('-updated_at')
+def export_establecimiento(request):
+    queryset = Establecimiento.objects.all().order_by('-updated_at')
     return export_queryset_to_excel(queryset, filename='establecimientos')
 
 
-def export_departament(request):
-    queryset = Departament.objects.all().order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='departamentos')
+def export_ficha(request):
+    queryset = Ficha.objects.filter(establecimiento=request.user.establecimiento).order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='fichas')
 
 
-def export_transaction_entry(request):
-    queryset = Transaction.objects.filter(type='ENTRY').select_related().order_by('-updated_at')
-
-    fields = [
-        ('Código', 'code'),
-        ('Tipo', 'type'),
-        ('Observación', 'observation'),
-        ('Estado', 'status'),
-        ('Funcionario', 'official'),
-        ('Usuario', 'login_user__username'),
-        ('Fecha Creación', 'created_at'),
-    ]
-
-    return export_extended_queryset_to_excel(queryset, fields, filename='transacciones_entrada')
+def export_ficha_pasivada(request):
+    queryset = Ficha.objects.filter(establecimiento=request.user.establecimiento, pasivado=True).order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='fichas_pasivadas')
 
 
-def export_transaction_output(request):
-    queryset = Transaction.objects.filter(type='OUTPUT').select_related(
-        'output_info', 'official', 'login_user'
-    ).order_by('-updated_at')
-
-    fields = [
-        ('Código', 'code'),
-        ('Tipo Salida', 'output_info__type_output'),
-        ('Fecha Devolución', 'output_info__return_date'),
-        ('Estado Salida', 'output_info__status'),
-        ('Observación', 'observation'),
-        ('Estado Transacción', 'status'),
-        ('Funcionario', 'official'),
-        ('Usuario', 'login_user__username'),
-        ('Fecha Creación', 'created_at'),
-    ]
-
-    return export_extended_queryset_to_excel(queryset, fields, filename='transacciones_salida')
+def export_movimiento_ficha(request):
+    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento).order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='movimientos_ficha')
 
 
-def export_transaction_support(request):
-    queryset = Transaction.objects.filter(type='SUPPORT').select_related(
-        'support_info', 'official', 'login_user'
-    ).order_by('-updated_at')
+def export_movimiento_ficha_envio(request):
+    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento,
+                                              estado_envio='ENVIADO').order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='movimientos_ficha_enviadas')
 
-    fields = [
-        ('Código', 'code'),
-        ('Tipo Soporte', 'support_info__type_soporte__name'),
-        ('Problema', 'support_info__problem'),
-        ('Solución', 'support_info__solution'),
-        ('Fecha Inicio', 'support_info__date_start'),
-        ('Fecha Fin', 'support_info__date_end'),
-        ('Estado Soporte', 'support_info__status'),
-        ('Observación', 'observation'),
-        ('Estado Transacción', 'status'),
-        ('Funcionario', 'official'),
-        ('Usuario', 'login_user__username'),
-        ('Fecha Creación', 'created_at'),
-    ]
 
-    return export_extended_queryset_to_excel(queryset, fields, filename='transacciones_soporte')
+def export_movimiento_ficha_recepcion(request):
+    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento,
+                                              estado_recepcion='RECIBIDO').order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='movimientos_ficha_recepcionadas')
+
+
+def export_movimiento_ficha_traspaso(request):
+    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento,
+                                              estado_traspaso='TRASPASDO').order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='movimientos_ficha_traspasadas')
+
+
+def export_paciente(request):
+    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento).order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='pacientes')
+
+
+def export_paciente_recien_nacido(request):
+    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, recien_nacido=True).order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='pacientes_recien_nacidos')
+
+
+def export_paciente_extranjero(request):
+    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, extranjero=True).order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='pacientes_extranjeros')
+
+
+def export_paciente_fallecido(request):
+    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, fallecido=True).order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='pacientes_fallecidos')
+
+
+def export_paciente_pueblo_indigena(request):
+    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, pueblo_indigena=True).order_by(
+        '-updated_at')
+    return export_queryset_to_excel(queryset, filename='pacientes_pueblo_indigenas')
+
+
+def export_pais(request):
+    queryset = Pais.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='paises')
+
+
+def export_prevision(request):
+    queryset = Prevision.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='previsiones')
+
+
+def export_profesion(request):
+    queryset = Profesion.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='profesiones')
+
+
+def export_profesional(request):
+    queryset = Profesional.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='profesionales')
+
+
+def export_sector(request):
+    queryset = Sector.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='sectores')
+
+
+def export_servicio_clinico(request):
+    queryset = ServicioClinico.objects.all().order_by('-updated_at')
+    return export_queryset_to_excel(queryset, filename='servicios_clinicos')

@@ -68,6 +68,7 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
             'title': 'Listado de Fichas',
             'list_url': reverse_lazy('kardex:ficha_list'),
             'create_url': reverse_lazy('kardex:ficha_create'),
+            'export_url': reverse_lazy('reports:export_ficha'),
             'datatable_enabled': True,
             'datatable_order': [[0, 'asc']],
             'datatable_page_length': 100,
@@ -271,6 +272,7 @@ class PacientePasivadosListView(FichaListView):
         context.update({
             'title': 'Fichas Pasivadas',
             'list_url': reverse_lazy('kardex:ficha_pasivados_list'),
+            'export_url': reverse_lazy('reports:export_ficha_pasivada'),
         })
         return context
 

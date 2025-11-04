@@ -7,6 +7,7 @@ from kardex.views.home import HomeDashboardView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeDashboardView.as_view(), name="index"),
+    path('reportes/', include('reports.urls'), name="reports"),
     path('kardex/', include('kardex.urls'), name="kardex-home"),
     path('usuarios/', include('usuarios.urls'), name="usuarios"),
     path('api-auth/v1/', include('rest_framework.urls')),
