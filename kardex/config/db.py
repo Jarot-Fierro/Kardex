@@ -31,7 +31,7 @@ MYSQL = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'HOST': os.getenv('DB_IP'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
