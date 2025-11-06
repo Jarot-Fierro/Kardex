@@ -145,6 +145,12 @@
                     <i class="fas fa-user ml-1"></i>
                 </a>
                 <ul aria-labelledby="dropdownUserMenu" class="dropdown-menu dropdown-menu-right border-0 shadow">
+                    <li>
+                        <a href="{% url 'admin:index' %}" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            Panel de Administrador
+                        </a>
+                    </li>
                     <li><a href="{% url 'usuarios:perfil' %}" class="dropdown-item"><i class="fas fa-id-badge mr-2"></i>
                         Perfil</a></li>
                     <li><a href="{% url 'usuarios:cambiar_password' %}" class="dropdown-item"><i
