@@ -101,10 +101,16 @@ $(document).ready(function () {
                         return;
                     }
                     if (data.status === 'not_found') {
+                        const msg = `El paciente con el RUT ${rut} no existe en el sistema. Presione Continuar para agregar todos sus datos personales en su establecimiento.`;
                         if (window.Swal && Swal.fire) {
-                            Swal.fire('No encontrado', 'Paciente no encontrado', 'warning');
+                            Swal.fire({
+                                title: 'Paciente no existe',
+                                text: msg,
+                                icon: 'info',
+                                confirmButtonText: 'Continuar'
+                            });
                         } else {
-                            alert('Paciente no encontrado');
+                            alert(msg);
                         }
                         return;
                     }
@@ -126,10 +132,16 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error('[rut_scan] Error en AJAX:', status, error);
                 if (xhr && xhr.responseJSON && xhr.responseJSON.status === 'not_found') {
+                    const msg = `El paciente con el RUT ${rut} no existe en el sistema. Presione Continuar para agregar todos sus datos personales en su establecimiento.`;
                     if (window.Swal && Swal.fire) {
-                        Swal.fire('No encontrado', 'Paciente no encontrado', 'warning');
+                        Swal.fire({
+                            title: 'Paciente no existe',
+                            text: msg,
+                            icon: 'info',
+                            confirmButtonText: 'Continuar'
+                        });
                     } else {
-                        alert('Paciente no encontrado');
+                        alert(msg);
                     }
                 }
             }
