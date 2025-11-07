@@ -9,6 +9,67 @@ $(document).ready(function () {
         return String(rut || '').trim().toUpperCase();
     }
 
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function crearFichaAutomaticamente(rut, createUrl) {
+        const url = createUrl || '/api/ingreso-paciente-ficha/auto-create/';
+        const csrftoken = getCookie('csrftoken');
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            headers: csrftoken ? { 'X-CSRFToken': csrftoken } : {},
+            data: { rut: rut }
+        });
+    }
+
+    function mostrarPopupCrear(data, rut) {
+        const msg = (data && data.message) || 'Sin mensaje';
+        const confirmText = (data && data.confirm_text) || 'Crear ficha';
+        const createUrl = data && data.create_url;
+
+        if (window.Swal && Swal.fire) {
+            Swal.fire({
+                title: 'Ficha no encontrada',
+                html: `<p>${msg}</p><p style="margin-top:8px;">${confirmText}</p>`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Crear ficha',
+                cancelButtonText: 'Cancelar'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    Swal.showLoading();
+                    crearFichaAutomaticamente(rut, createUrl)
+                        .done(function (resp) {
+                            if (resp && resp.redirect_url) {
+                                window.location.href = resp.redirect_url;
+                            } else {
+                                Swal.fire('Creado', 'Ficha creada, pero no se recibió URL de redirección.', 'success');
+                            }
+                        })
+                        .fail(function (xhr) {
+                            const detail = (xhr.responseJSON && (xhr.responseJSON.detail || xhr.responseJSON.message)) || 'Error al crear la ficha.';
+                            Swal.fire('Error', detail, 'error');
+                        });
+                }
+            });
+        } else {
+            // Fallback sin SweetAlert2
+            if (confirm(`${msg}\n\n${confirmText}`)) {
+                crearFichaAutomaticamente(rut, createUrl)
+                    .done(function (resp) {
+                        if (resp && resp.redirect_url) {
+                            window.location.href = resp.redirect_url;
+                        }
+                    });
+            }
+        }
+    }
+
     // Evitar que ENTER envíe el formulario
     $rutField.on('keydown', function (e) {
         if (e.key === 'Enter') {
@@ -33,6 +94,22 @@ $(document).ready(function () {
             data: { search: rut, tipo: 'rut' },
             success: function (data) {
                 console.log('[rut_scan] Respuesta API:', data);
+                // Si backend devuelve estructura especial
+                if (data && data.status) {
+                    if (data.status === 'missing_ficha') {
+                        mostrarPopupCrear(data, rut);
+                        return;
+                    }
+                    if (data.status === 'not_found') {
+                        if (window.Swal && Swal.fire) {
+                            Swal.fire('No encontrado', 'Paciente no encontrado', 'warning');
+                        } else {
+                            alert('Paciente no encontrado');
+                        }
+                        return;
+                    }
+                }
+
                 const items = Array.isArray(data) ? data : (data.results || []);
                 if (items.length > 0) {
                     const first = items[0];
@@ -48,6 +125,13 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error('[rut_scan] Error en AJAX:', status, error);
+                if (xhr && xhr.responseJSON && xhr.responseJSON.status === 'not_found') {
+                    if (window.Swal && Swal.fire) {
+                        Swal.fire('No encontrado', 'Paciente no encontrado', 'warning');
+                    } else {
+                        alert('Paciente no encontrado');
+                    }
+                }
             }
         });
     });
