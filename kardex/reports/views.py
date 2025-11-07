@@ -1,5 +1,6 @@
 from kardex.models import *
-from .utils import export_queryset_to_excel, export_queryset_to_excel_advance
+from .fields_export_csv import *
+from .utils import export_queryset_to_excel, export_queryset_to_excel_advance, export_queryset_to_csv_fast
 
 
 def export_comuna(request):
@@ -19,43 +20,18 @@ def export_ficha(request):
     return export_queryset_to_excel_advance(queryset, filename='fichas')
 
 
-import pandas as pd
-from django.http import HttpResponse
-
-
-def export_ficha_fast(request):
-    # Traemos solo los campos necesarios
-    qs = Ficha.objects.filter(
+def export_ficha_csv(request):
+    queryset = Paciente.objects.filter(
         establecimiento=request.user.establecimiento
-    ).values(
-        'id', 'numero_ficha_sistema', 'numero_ficha_tarjeta', 'pasivado', 'observacion', 'usuario__username',
-        'profesional__nombres', 'fecha_creacion_anterior', 'paciente__rut', 'sector__color',
-        'establecimiento__nombre', 'updated_at'
     )
+    return export_queryset_to_csv_fast(queryset, filename='fichas', fields=fields_ficha_csv)
 
-    df = pd.DataFrame.from_records(qs)
 
-    # Convertir datetime con zona horaria a naive (compatible con Excel)
-    for col in df.columns:
-        if pd.api.types.is_datetime64_any_dtype(df[col]):
-            # Si es tz-aware, lo hacemos naive
-            if df[col].dt.tz is not None:
-                df[col] = df[col].dt.tz_convert(None)
-            else:
-                df[col] = df[col]
-
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+def export_ficha_pasivadas_csv(request):
+    queryset = Paciente.objects.filter(
+        establecimiento=request.user.establecimiento, pasivado=True
     )
-    response['Content-Disposition'] = 'attachment; filename=fichas.xlsx'
-
-    df.to_excel(response, index=False, engine='xlsxwriter')
-    return response
-
-
-def export_ficha_pasivada(request):
-    queryset = Ficha.objects.filter(establecimiento=request.user.establecimiento, pasivado=True).order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='fichas_pasivadas')
+    return export_queryset_to_csv_fast(queryset, filename='fichas', fields=fields_ficha_csv)
 
 
 def export_movimiento_ficha(request):
@@ -85,34 +61,33 @@ def export_movimiento_ficha_traspaso(request):
     return export_queryset_to_excel(queryset, filename='movimientos_ficha_traspasadas')
 
 
-def export_paciente(request):
-    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento).order_by('-updated_at')
-    return export_queryset_to_excel(queryset, filename='pacientes')
+## CSV
+def export_paciente_csv(request):
+    queryset = Paciente.objects.all()
+    return export_queryset_to_csv_fast(queryset, filename='pacientes', fields=fields_paciente_csv)
 
 
-def export_paciente_recien_nacido(request):
-    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, recien_nacido=True).order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='pacientes_recien_nacidos')
+def export_paciente_recien_nacido_csv(request):
+    queryset = Paciente.objects.filter(recien_nacido=True)
+    return export_queryset_to_csv_fast(queryset, filename='pacientes_recien_nacidos_csv', fields=fields_paciente_csv)
 
 
-def export_paciente_extranjero(request):
-    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, extranjero=True).order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='pacientes_extranjeros')
+def export_paciente_extranjero_csv(request):
+    queryset = Paciente.objects.filter(extranjero=True)
+    return export_queryset_to_csv_fast(queryset, filename='pacientes_extranjeros_csv', fields=fields_paciente_csv)
 
 
-def export_paciente_fallecido(request):
-    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, fallecido=True).order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='pacientes_fallecidos')
+def export_paciente_fallecido_csv(request):
+    queryset = Paciente.objects.filter(fallecido=True)
+    return export_queryset_to_csv_fast(queryset, filename='pacientes_fallecids_csv', fields=fields_paciente_csv)
 
 
-def export_paciente_pueblo_indigena(request):
-    queryset = Paciente.objects.filter(establecimiento=request.user.establecimiento, pueblo_indigena=True).order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='pacientes_pueblo_indigenas')
+def export_paciente_pueblo_indigena_csv(request):
+    queryset = Paciente.objects.filter(pueblo_indigena=True)
+    return export_queryset_to_csv_fast(queryset, filename='pacientes_pueblo_indigena_csv', fields=fields_paciente_csv)
 
+
+## TERMINO
 
 def export_pais(request):
     queryset = Pais.objects.all().order_by('-updated_at')

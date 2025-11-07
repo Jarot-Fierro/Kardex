@@ -16,9 +16,8 @@ urlpatterns = [
     path('export/servicio_clinico/', views.export_servicio_clinico, name='export_servicio_clinico'),
 
     # FICHAS
-    path('export/ficha/', views.export_ficha, name='export_ficha'),
-    path('export/ficha_pasivada/', views.export_ficha_pasivada, name='export_ficha_pasivada'),
-    path('export/fichas_fast/', views.export_ficha_fast, name='export_ficha_fast'),
+    path('export/ficha/', views.export_ficha_csv, name='export_ficha'),
+    path('export/ficha_pasivada/', views.export_ficha_pasivadas_csv, name='export_ficha_pasivada'),
 
     # MOVIMIENTOS FICHAS
     path('export/movimiento_ficha/', views.export_movimiento_ficha, name='export_movimiento_ficha'),
@@ -28,12 +27,15 @@ urlpatterns = [
     path('export/movimiento_ficha_traspaso/', views.export_movimiento_ficha_traspaso,
          name='export_movimiento_ficha_traspaso'),
 
-    # PACIENTES
-    path('export/paciente/', views.export_paciente, name='export_paciente'),
-    path('export/paciente_recien_nacido/', views.export_paciente_recien_nacido, name='export_paciente_recien_nacido'),
-    path('export/paciente_extranjero/', views.export_paciente_extranjero, name='export_paciente_extranjero'),
-    path('export/paciente_fallecido/', views.export_paciente_fallecido, name='export_paciente_fallecido'),
-    path('export/paciente_pueblo_indigena/', views.export_paciente_pueblo_indigena,
-         name='export_paciente_pueblo_indigena'),
+    # === PACIENTES (EXPORTACIÓN CSV) ===
+    path('export/paciente-csv/', views.export_paciente_csv, name='export_paciente_csv'),
+    path('export/paciente_recien_nacido-csv/', views.export_paciente_recien_nacido_csv,
+         name='export_paciente_recien_nacido_csv'),
+    path('export/paciente_extranjero-csv/', views.export_paciente_extranjero_csv,
+         name='export_paciente_extranjero_csv'),
+    path('export/paciente_fallecido-csv/', views.export_paciente_fallecido_csv,
+         name='export_paciente_fallecido_csv'),
+    path('export/paciente_pueblo_indigena-csv/', views.export_paciente_pueblo_indigena_csv,
+         name='export_paciente_pueblo_indigena_csv'),
 
 ]

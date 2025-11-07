@@ -84,6 +84,7 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
             'datatable_order': [[0, 'asc']],
             'datatable_page_length': 100,
             'columns': self.datatable_columns,
+            'export_csv_url': reverse_lazy('reports:export_paciente_csv'),
         })
         return context
 
@@ -256,6 +257,7 @@ class PacienteRecienNacidoListView(PacienteListView):
         context.update({
             'title': 'Pacientes Recién Nacidos',
             'list_url': reverse_lazy('kardex:paciente_recien_nacido_list'),
+            'export_csv_url': reverse_lazy('reports:export_paciente_recien_nacido_csv'),
         })
         return context
 
@@ -314,6 +316,7 @@ class PacienteExtranjeroListView(PacienteListView):
         context.update({
             'title': 'Pacientes Extranjeros',
             'list_url': reverse_lazy('kardex:paciente_extranjero_list'),
+            'export_csv_url': reverse_lazy('reports:export_paciente_extranjero_csv'),
         })
         return context
 
@@ -377,6 +380,7 @@ class PacienteFallecidoListView(PacienteListView):
         context.update({
             'title': 'Pacientes Fallecidos',
             'list_url': reverse_lazy('kardex:paciente_fallecido_list'),
+            'export_csv_url': reverse_lazy('reports:export_paciente_fallecido_csv'),
         })
         return context
 
@@ -391,6 +395,7 @@ class PacientePuebloIndigenaListView(PacienteListView):
         context.update({
             'title': 'Pacientes Pertenecientes a Pueblos Indigenas',
             'list_url': reverse_lazy('kardex:paciente_pueblo_indigena_list'),
+            'export_csv_url': reverse_lazy('reports:export_paciente_pueblo_indigena_csv'),
         })
         return context
 

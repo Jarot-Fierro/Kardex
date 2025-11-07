@@ -1,10 +1,8 @@
 import io
-from datetime import date, datetime
 from time import timezone
 
 import openpyxl
 from django.http import HttpResponse
-from django.http import StreamingHttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 from openpyxl.utils import get_column_letter
@@ -237,4 +235,55 @@ def export_queryset_to_excel_advance(queryset, filename='reporte', excluded_fiel
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = f'attachment; filename={filename}.xlsx'
+    return response
+
+
+import csv
+from datetime import date, datetime
+from django.http import StreamingHttpResponse
+
+
+class Echo:
+    """Helper class para streaming del CSV"""
+
+    def write(self, value):
+        return value
+
+
+def export_queryset_to_csv_fast(queryset, filename='reporte', fields=None, delimiter=','):
+    """
+    Exporta cualquier queryset a CSV de forma ultrarrápida usando values().
+    Soporta caracteres especiales (UTF-8 con BOM para Excel).
+    """
+    if fields is None:
+        # Si no se especifican campos, tomar todos los del modelo
+        model = queryset.model
+        fields = [f.name for f in model._meta.concrete_fields]
+
+    # Obtener datos planos
+    qs = queryset.values(*fields)
+
+    def normalize_value(value):
+        if value is None:
+            return ''
+        elif isinstance(value, datetime):
+            return value.strftime("%Y-%m-%d %H:%M:%S")
+        elif isinstance(value, date):
+            return value.strftime("%Y-%m-%d")
+        return str(value)
+
+    def csv_generator():
+        pseudo_buffer = Echo()
+        writer = csv.writer(pseudo_buffer, delimiter=delimiter)
+        # Agregar BOM UTF-8 (para Excel)
+        yield '\ufeff'
+        yield writer.writerow(fields)
+        for row in qs.iterator(chunk_size=20000):
+            yield writer.writerow([normalize_value(v) for v in row.values()])
+
+    response = StreamingHttpResponse(
+        csv_generator(),
+        content_type='text/csv; charset=utf-8'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
     return response
