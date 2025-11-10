@@ -57,6 +57,8 @@
                                         {% endif %}
                                     </div>
                                 </div>
+
+                                {% if request.user.is_superuser %}
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="id_tipo_perfil">{{ form.tipo_perfil.label }}</label>
@@ -66,7 +68,6 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                {% if request.user.is_superuser %}
                                 <div class="form-row">
                                     <div class="form-group col-md-12">
                                         <label for="id_establecimiento">{{ form.establecimiento.label }}</label>

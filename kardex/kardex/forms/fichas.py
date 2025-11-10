@@ -4,13 +4,12 @@ from kardex.models import Ficha, Establecimiento, Profesional, Paciente, Sector
 
 
 class FormFicha(forms.ModelForm):
-    numero_ficha_sistema = forms.CharField(
+    numero_ficha_sistema = forms.IntegerField(
         label='Número de Ficha',
-        widget=forms.TextInput(attrs={
+        widget=forms.NumberInput(attrs={
             'id': 'id_numero_ficha_sistema',
             'class': 'form-control',
             'placeholder': 'Ingrese el número de numero de ficha',
-            'autocomplete': 'off'
         }),
         required=True
     )
@@ -38,10 +37,10 @@ class FormFicha(forms.ModelForm):
     paciente = forms.ModelChoiceField(
         label='Paciente',
         empty_label='Seleccione un Paciente',
-        queryset=Paciente.objects.filter(nombre='SILVIA').all(),
+        queryset=Paciente.objects.none(),
         widget=forms.Select(attrs={
-            'id': 'paciente_numero_ficha_sistema',
-            'class': 'form-control select2'
+            'id': 'paciente-select',
+            'class': 'form-control'
         }),
         required=False
     )

@@ -21,16 +21,26 @@ class ServicioClinicoListView(PermissionRequiredMixin, DataTableMixin, TemplateV
     datatable_search_fields = ['nombre__icontains', 'correo_jefe__icontains',
                                'telefono__icontains', 'establecimiento__nombre__icontains']
 
-    permission_required = 'kardex.view_servicio_clinico'
+    permission_required = 'kardex.view_servicioclinico'
     raise_exception = True
 
-    permission_view = 'kardex.view_servicio_clinico'
-    permission_update = 'kardex.change_servicio_clinico'
-    permission_delete = 'kardex.delete_servicio_clinico'
+    permission_view = 'kardex.view_servicioclinico'
+    permission_update = 'kardex.change_servicioclinico'
+    permission_delete = 'kardex.delete_servicioclinico'
 
     url_detail = 'kardex:servicio_clinico_detail'
     url_update = 'kardex:servicio_clinico_update'
     url_delete = 'kardex:servicio_clinico_delete'
+
+    def get_base_queryset(self):
+        """Filtra por el establecimiento del usuario logueado."""
+        user = getattr(self.request, 'user', None)
+        establecimiento = getattr(user, 'establecimiento', None) if user else None
+        qs = ServicioClinico.objects.all()
+        if establecimiento:
+            return qs.filter(establecimiento=establecimiento)
+        # Si el usuario no tiene establecimiento, no mostrar registros
+        return qs.none()
 
     def render_row(self, obj):
         return {

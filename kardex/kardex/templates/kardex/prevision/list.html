@@ -17,9 +17,11 @@
                 <a href="{% url 'reports:export_prevision' %}" class="btn btn-success me-2">
                     <i class="bi bi-file-earmark-excel"></i> Reporte
                 </a>
+                {% if perms.kardex.add_prevision %}
                 <a href="{% url 'kardex:prevision_create' %}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Nueva Previsión
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>

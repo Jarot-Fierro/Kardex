@@ -23,12 +23,12 @@ class ProfesionalListView(PermissionRequiredMixin, DataTableMixin, TemplateView)
         'profesion__nombre__icontains', 'establecimiento__nombre__icontains'
     ]
 
-    permission_required = 'kardex.view_profesionales'
+    permission_required = 'kardex.view_profesional'
     raise_exception = True
 
-    permission_view = 'kardex.view_profesionales'
-    permission_update = 'kardex.change_profesionales'
-    permission_delete = 'kardex.delete_profesionales'
+    permission_view = 'kardex.view_profesional'
+    permission_update = 'kardex.change_profesional'
+    permission_delete = 'kardex.delete_profesional'
 
     url_detail = 'kardex:profesional_detail'
     url_update = 'kardex:profesional_update'
@@ -44,6 +44,16 @@ class ProfesionalListView(PermissionRequiredMixin, DataTableMixin, TemplateView)
             'Profesión': (getattr(obj.profesion, 'nombre', '') or '').upper(),
             'Establecimiento': (getattr(obj.establecimiento, 'nombre', '') or '').upper(),
         }
+
+    def get_base_queryset(self):
+        """Filtra por el establecimiento del usuario logueado."""
+        user = getattr(self.request, 'user', None)
+        establecimiento = getattr(user, 'establecimiento', None) if user else None
+        qs = Profesional.objects.all()
+        if establecimiento:
+            return qs.filter(establecimiento=establecimiento)
+        # Si el usuario no tiene establecimiento, no mostrar registros
+        return qs.none()
 
     def get(self, request, *args, **kwargs):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('datatable'):

@@ -46,4 +46,36 @@
         width: '100%'
     });
 </script>
+
+<script>
+    $('#paciente-select').select2({
+      ajax: {
+        url: '/api/pacientes/',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            search: params.term, // lo que el usuario escribe
+            page: params.page || 1
+          };
+        },
+        processResults: function (data) {
+          // DRF devuelve por defecto un array, o un objeto con 'results'
+          const results = data.results || data;
+          return {
+            results: results.map(function (paciente) {
+              return {
+                id: paciente.id,
+                text: (paciente.nombre || '') + (paciente.apellido_paterno ? ' ' + paciente.apellido_paterno : '') + (paciente.apellido_materno ? ' ' + paciente.apellido_materno : '') + (paciente.rut ? ' (' + paciente.rut + ')' : '')
+              };
+            })
+          };
+        },
+        cache: true
+      },
+      placeholder: 'Buscar paciente',
+      minimumInputLength: 1
+    });
+
+</script>
 {% endblock %}

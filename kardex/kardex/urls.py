@@ -126,6 +126,7 @@ urlpatterns = [
     path('movimientos/recepcion/', RecepcionFichaView.as_view(), name='recepcion_ficha'),
     path('movimientos/salida/', SalidaFichaView.as_view(), name='salida_ficha'),
     path('movimientos/traspaso/', TraspasoFichaView.as_view(), name='traspaso_ficha'),
+    path('movimientos/transito/', MovimientoFichaTransitoListView.as_view(), name='movimiento_ficha_transito'),
 
 ]
 

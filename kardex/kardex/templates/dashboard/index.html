@@ -10,22 +10,25 @@
             <div class="card-body">
                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div>
-                        <h5 class="mb-1">Bienvenido, {{ request.user_nombre }}</h5>
+                        <h5 class="mb-1">Bienvenido,
+                            {% if not request.user.first_name and not request.user.last_name %}
+                            {{ request.user.username }}
+                            {% else %}
+                            {{ request.user.first_name }} {{ request.user.last_name }}
+                            {% endif %}
+                        </h5>
                         <p class="mb-0 text-muted">
-                            Establecimiento: {% if establecimiento %}<strong>{{ establecimiento }}</strong>
-                            {% else %}<span class="badge badge-warning">Sin establecimiento</span>{% endif %}
+                            Establecimiento:
+                            {% if request.user.establecimiento %}
+                            <strong>{{ request.user.establecimiento.nombre }}</strong>
+                            {% else %}
+                            <span class="badge badge-warning">Sin establecimiento</span>
+                            {% endif %}
                             {% if rol %}&nbsp;|&nbsp; Rol: <strong>{{ rol }}</strong>{% endif %}
                         </p>
                     </div>
                     <form class="form-inline mt-2 mt-md-0" method="get">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="q"
-                                   placeholder="Buscar paciente por nombre o RUT" value="{{ request.GET.q }}">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Buscar
-                                </button>
-                            </div>
-                        </div>
+                        <div class="input-group"></div>
                     </form>
                 </div>
             </div>
@@ -114,8 +117,8 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if f %}
-                            <a href="{% url 'kardex:paciente_update' f.pk %}" class="btn btn-sm btn-outline-primary">Ver
+                            {% if p %}
+                            <a href="{% url 'kardex:paciente_update' p.pk %}" class="btn btn-sm btn-outline-primary">Ver
                                 ficha</a>
                             {% else %}
                             <button class="btn btn-sm btn-outline-secondary" disabled>Ver ficha</button>

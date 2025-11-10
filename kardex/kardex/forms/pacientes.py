@@ -849,6 +849,13 @@ class FormPaciente2(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'comuna_paciente'}),
         required=True
     )
+    sector = forms.ModelChoiceField(
+        label='Sector',
+        empty_label='Seleccione un Sector',
+        queryset=Sector.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control select2', 'id': 'sector_paciente'}),
+        required=False
+    )
 
     genero = forms.ChoiceField(
         label='Estado Civil',
@@ -895,7 +902,7 @@ class FormPaciente2(forms.ModelForm):
 
         # Si es válido, devolverlo formateado correctamente
         return format_rut(rut_sin_formato)
-    
+
     def clean_nombre(self):
         value = self.cleaned_data.get('nombre', '')
         if value:
@@ -997,4 +1004,5 @@ class FormPaciente2(forms.ModelForm):
             'pueblo_indigena',
             'alergico_a',
             'sin_telefono',
+            'sector',
         ]

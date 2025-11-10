@@ -91,7 +91,8 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             mov.servicio_clinico_recepcion = getattr(request.user, 'servicio_clinico', None)
             mov.observacion_recepcion = observacion_recepcion
             mov.fecha_recepcion = fecha_recepcion or now()
-            # No es necesario setear explícitamente estado a RECIBIDO; el modelo lo ajusta al guardar
+            # Marcar recepción como RECIBIDO explícitamente
+            mov.estado_recepcion = 'RECIBIDO'
             mov.save()
 
             messages.success(request, 'Recepción registrada correctamente.')
@@ -267,7 +268,11 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
         return context
 
     def get_base_queryset(self):
-        qs = MovimientoFicha.objects.filter(estado_envio='ENVIADO').select_related(
+        establecimiento = getattr(self.request.user, 'establecimiento', None)
+        qs = MovimientoFicha.objects.filter(
+            estado_envio='ENVIADO',
+            ficha__establecimiento=establecimiento
+        ).select_related(
             'ficha__paciente',
             'servicio_clinico_envio',
             'usuario_envio'
@@ -558,6 +563,86 @@ class MovimientoFichaDeleteView(PermissionRequiredMixin, DeleteView):
         context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
+
+
+class MovimientoFichaTransitoListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
+    template_name = 'kardex/movimiento_ficha/list.html'
+    model = MovimientoFicha
+
+    # Usamos las mismas columnas que en la vista de Salida para mantener consistencia visual
+    datatable_columns = [
+        'ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico Envío',
+        'Usuario Envío', 'Observación envío', 'Fecha envío', 'Estado envio'
+    ]
+    datatable_order_fields = [
+        'id', None, 'ficha__paciente__rut', 'ficha__numero_ficha_sistema',
+        'ficha__paciente__apellido_paterno',
+        'servicio_clinico_envio__nombre', 'usuario_envio__username',
+        'observacion_envio', 'fecha_envio', 'estado_envio'
+    ]
+    datatable_search_fields = [
+        'ficha__paciente__rut__icontains',
+        'ficha__numero_ficha_sistema__icontains',
+        'ficha__paciente__nombre__icontains',
+        'ficha__paciente__apellido_paterno__icontains',
+        'ficha__paciente__apellido_materno__icontains',
+        'servicio_clinico_envio__nombre__icontains',
+        'usuario_envio__username__icontains',
+        'observacion_envio__icontains',
+    ]
+
+    permission_required = 'kardex.view_movimiento_ficha'
+    raise_exception = True
+
+    permission_view = 'kardex.view_movimiento_ficha'
+    permission_update = 'kardex.change_movimiento_ficha'
+    permission_delete = 'kardex.delete_movimiento_ficha'
+
+    url_detail = 'kardex:movimiento_ficha_detail'
+    url_update = 'kardex:movimiento_ficha_update'
+    url_delete = 'kardex:movimiento_ficha_delete'
+
+    def render_row(self, obj):
+        pac = obj.ficha.paciente if obj.ficha else None
+        nombre = f"{getattr(pac, 'nombre', '')} {getattr(pac, 'apellido_paterno', '')} {getattr(pac, 'apellido_materno', '')}" if pac else ''
+        return {
+            'ID': obj.id,
+            'RUT': getattr(pac, 'rut', '') if pac else '',
+            'Ficha': getattr(obj.ficha, 'numero_ficha_sistema', '') if obj.ficha else '',
+            'Nombre completo': nombre.strip(),
+            'Servicio Clínico Envío': getattr(obj.servicio_clinico_envio, 'nombre', ''),
+            'Usuario Envío': getattr(obj.usuario_envio, 'username', '') if obj.usuario_envio else '',
+            'Observación envío': obj.observacion_envio or '',
+            'Fecha envío': obj.fecha_envio.strftime('%Y-%m-%d %H:%M') if obj.fecha_envio else '',
+            'Estado envio': obj.estado_envio or '',
+        }
+
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.GET.get('datatable'):
+            return self.get_datatable_response(request)
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': 'Fichas en tránsito',
+            'list_url': reverse_lazy('kardex:movimiento_ficha_transito'),
+            'datatable_enabled': True,
+            'datatable_order': [[0, 'asc']],
+            'datatable_page_length': 100,
+            'columns': self.datatable_columns,
+        })
+        return context
+
+    def get_base_queryset(self):
+        # En tránsito: ENVIADO y no recepcionado aún, o TRASPASDO
+        from django.db.models import Q
+        qs = MovimientoFicha.objects.select_related(
+            'ficha__paciente', 'servicio_clinico_envio', 'usuario_envio'
+        ).filter(
+            Q(estado_envio='ENVIADO') & ~Q(estado_recepcion='RECIBIDO') | Q(estado_traspaso='TRASPASDO')
+        )
+        return qs
 
 
 class MovimientosFichasHistoryListView(GenericHistoryListView):

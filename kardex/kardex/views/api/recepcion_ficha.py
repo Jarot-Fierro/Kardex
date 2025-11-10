@@ -69,7 +69,7 @@ class RecepcionFichaViewSet(viewsets.ModelViewSet):
             fecha_envio__isnull=False,
             estado_recepcion__in=['EN ESPERA', 'RECIBIDO'],
             ficha__establecimiento=user.establecimiento
-        ).order_by('-fecha_envio')
+        ).order_by('-updated_at')
         return qs
 
     @action(detail=True, methods=['post'], url_path='mark_received')
