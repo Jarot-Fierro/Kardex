@@ -1,5 +1,6 @@
 from django import forms
 
+from config.validations import validate_spaces
 from kardex.models import ServicioClinico, Establecimiento
 
 
@@ -44,6 +45,17 @@ class FormServicioClinico(forms.ModelForm):
         }),
         required=True
     )
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre'].strip()
+        current_instance = self.instance if self.instance.pk else None
+
+        exists = ServicioClinico.objects.filter(nombre__iexact=nombre).exclude(
+            pk=current_instance.pk if current_instance else None).exists()
+
+        validate_spaces(nombre)
+
+        return nombre
 
     class Meta:
         model = ServicioClinico

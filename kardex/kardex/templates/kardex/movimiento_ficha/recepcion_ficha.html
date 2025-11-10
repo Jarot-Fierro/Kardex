@@ -75,18 +75,18 @@
                         <div class="form-row">
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.fecha_recepcion.label }}</label>
-                                    {{ form.fecha_recepcion }}
-                                    {% for error in form.fecha_recepcion.errors %}
+                                    <label class="form-check-label">{{ form.servicio_clinico_envio.label }}</label>
+                                    {{ form.servicio_clinico_envio }}
+                                    {% for error in form.servicio_clinico_envio.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.servicio_clinico_envio.label }}</label>
-                                    {{ form.servicio_clinico_envio }}
-                                    {% for error in form.servicio_clinico_envio.errors %}
+                                    <label class="form-check-label">{{ form.servicio_clinico_recepcion.label }}</label>
+                                    {{ form.servicio_clinico_recepcion }}
+                                    {% for error in form.servicio_clinico_recepcion.errors %}
                                     <span class="text-danger small d-block">{{ error }}</span>
                                     {% endfor %}
                                 </div>
@@ -101,18 +101,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="col-md-4">
-                                <div class="form-check">
-                                    <label class="form-check-label">{{ form.servicio_clinico_recepcion.label }}</label>
-                                    {{ form.servicio_clinico_recepcion }}
-                                    {% for error in form.servicio_clinico_recepcion.errors %}
-                                    <span class="text-danger small d-block">{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <div class="col-md-8"></div>
-                        </div>
+
                         <div class="form-row">
                             <div class="col-md-12">
                                 <div class="form-check">
@@ -136,9 +125,15 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Movimientos de Recepción</h3>
+                <div class="card-header d-flex align-items-center">
+                    <h3 class="card-title mb-0">Movimientos de Recepción</h3>
+                    <a href="{% url 'reports:export_movimiento_ficha_recepcion_csv' %}"
+                       class="btn btn-success btn-sm ml-auto">
+                        <i class="fas fa-file-csv"></i> Exportar CSV
+                    </a>
                 </div>
+
+
                 <div class="card-body">
                     <table id="Table" class="table table-bordered table-striped table-sm">
                         <thead>

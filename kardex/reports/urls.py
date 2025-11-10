@@ -20,12 +20,13 @@ urlpatterns = [
     path('export/ficha_pasivada/', views.export_ficha_pasivadas_csv, name='export_ficha_pasivada'),
 
     # MOVIMIENTOS FICHAS
-    path('export/movimiento_ficha/', views.export_movimiento_ficha, name='export_movimiento_ficha'),
-    path('export/movimiento_ficha_envio/', views.export_movimiento_ficha_envio, name='export_movimiento_ficha_envio'),
-    path('export/movimiento_ficha_recepcion/', views.export_movimiento_ficha_recepcion,
-         name='export_movimiento_ficha_recepcion'),
-    path('export/movimiento_ficha_traspaso/', views.export_movimiento_ficha_traspaso,
-         name='export_movimiento_ficha_traspaso'),
+    path('export/movimiento_ficha/csv/', views.export_movimiento_ficha_csv, name='export_movimiento_ficha_csv'),
+    path('export/movimiento_ficha_envio/csv/', views.export_movimiento_ficha_envio_csv,
+         name='export_movimiento_ficha_envio_csv'),
+    path('export/movimiento_ficha_recepcion/csv/', views.export_movimiento_ficha_recepcion_csv,
+         name='export_movimiento_ficha_recepcion_csv'),
+    path('export/movimiento_ficha_traspaso/csv/', views.export_movimiento_ficha_traspaso_csv,
+         name='export_movimiento_ficha_traspaso_csv'),
 
     # === PACIENTES (EXPORTACIÓN CSV) ===
     path('export/paciente-csv/', views.export_paciente_csv, name='export_paciente_csv'),

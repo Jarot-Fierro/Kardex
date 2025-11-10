@@ -1,5 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
+from config.validations import validate_spaces, validate_rut, format_rut
 from kardex.choices import GENERO_CHOICES
 from kardex.models import Paciente, Comuna, Prevision, Sector
 from usuarios.models import UsuarioPersonalizado
@@ -318,7 +320,7 @@ class FormPaciente(forms.ModelForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Opcional (Componente separado por comas)',
-            'id': 'alergico_a_paciente'
+            'id': 'alergico_a'
         }),
         required=False
     )
@@ -368,17 +370,94 @@ class FormPaciente(forms.ModelForm):
         required=False
     )
 
+    # --- Validaciones de espacios para todos los campos de texto ---
+
     def clean_rut(self):
-        rut = self.cleaned_data.get('rut', '').strip()
-        return rut or None
+        rut = self.cleaned_data.get('rut')
+        if not rut:
+            return rut
+        # Quitar espacios al inicio o final
+        rut = rut.strip()
 
-    def clean_nip(self):
-        nip = self.cleaned_data.get('nip', '').strip()
-        return nip or None
+        # Validar que no contenga espacios internos
+        if " " in rut:
+            raise ValidationError("El RUT no debe contener espacios.")
 
-    def clean_pasaporte(self):
-        pasaporte = self.cleaned_data.get('pasaporte', '').strip()
-        return pasaporte or None
+        # Eliminar puntos y guión para validar
+        rut_sin_formato = rut.replace(".", "").replace("-", "").upper()
+
+        # Validar usando tu validador existente
+        if not validate_rut(rut_sin_formato):
+            raise ValidationError("El RUT ingresado no es válido.")
+
+        # Si es válido, devolverlo formateado correctamente
+        return format_rut(rut_sin_formato)
+
+    def clean_nombre(self):
+        value = self.cleaned_data.get('nombre', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_apellido_paterno(self):
+        value = self.cleaned_data.get('apellido_paterno', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_apellido_materno(self):
+        value = self.cleaned_data.get('apellido_materno', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombres_padre(self):
+        value = self.cleaned_data.get('nombres_padre', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombres_madre(self):
+        value = self.cleaned_data.get('nombres_madre', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombre_pareja(self):
+        value = self.cleaned_data.get('nombre_pareja', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_direccion(self):
+        value = self.cleaned_data.get('direccion', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_ocupacion(self):
+        value = self.cleaned_data.get('ocupacion', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_representante_legal(self):
+        value = self.cleaned_data.get('representante_legal', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombre_social(self):
+        value = self.cleaned_data.get('nombre_social', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_alergico_a(self):
+        value = self.cleaned_data.get('alergico_a', '')
+        if value:
+            validate_spaces(value)
+        return value
 
     class Meta:
         model = Paciente
@@ -412,7 +491,9 @@ class FormPaciente(forms.ModelForm):
             'prevision',
             'usuario',
             'genero',
+            'alergico_a',
             'sector',
+            'sin_telefono',
         ]
 
 
@@ -792,17 +873,94 @@ class FormPaciente2(forms.ModelForm):
         required=False
     )
 
+    # --- Validaciones de espacios para todos los campos de texto ---
+
     def clean_rut(self):
-        rut = self.cleaned_data.get('rut', '').strip()
-        return rut or None
+        rut = self.cleaned_data.get('rut')
+        if not rut:
+            return rut
+        # Quitar espacios al inicio o final
+        rut = rut.strip()
 
-    def clean_nip(self):
-        nip = self.cleaned_data.get('nip', '').strip()
-        return nip or None
+        # Validar que no contenga espacios internos
+        if " " in rut:
+            raise ValidationError("El RUT no debe contener espacios.")
 
-    def clean_pasaporte(self):
-        pasaporte = self.cleaned_data.get('pasaporte', '').strip()
-        return pasaporte or None
+        # Eliminar puntos y guión para validar
+        rut_sin_formato = rut.replace(".", "").replace("-", "").upper()
+
+        # Validar usando tu validador existente
+        if not validate_rut(rut_sin_formato):
+            raise ValidationError("El RUT ingresado no es válido.")
+
+        # Si es válido, devolverlo formateado correctamente
+        return format_rut(rut_sin_formato)
+    
+    def clean_nombre(self):
+        value = self.cleaned_data.get('nombre', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_apellido_paterno(self):
+        value = self.cleaned_data.get('apellido_paterno', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_apellido_materno(self):
+        value = self.cleaned_data.get('apellido_materno', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombres_padre(self):
+        value = self.cleaned_data.get('nombres_padre', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombres_madre(self):
+        value = self.cleaned_data.get('nombres_madre', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombre_pareja(self):
+        value = self.cleaned_data.get('nombre_pareja', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_direccion(self):
+        value = self.cleaned_data.get('direccion', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_ocupacion(self):
+        value = self.cleaned_data.get('ocupacion', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_representante_legal(self):
+        value = self.cleaned_data.get('representante_legal', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_nombre_social(self):
+        value = self.cleaned_data.get('nombre_social', '')
+        if value:
+            validate_spaces(value)
+        return value
+
+    def clean_alergico_a(self):
+        value = self.cleaned_data.get('alergico_a', '')
+        if value:
+            validate_spaces(value)
+        return value
 
     class Meta:
         model = Paciente
@@ -837,4 +995,6 @@ class FormPaciente2(forms.ModelForm):
             'usuario',
             'genero',
             'pueblo_indigena',
+            'alergico_a',
+            'sin_telefono',
         ]

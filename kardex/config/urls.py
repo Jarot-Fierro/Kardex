@@ -9,7 +9,7 @@ urlpatterns = [
     path('', HomeDashboardView.as_view(), name="index"),
     path('reportes/', include('reports.urls'), name="reports"),
     path('kardex/', include('kardex.urls'), name="kardex-home"),
-    path('inicio/', include('usuarios.urls'), name="usuarios"),
+    path('usuarios/', include('usuarios.urls'), name="usuarios"),
     path('api-auth/v1/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
 ]

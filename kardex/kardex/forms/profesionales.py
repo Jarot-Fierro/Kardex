@@ -1,5 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
+from config.validations import validate_rut, format_rut, validate_spaces, validate_email
 from kardex.models import Profesional, Establecimiento
 from kardex.models.profesion import Profesion
 
@@ -64,6 +66,42 @@ class FormProfesional(forms.ModelForm):
         }),
         required=True
     )
+
+    def clean_rut(self):
+        rut = self.cleaned_data.get('rut')
+        if not rut:
+            return rut
+
+        rut = rut.strip()
+
+        # Validar que no contenga espacios
+        if " " in rut:
+            raise ValidationError("El RUT no debe contener espacios.")
+
+        rut_sin_formato = rut.replace(".", "").replace("-", "").upper()
+
+        if not validate_rut(rut_sin_formato):
+            raise ValidationError("El RUT ingresado no es válido.")
+
+        # Si ya existe otro profesional con el mismo RUT
+        if Profesional.objects.filter(rut=format_rut(rut_sin_formato)).exclude(pk=self.instance.pk).exists():
+            raise ValidationError("Ya existe un profesional con este RUT.")
+
+        return format_rut(rut_sin_formato)
+
+    def clean_nombres(self):
+        nombres = self.cleaned_data.get('nombres', '').strip()
+        validate_spaces(nombres)
+        return nombres
+
+    def clean_correo(self):
+        correo = self.cleaned_data.get('correo', '').strip()
+        validate_email(correo)
+
+        # Evitar correos duplicados
+        if Profesional.objects.filter(correo=correo).exclude(pk=self.instance.pk).exists():
+            raise ValidationError("Ya existe un profesional con este correo electrónico.")
+        return correo
 
     class Meta:
         model = Profesional

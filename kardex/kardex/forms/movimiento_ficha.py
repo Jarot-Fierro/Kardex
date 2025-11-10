@@ -4,16 +4,6 @@ from kardex.models import MovimientoFicha, Ficha, ServicioClinico, Profesional
 
 
 class FormEntradaFicha(forms.ModelForm):
-    fecha_recepcion = forms.DateTimeField(
-        label='Fecha de Recepción',
-        widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_recepcion_ficha',
-            'class': 'form-control',
-            'type': 'datetime-local'
-        }),
-        required=True
-    )
-
     rut = forms.CharField(
         label='RUT',
         required=False,
@@ -140,7 +130,6 @@ class FormEntradaFicha(forms.ModelForm):
     class Meta:
         model = MovimientoFicha
         fields = [
-            'fecha_recepcion',
             'observacion_recepcion',
             'rut',
             'ficha',
@@ -217,16 +206,6 @@ class FormSalidaFicha(forms.ModelForm):
         required=True
     )
 
-    fecha_envio = forms.DateTimeField(
-        label='Fecha de Envío',
-        widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_envio_ficha',
-            'class': 'form-control',
-            'type': 'datetime-local'
-        }),
-        required=True
-    )
-
     observacion_envio = forms.CharField(
         label='Observación de Envío',
         widget=forms.Textarea(attrs={
@@ -284,11 +263,6 @@ class FormSalidaFicha(forms.ModelForm):
             }
 
             qs = Ficha.objects.filter(**filtro)
-            print(qs)
-
-            print('Aqui van los datos')
-            print(f'{ficha_numero} {rut_value} {self.user.establecimiento}')
-            print('Aqui termina')
 
             # Validaciones de resultados
             if not qs.exists():
@@ -313,7 +287,6 @@ class FormSalidaFicha(forms.ModelForm):
         fields = [
             'rut',
             'ficha',
-            'fecha_envio',
             'servicio_clinico_envio',
             'servicio_clinico_recepcion',
             'observacion_envio',
@@ -330,16 +303,6 @@ class FormTraspasoFicha(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.user is None and self.request is not None:
             self.user = getattr(self.request, 'user', None)
-
-    fecha_traspaso = forms.DateTimeField(
-        label='Fecha de Traspaso',
-        widget=forms.DateTimeInput(attrs={
-            'id': 'fecha_traspaso_ficha',
-            'class': 'form-control',
-            'type': 'datetime-local'
-        }),
-        required=False
-    )
 
     # Campos auxiliares de búsqueda/visualización
     rut = forms.CharField(
@@ -478,7 +441,6 @@ class FormTraspasoFicha(forms.ModelForm):
     class Meta:
         model = MovimientoFicha
         fields = [
-            'fecha_traspaso',
             'ficha',
             'profesional_traspaso',
             'rut',

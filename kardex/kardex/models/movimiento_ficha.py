@@ -123,18 +123,32 @@ class MovimientoFicha(StandardModel):
 
     def save(self, *args, **kwargs):
         creating = self.pk is None
-        # Envío: set defaults and fecha_envio if missing
+
+        # Si es un movimiento nuevo (creación)
         if creating:
+            # Si no tiene estado de envío, lo marcamos como ENVIADO
             if not self.estado_envio:
                 self.estado_envio = 'ENVIADO'
+            # Si no tiene estado de recepción, queda en espera
             if not self.estado_recepcion:
                 self.estado_recepcion = 'EN ESPERA'
-            if self.fecha_envio is None:
+            # Si no tiene estado de traspaso, también en espera
+            if not self.estado_traspaso:
+                self.estado_traspaso = 'EN ESPERA'
+            # Asignamos la fecha de envío automáticamente
+            if not self.fecha_envio:
                 self.fecha_envio = timezone.now()
+
         else:
-            # Si se completa recepción, actualizar estado
-            if self.fecha_recepcion and self.estado_recepcion != 'RECIBIDO':
-                self.estado_recepcion = 'RECIBIDO'
+            # Si se marca como recibido y no tiene fecha, se asigna automáticamente
+            if self.estado_recepcion == 'RECIBIDO' and not self.fecha_recepcion:
+                self.fecha_recepcion = timezone.now()
+
+            # Si se marca como traspasado y no tiene fecha, también se asigna
+            if self.estado_traspaso == 'TRASPASADO' and not self.fecha_traspaso:
+                self.fecha_traspaso = timezone.now()
+
+        # Validación de datos antes de guardar
         self.full_clean()
         super().save(*args, **kwargs)
 

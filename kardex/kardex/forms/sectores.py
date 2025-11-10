@@ -1,5 +1,6 @@
 from django import forms
 
+from config.validations import validate_spaces
 from kardex.choices import SECTOR_COLORS
 # from config.validation_forms import validate_nombre, validate_description, validate_spaces, validate_exists
 from kardex.models import Sector, Establecimiento
@@ -55,6 +56,17 @@ class FormSector(forms.ModelForm):
             }),
         required=True
     )
+
+    def clean_codigo(self):
+        codigo = self.cleaned_data['codigo'].strip()
+        current_instance = self.instance if self.instance.pk else None
+
+        exists = Sector.objects.filter(codigo__iexact=codigo).exclude(
+            pk=current_instance.pk if current_instance else None).exists()
+
+        validate_spaces(codigo)
+
+        return codigo
 
     class Meta:
         model = Sector

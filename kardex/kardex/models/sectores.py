@@ -7,7 +7,8 @@ from kardex.choices import SECTOR_COLORS
 
 class Sector(StandardModel):
     codigo = models.CharField(null=True, blank=True, verbose_name='Código del Sector', max_length=100)
-    color = models.CharField(null=True, blank=True, verbose_name='Color del Sector', max_length=100)
+    color = models.CharField(null=True, blank=True, verbose_name='Color del Sector', max_length=100,
+                             default='NO INFORMADO')
     observacion = models.TextField(null=True, blank=True, choices=SECTOR_COLORS, verbose_name='Observaciones')
     establecimiento = models.ForeignKey('kardex.Establecimiento', on_delete=models.PROTECT, null=False,
                                         verbose_name='Establecimiento', related_name='sector_establecimiento')
@@ -15,7 +16,7 @@ class Sector(StandardModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.codigo
+        return self.color
 
     class Meta:
         verbose_name = 'Sector'

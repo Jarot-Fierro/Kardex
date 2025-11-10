@@ -1,6 +1,6 @@
 from kardex.models import *
 from .fields_export_csv import *
-from .utils import export_queryset_to_excel, export_queryset_to_excel_advance, export_queryset_to_csv_fast
+from .utils import export_queryset_to_excel, export_queryset_to_csv_fast
 
 
 def export_comuna(request):
@@ -13,55 +13,76 @@ def export_establecimiento(request):
     return export_queryset_to_excel(queryset, filename='establecimientos')
 
 
-def export_ficha(request):
-    queryset = Ficha.objects.filter(
-        establecimiento=request.user.establecimiento
-    )
-    return export_queryset_to_excel_advance(queryset, filename='fichas')
-
-
+## CSV FICHAS
 def export_ficha_csv(request):
-    queryset = Paciente.objects.filter(
+    queryset = Ficha.objects.filter(
         establecimiento=request.user.establecimiento
     )
     return export_queryset_to_csv_fast(queryset, filename='fichas', fields=fields_ficha_csv)
 
 
 def export_ficha_pasivadas_csv(request):
-    queryset = Paciente.objects.filter(
+    queryset = Ficha.objects.filter(
         establecimiento=request.user.establecimiento, pasivado=True
     )
-    return export_queryset_to_csv_fast(queryset, filename='fichas', fields=fields_ficha_csv)
+    return export_queryset_to_csv_fast(queryset, filename='fichas_pasivadas', fields=fields_ficha_csv)
 
 
-def export_movimiento_ficha(request):
-    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento).order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='movimientos_ficha')
+## TERMINO FICHAS
+
+## CSV MOVIMIENTOS FICHAS
+
+def export_movimiento_ficha_csv(request):
+    queryset = MovimientoFicha.objects.filter(
+        ficha__establecimiento=request.user.establecimiento
+    ).order_by('-updated_at')
+    return export_queryset_to_csv_fast(
+        queryset,
+        filename='movimientos_ficha',
+        fields=fields_movimiento_ficha_csv
+    )
 
 
-def export_movimiento_ficha_envio(request):
-    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento,
-                                              estado_envio='ENVIADO').order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='movimientos_ficha_enviadas')
+def export_movimiento_ficha_envio_csv(request):
+    queryset = MovimientoFicha.objects.filter(
+        ficha__establecimiento=request.user.establecimiento,
+        estado_envio='ENVIADO'
+    ).order_by('-updated_at')
+    return export_queryset_to_csv_fast(
+        queryset,
+        filename='movimientos_ficha_enviadas',
+        fields=fields_movimiento_ficha_csv
+    )
 
 
-def export_movimiento_ficha_recepcion(request):
-    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento,
-                                              estado_recepcion='RECIBIDO').order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='movimientos_ficha_recepcionadas')
+def export_movimiento_ficha_recepcion_csv(request):
+    queryset = MovimientoFicha.objects.filter(
+        ficha__establecimiento=request.user.establecimiento,
+        estado_recepcion='RECIBIDO'
+    ).order_by('-updated_at')
+    return export_queryset_to_csv_fast(
+        queryset,
+        filename='movimientos_ficha_recepcionadas',
+        fields=fields_movimiento_ficha_csv
+    )
 
 
-def export_movimiento_ficha_traspaso(request):
-    queryset = MovimientoFicha.objects.filter(ficha__establecimiento=request.user.establecimiento,
-                                              estado_traspaso='TRASPASDO').order_by(
-        '-updated_at')
-    return export_queryset_to_excel(queryset, filename='movimientos_ficha_traspasadas')
+def export_movimiento_ficha_traspaso_csv(request):
+    queryset = MovimientoFicha.objects.filter(
+        ficha__establecimiento=request.user.establecimiento,
+        estado_traspaso='TRASPASADO'
+    ).order_by('-updated_at')
+    return export_queryset_to_csv_fast(
+        queryset,
+        filename='movimientos_ficha_traspasadas',
+        fields=fields_movimiento_ficha_csv
+    )
 
 
-## CSV
+## TERMINO MOVIMIENTOS FICHAS
+
+
+## CSV PACIENTE
 def export_paciente_csv(request):
     queryset = Paciente.objects.all()
     return export_queryset_to_csv_fast(queryset, filename='pacientes', fields=fields_paciente_csv)
@@ -87,7 +108,7 @@ def export_paciente_pueblo_indigena_csv(request):
     return export_queryset_to_csv_fast(queryset, filename='pacientes_pueblo_indigena_csv', fields=fields_paciente_csv)
 
 
-## TERMINO
+## TERMINO PACIENTE
 
 def export_pais(request):
     queryset = Pais.objects.all().order_by('-updated_at')

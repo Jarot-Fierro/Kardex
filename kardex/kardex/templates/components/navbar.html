@@ -73,7 +73,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false" class="nav-link dropdown-toggle">Consultas</a>
+                       aria-expanded="false" class="nav-link dropdown-toggle">Reportes</a>
                     <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
                         <li>
                             <a href="{% url 'kardex:paciente_fecha_form' %}" class="dropdown-item">Ingresos por rango de
@@ -82,36 +82,44 @@
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
-                            <a href="{% url 'kardex:paciente_recien_nacido_list' %}" class="dropdown-item">Consulta
+                            <a href="{% url 'kardex:paciente_recien_nacido_list' %}" class="dropdown-item">Reporte
                                 recien nacidos
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'kardex:paciente_extranjero_list' %}" class="dropdown-item">Consulta
+                            <a href="{% url 'kardex:paciente_extranjero_list' %}" class="dropdown-item">Reporte
                                 extranjeros
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'kardex:paciente_fallecido_list' %}" class="dropdown-item">Consulta
+                            <a href="{% url 'kardex:paciente_fallecido_list' %}" class="dropdown-item">Reporte
                                 fallecidos
                             </a>
                         </li>
 
                         <li>
-                            <a href="{% url 'kardex:paciente_rut_madre_list' %}" class="dropdown-item">Consulta
+                            <a href="{% url 'kardex:paciente_rut_madre_list' %}" class="dropdown-item">Reporte
                                 Rut Madre Paciente
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'kardex:ficha_pasivados_list' %}" class="dropdown-item">Consulta
-                                Fichas Pasivadas
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'kardex:paciente_pueblo_indigena_list' %}" class="dropdown-item">Consulta
+                            <a href="{% url 'kardex:paciente_pueblo_indigena_list' %}" class="dropdown-item">Reporte
                                 Pueblo Indigena
                             </a>
                         </li>
+                        <li class="dropdown-divider"></li>
+                        <li>
+                            <a href="{% url 'kardex:ficha_pasivados_list' %}" class="dropdown-item">Reporte
+                                Fichas Pasivadas
+                            </a>
+                        </li>
+                        <li class="dropdown-divider"></li>
+                        <li>
+                            <a href="{% url 'reports:export_movimiento_ficha_csv' %}" class="dropdown-item">Reporte
+                                Movimientos Clínicos
+                            </a>
+                        </li>
+
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

@@ -42,15 +42,6 @@
                         <div class="form-row">
                             <div class="col-md-6">
                                 <div class="form-check">
-                                    <label class="form-check-label">{{ form.fecha_traspaso.label }}</label>
-                                    {{ form.fecha_traspaso }}
-                                    {% for error in form.fecha_traspaso.errors %}
-                                    <span class="text-danger small d-block">{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check">
                                     <label class="form-check-label">{{ form.profesional_traspaso.label }}</label>
                                     {{ form.profesional_traspaso }}
                                     {% for error in form.profesional_traspaso.errors %}

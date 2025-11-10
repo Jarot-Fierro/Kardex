@@ -107,6 +107,7 @@ function cargarDatosFicha(fichaId) {
             $('#pasaporte_paciente').val(paciente.pasaporte || '');
             $('#nip_paciente').val(paciente.nip || paciente.nip || '');
             $('#rut_responsable_temporal_paciente').val(paciente.rut_responsable_temporal || '');
+            $('#alergico_a').val(paciente.alergico_a || '');
 
             $('#usar_rut_madre_como_responsable_paciente')
                 .prop('checked', !!paciente.usar_rut_madre_como_responsable)
