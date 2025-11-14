@@ -42,7 +42,7 @@ class Paciente(StandardModel):
     representante_legal = models.CharField(max_length=100, null=True, blank=True, verbose_name='Representante Legal')
 
     # CONTACTO Y DIRECCIÓN
-    direccion = models.CharField(max_length=200, verbose_name='Dirección', null=False)
+    direccion = models.CharField(max_length=200, verbose_name='Dirección', null=True, blank=True)
     sin_telefono = models.BooleanField(default=False)
     numero_telefono1 = models.CharField(max_length=15, verbose_name='Número de Teléfono', null=True, blank=True)
     numero_telefono2 = models.CharField(max_length=15, verbose_name='Número de Teléfono 2', null=True, blank=True)

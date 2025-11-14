@@ -143,13 +143,28 @@
                         <label class="form-label" for="id_rut">
                             {{ form.rut.label }}
                         </label>
-                        {{ form.rut }}
-                        <!--  Primera consulta con Edición-->
+
+                        <!-- Input con botón integrado -->
+                        <div class="input-group">
+                            {{ form.rut }}
+
+                            <!-- Botón tipo etiqueta dentro del input -->
+                            <div class="input-group-append">
+                                <a href="{% url 'kardex:paciente_actualizar_rut' paciente.pk %}"
+                                   class="btn btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Input hidden con valor inicial -->
                         <input type="hidden" id="rut_inicial" value="{{ paciente.rut|default:'' }}">
+
                         {% for error in form.rut.errors %}
                         <span class="text-danger small">{{ error }}</span>
                         {% endfor %}
                     </div>
+
                     <div class="col-md-6">
                         <label class="form-label" for="pasaporte_paciente">
                             {{ form.pasaporte.label }}

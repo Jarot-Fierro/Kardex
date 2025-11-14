@@ -77,6 +77,7 @@ urlpatterns = [
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
     path('consulta-pacientes/', PacienteQueryView.as_view(), name='paciente_query'),
     path('pacientes/<int:pk>/editar/', PacienteUpdateView.as_view(), name='paciente_update'),
+    path('pacientes/<int:pk>/actualizar-rut/', PacienteActualizarRut.as_view(), name='paciente_actualizar_rut'),
     path('pacientes-pueblo_indigena/', PacientePuebloIndigenaListView.as_view(), name='paciente_pueblo_indigena_list'),
     path('pacientes/historial', PacientesHistoryListView.as_view(), name='paciente_history'),
 

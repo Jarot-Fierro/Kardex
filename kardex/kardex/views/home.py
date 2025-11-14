@@ -1,10 +1,11 @@
+from datetime import timedelta
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.views.generic import TemplateView
 from django.utils import timezone
-from datetime import timedelta
+from django.views.generic import TemplateView
 
 from kardex.models import Paciente, Ficha
 
@@ -16,14 +17,13 @@ class HomeDashboardView(LoginRequiredMixin, TemplateView):
         # Quick search: by RUT exact or name contains
         q = request.GET.get('q')
         if q:
-            qs = Paciente.objects.all()
-            # Search by RUT exact (case-insensitive) or partial name
-            qs = qs.filter(
+            qs = Paciente.objects.filter(status='ACTIVE').filter(
                 Q(rut__iexact=q) |
                 Q(nombre__icontains=q) |
                 Q(apellido_paterno__icontains=q) |
                 Q(apellido_materno__icontains=q)
             )
+
             if qs.count() == 1:
                 paciente = qs.first()
                 return redirect('kardex:paciente_detail', pk=paciente.pk)
@@ -51,7 +51,7 @@ class HomeDashboardView(LoginRequiredMixin, TemplateView):
         # Fichas directamente relacionadas al paciente (ya no hay tabla de ingresos)
         fichas_qs = Ficha.objects.select_related('paciente', 'establecimiento')
         if establecimiento is not None:
-            fichas_qs = fichas_qs.filter(establecimiento=establecimiento)
+            fichas_qs = fichas_qs.filter(establecimiento=establecimiento, paciente__status='ACTIVE')
 
         # Para mantener las tarjetas actuales del dashboard:
         # - total_ingresos_est: interpretamos como cantidad de pacientes con alguna ficha en el establecimiento

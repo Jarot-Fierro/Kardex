@@ -7,7 +7,7 @@ from django.utils.dateparse import parse_date
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 from django.views.generic import TemplateView, FormView
 
-from kardex.forms.pacientes import FormPacienteCreacion, FormPaciente2
+from kardex.forms.pacientes import FormPacienteCreacion, FormPaciente, FormPacienteActualizarRut
 from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.mixin import DataTableMixin
 from kardex.models import Ficha
@@ -55,7 +55,7 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
 
     def get_base_queryset(self):
         # Vista libre: no limitar por establecimiento, mostrar todos los pacientes
-        return Paciente.objects.all()
+        return Paciente.objects.filter(status='ACTIVE')
 
     def render_row(self, obj):
         nombre_completo = f"{(obj.nombre or '').upper()} {(obj.apellido_paterno or '').upper()} {(obj.apellido_materno or '').upper()}".strip()
@@ -106,7 +106,7 @@ class PacienteDetailView(PermissionRequiredMixin, DetailView):
 class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'kardex/paciente/form_update.html'
     model = Paciente
-    form_class = FormPaciente2
+    form_class = FormPaciente
     success_url = reverse_lazy('kardex:paciente_list')
     permission_required = 'kardex.change_paciente'
     raise_exception = True
@@ -185,6 +185,51 @@ class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
         context['ficha_tarjeta_url'] = ficha_tarjeta_url
         context['ficha_pasivado'] = ficha_pasivado
 
+        return context
+
+
+class PacienteActualizarRut(PermissionRequiredMixin, UpdateView):
+    template_name = 'kardex/paciente/form_rut.html'
+    model = Paciente
+    form_class = FormPacienteActualizarRut
+    success_url = reverse_lazy('kardex:paciente_list')
+    permission_required = 'kardex.change_paciente'
+    raise_exception = True
+
+    def form_valid(self, form):
+        messages.success(self.request, 'RUT del paciente actualizado correctamente.')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Actualizar RUT del Paciente'
+        context['module_name'] = MODULE_NAME
+        context['list_url'] = self.success_url
+
+        paciente = self.object
+        # Construimos una lista de (label, valor) para mostrar en el panel derecho
+        fields_info = []
+        # Usar model_to_dict puede omitir ManyToMany; aquí listamos field por field para labels
+        for field in paciente._meta.fields:
+            try:
+                label = getattr(paciente._meta.get_field(field.name), 'verbose_name', field.name)
+            except Exception:
+                label = field.name
+            value = getattr(paciente, field.name, '')
+            # Formatear fechas
+            if hasattr(value, 'strftime'):
+                try:
+                    value = value.strftime('%d/%m/%Y')
+                except Exception:
+                    value = str(value)
+            # Resolver FKs a su string
+            if hasattr(value, '__class__') and value.__class__.__name__ == 'DeferredAttribute':
+                value = getattr(paciente, field.name)
+            if field.related_model is not None:
+                value = getattr(paciente, field.name)
+                value = '' if value is None else str(value)
+            fields_info.append((str(label).capitalize(), '' if value is None else str(value)))
+        context['paciente_fields'] = fields_info
         return context
 
 

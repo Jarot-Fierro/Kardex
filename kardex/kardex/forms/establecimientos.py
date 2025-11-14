@@ -38,7 +38,7 @@ class FormEstablecimiento(forms.ModelForm):
             attrs={
                 'id': 'telefono_establecimiento',
                 'class': 'form-control',
-                'placeholder': '+56912345678',
+                'placeholder': '(44) 123 4567 ',
             }),
         required=False,
         validators=[MaxLengthValidator(15, message='No puedes escribir más de 15 caracteres.')],

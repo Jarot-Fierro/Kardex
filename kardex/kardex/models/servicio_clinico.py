@@ -5,7 +5,7 @@ from config.abstract import StandardModel
 
 
 class ServicioClinico(StandardModel):
-    nombre = models.CharField(max_length=100, unique=True, null=False, verbose_name='Nombre')
+    nombre = models.CharField(max_length=100, null=False, verbose_name='Nombre')
     tiempo_horas = models.IntegerField(null=True, blank=True, verbose_name='Tiempo en horas')
     correo_jefe = models.EmailField(max_length=100, null=True, blank=True, verbose_name='Correo del jefe a cargo')
     telefono = models.CharField(max_length=15, null=True, blank=True, verbose_name='Teléfono')
