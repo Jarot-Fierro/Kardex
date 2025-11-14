@@ -9,10 +9,10 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import FormView, UpdateView
+from django.views.generic import FormView, UpdateView, CreateView
 from django.views.generic.base import View
 
-from .forms import CustomLoginForm, UsuarioPersonalizadoChangeForm, ChangePasswordLoggedUserForm
+from .forms import CustomLoginForm, UsuarioPersonalizadoChangeForm, ChangePasswordLoggedUserForm, UsuarioPersonalizadoCreationForm
 from .models import UsuarioPersonalizado
 
 
@@ -112,3 +112,15 @@ class CambiarPasswordView(LoginRequiredMixin, FormView):
         update_session_auth_hash(self.request, user)
         add_message(self.request, SUCCESS, 'Contraseña actualizada correctamente.')
         return super().form_valid(form)
+
+
+class CreacionUsuarioView(LoginRequiredMixin, CreateView):
+    template_name = 'usuarios/creacion_usuario.html'
+    model = UsuarioPersonalizado
+    form_class = UsuarioPersonalizadoCreationForm
+    success_url = reverse_lazy('usuarios:perfil')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        add_message(self.request, SUCCESS, 'Usuario creado correctamente.')
+        return response

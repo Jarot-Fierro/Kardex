@@ -45,6 +45,17 @@ class FormProfesional(forms.ModelForm):
         }),
         required=True
     )
+
+    anexo = forms.CharField(
+        label='Anexo',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control anexo_personal',
+            'placeholder': '44 123 4567',
+            'id': 'telefono_establecimiento'
+        }),
+        required=True
+    )
+
     profesion = forms.ModelChoiceField(
         label='Profesión',
         queryset=Profesion.objects.filter(status='ACTIVE'),
@@ -110,6 +121,7 @@ class FormProfesional(forms.ModelForm):
             'nombres',
             'correo',
             'telefono',
+            'anexo',
             'profesion',
             'establecimiento'
         ]

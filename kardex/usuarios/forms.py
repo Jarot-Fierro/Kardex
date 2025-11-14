@@ -35,6 +35,60 @@ class UsuarioPersonalizadoChangeForm(forms.ModelForm):
         self.fields['establecimiento'].queryset = Establecimiento.objects.filter(status="ACTIVE")
 
 
+class UsuarioPersonalizadoCreationForm(forms.ModelForm):
+    password1 = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'})
+    )
+    password2 = forms.CharField(
+        label='Confirmar contraseña',
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmar contraseña'})
+    )
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'tipo_perfil', 'establecimiento']
+        labels = {
+            'first_name': 'Nombres',
+            'last_name': 'Apellidos',
+            'email': 'Correo electrónico',
+            'username': 'RUT',
+            'tipo_perfil': 'Tipo de perfil',
+            'establecimiento': 'Establecimiento',
+        }
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo@correo.com'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '12.345.678-9'}),
+            'tipo_perfil': forms.Select(attrs={'class': 'form-control'}),
+            'establecimiento': forms.Select(attrs={'id': 'usuario_establecimiento', 'class': 'form-control select2'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Limitar establecimientos activos únicamente
+        if 'establecimiento' in self.fields:
+            self.fields['establecimiento'].queryset = Establecimiento.objects.filter(status="ACTIVE")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        p1 = cleaned_data.get('password1')
+        p2 = cleaned_data.get('password2')
+        if p1 and p2 and p1 != p2:
+            self.add_error('password2', 'Las contraseñas no coinciden.')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data.get('password1')
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+        return user
+
+
 class CustomLoginForm(forms.Form):
     username = forms.CharField(
         label="RUT",

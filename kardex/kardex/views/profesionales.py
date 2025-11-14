@@ -15,11 +15,11 @@ MODULE_NAME = 'Profesionales'
 class ProfesionalListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/profesional/list.html'
     model = Profesional
-    datatable_columns = ['ID', 'RUT', 'Nombre', 'Correo', 'Teléfono', 'Profesión', 'Establecimiento']
-    datatable_order_fields = ['id', None, 'rut', 'nombres', 'correo', 'telefono', 'profesion__nombre',
+    datatable_columns = ['ID', 'RUT', 'Nombre', 'Correo', 'Teléfono', 'Anexo', 'Profesión', 'Establecimiento']
+    datatable_order_fields = ['id', None, 'rut', 'nombres', 'correo', 'telefono', 'anexo', 'profesion__nombre',
                               'establecimiento__nombre']
     datatable_search_fields = [
-        'rut__icontains', 'nombres__icontains', 'correo__icontains', 'telefono__icontains',
+        'rut__icontains', 'nombres__icontains', 'correo__icontains', 'telefono__icontains', 'anexo__icontains',
         'profesion__nombre__icontains', 'establecimiento__nombre__icontains'
     ]
 
@@ -41,6 +41,7 @@ class ProfesionalListView(PermissionRequiredMixin, DataTableMixin, TemplateView)
             'Nombre': (obj.nombres or '').upper(),
             'Correo': (obj.correo or ''),
             'Teléfono': (obj.telefono or ''),
+            'Anexo': (obj.anexo or ''),
             'Profesión': (getattr(obj.profesion, 'nombre', '') or '').upper(),
             'Establecimiento': (getattr(obj.establecimiento, 'nombre', '') or '').upper(),
         }
