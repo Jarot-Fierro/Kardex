@@ -585,7 +585,8 @@ class PacienteQueryView(PermissionRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         instance = self._get_paciente_instance(self.request)
         is_update = instance is not None
-        context['title'] = 'Editar Paciente' if is_update else 'Crear Paciente'
+        context[
+            'title'] = 'Editar Paciente' if is_update else f'Crear Paciente en {self.request.establecimiento.nombre}'
         context['list_url'] = self.success_url
         context['action'] = 'edit' if is_update else 'add'
         context['module_name'] = MODULE_NAME

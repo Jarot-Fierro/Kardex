@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FORMULARIO DE POSTULACIÓN A REEMPLAZOS DIRECCIÓN SERVICIO DE SALUD ARAUCO</title>
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- AdminLTE3 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/css/adminlte.min.css">
+
+    <!-- Estilos personalizados -->
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --secondary-color: #f8f9fa;
+            --accent-color: #005a9e;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .form-body {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eaeaea;
+            font-weight: 600;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .form-control, .custom-select {
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-control:focus, .custom-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 120, 212, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: #e9f2fb;
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .progress {
+            height: 8px;
+            margin-top: 10px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: var(--secondary-color);
+            border-bottom: 1px solid #eaeaea;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-footer {
+            padding: 1.5rem 2rem;
+            background-color: var(--secondary-color);
+            border-top: 1px solid #eaeaea;
+            text-align: center;
+        }
+
+        .alert-info {
+            background-color: #e9f2fb;
+            border-color: #b8d4f0;
+            color: #0c5460;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+            }
+
+            .form-header, .form-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- Contenido principal -->
+    <div class="content-wrapper">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h1>FORMULARIO DE POSTULACIÓN</h1>
+                        <p>Dirección Servicio de Salud Arauco</p>
+                    </div>
+
+                    <form id="postulacionForm" enctype="multipart/form-data">
+                        <div class="form-body">
+                            <!-- Información Personal -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="section-title">Información Personal</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="nombres" class="required-field">Nombres</label>
+                                                <input type="text" class="form-control" id="nombres" name="nombres"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="apellidos" class="required-field">Apellidos</label>
+                                                <input type="text" class="form-control" id="apellidos" name="apellidos"
+                                                       required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="rut" class="required-field">RUT</label>
+                                                <input type="text" class="form-control" id="rut" name="rut"
+                                                       placeholder="12.345.678-9" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="fechaNacimiento" class="required-field">Fecha de
+                                                    Nacimiento</label>
+                                                <input type="date" class="form-control" id="fechaNacimiento"
+                                                       name="fechaNacimiento" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="nacionalidad" class="required-field">Nacionalidad</label>
+                                                <input type="text" class="form-control" id="nacionalidad"
+                                                       name="nacionalidad" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="estadoCivil" class="required-field">Estado Civil</label>
+                                                <select class="custom-select" id="estadoCivil" name="estadoCivil"
+                                                        required>
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="soltero">Soltero(a)</option>
+                                                    <option value="casado">Casado(a)</option>
+                                                    <option value="divorciado">Divorciado(a)</option>
+                                                    <option value="viudo">Viudo(a)</option>
+                                                    <option value="union">Unión Civil</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información de Contacto -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="section-title">Información de Contacto</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="telefono" class="required-field">Teléfono</label>
+                                                <input type="tel" class="form-control" id="telefono" name="telefono"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="email" class="required-field">Correo Electrónico</label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                       required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="direccion" class="required-field">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" name="direccion"
+                                               required>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="comuna" class="required-field">Comuna</label>
+                                                <input type="text" class="form-control" id="comuna" name="comuna"
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="region" class="required-field">Región</label>
+                                                <input type="text" class="form-control" id="region" name="region"
+                                                       required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información Académica -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="section-title">Información Académica</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="nivelEducacion" class="required-field">Nivel de Educación</label>
+                                        <select class="custom-select" id="nivelEducacion" name="nivelEducacion"
+                                                required>
+                                            <option value="">Seleccione...</option>
+                                            <option value="basica">Educación Básica</option>
+                                            <option value="media">Educación Media</option>
+                                            <option value="tecnica">Educación Técnica</option>
+                                            <option value="profesional">Educación Profesional</option>
+                                            <option value="postgrado">Postgrado</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="titulo" class="required-field">Título Obtenido</label>
+                                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="institucion" class="required-field">Institución</label>
+                                        <input type="text" class="form-control" id="institucion" name="institucion"
+                                               required>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="anoTitulacion" class="required-field">Año de
+                                                    Titulación</label>
+                                                <input type="number" class="form-control" id="anoTitulacion"
+                                                       name="anoTitulacion" min="1950" max="2030" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="estadoTitulo" class="required-field">Estado del
+                                                    Título</label>
+                                                <select class="custom-select" id="estadoTitulo" name="estadoTitulo"
+                                                        required>
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="egresado">Egresado</option>
+                                                    <option value="titulado">Titulado</option>
+                                                    <option value="enTramite">En Trámite</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Experiencia Laboral -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="section-title">Experiencia Laboral</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div id="experienciasContainer">
+                                        <div class="experiencia-item border-bottom pb-3 mb-3">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="empresa1"
+                                                               class="required-field">Empresa/Institución</label>
+                                                        <input type="text" class="form-control" id="empresa1"
+                                                               name="empresa[]" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="cargo1" class="required-field">Cargo</label>
+                                                        <input type="text" class="form-control" id="cargo1"
+                                                               name="cargo[]" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fechaInicio1" class="required-field">Fecha de
+                                                            Inicio</label>
+                                                        <input type="date" class="form-control" id="fechaInicio1"
+                                                               name="fechaInicio[]" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fechaTermino1">Fecha de Término</label>
+                                                        <input type="date" class="form-control" id="fechaTermino1"
+                                                               name="fechaTermino[]">
+                                                        <small class="form-text text-muted">Dejar vacío si es trabajo
+                                                            actual</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="funciones1" class="required-field">Funciones
+                                                    Principales</label>
+                                                <textarea class="form-control" id="funciones1" name="funciones[]"
+                                                          rows="3" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" id="agregarExperiencia"
+                                            class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-plus mr-1"></i> Agregar Experiencia
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Documentos Adjuntos -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="section-title">Documentos Adjuntos</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        Por favor, adjunte los siguientes documentos en formato PDF
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="curriculum" class="required-field">Curriculum Vitae</label>
+                                                <div class="file-upload-area"
+                                                     onclick="document.getElementById('curriculum').click()">
+                                                    <div class="file-upload-icon">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </div>
+                                                    <p>Haga clic para seleccionar su CV</p>
+                                                    <small class="text-muted">Formato PDF, máximo 5MB</small>
+                                                    <input type="file" id="curriculum" name="curriculum" accept=".pdf"
+                                                           style="display: none;" required>
+                                                </div>
+                                                <div class="progress mt-2" style="display: none;">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="width: 0%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="certificadoTitulo">Certificado de Título</label>
+                                                <div class="file-upload-area"
+                                                     onclick="document.getElementById('certificadoTitulo').click()">
+                                                    <div class="file-upload-icon">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </div>
+                                                    <p>Haga clic para seleccionar su certificado</p>
+                                                    <small class="text-muted">Formato PDF, máximo 5MB</small>
+                                                    <input type="file" id="certificadoTitulo" name="certificadoTitulo"
+                                                           accept=".pdf" style="display: none;">
+                                                </div>
+                                                <div class="progress mt-2" style="display: none;">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="width: 0%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="antecedentes">Antecedentes Penales</label>
+                                                <div class="file-upload-area"
+                                                     onclick="document.getElementById('antecedentes').click()">
+                                                    <div class="file-upload-icon">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </div>
+                                                    <p>Haga clic para seleccionar sus antecedentes</p>
+                                                    <small class="text-muted">Formato PDF, máximo 5MB</small>
+                                                    <input type="file" id="antecedentes" name="antecedentes"
+                                                           accept=".pdf" style="display: none;">
+                                                </div>
+                                                <div class="progress mt-2" style="display: none;">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="width: 0%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="otrosDocumentos">Otros Documentos</label>
+                                                <div class="file-upload-area"
+                                                     onclick="document.getElementById('otrosDocumentos').click()">
+                                                    <div class="file-upload-icon">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </div>
+                                                    <p>Haga clic para seleccionar otros documentos</p>
+                                                    <small class="text-muted">Formato PDF, máximo 5MB</small>
+                                                    <input type="file" id="otrosDocumentos" name="otrosDocumentos"
+                                                           accept=".pdf" style="display: none;">
+                                                </div>
+                                                <div class="progress mt-2" style="display: none;">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="width: 0%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Declaración -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="section-title">Declaración</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="declaracionVeracidad"
+                                               required>
+                                        <label class="form-check-label" for="declaracionVeracidad">
+                                            Declaro bajo juramento que la información proporcionada en este formulario
+                                            es veraz y completa.
+                                            Entiendo que cualquier declaración falsa puede resultar en la
+                                            descalificación de mi postulación
+                                            o en la terminación de mi contratación.
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="autorizacionDatos" required>
+                                        <label class="form-check-label" for="autorizacionDatos">
+                                            Autorizo al Servicio de Salud Arauco a verificar la información
+                                            proporcionada y a realizar
+                                            las consultas necesarias para evaluar mi postulación.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane mr-2"></i> Enviar Postulación
+                            </button>
+                            <p class="mt-3 text-muted">
+                                Todos los campos marcados con <span class="text-danger">*</span> son obligatorios
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- AdminLTE3 JS -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/adminlte.min.js"></script>
+
+<!-- Script personalizado -->
+<script>
+    $(document).ready(function() {
+        let experienciaCount = 1;
+
+        // Agregar nueva experiencia laboral
+        $('#agregarExperiencia').click(function() {
+            experienciaCount++;
+            const newExperiencia = `
+                <div class="experiencia-item border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>Experiencia Laboral ${experienciaCount}</h5>
+                        <button type="button" class="btn btn-sm btn-outline-danger eliminar-experiencia">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empresa${experienciaCount}" class="required-field">Empresa/Institución</label>
+                                <input type="text" class="form-control" id="empresa${experienciaCount}" name="empresa[]" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cargo${experienciaCount}" class="required-field">Cargo</label>
+                                <input type="text" class="form-control" id="cargo${experienciaCount}" name="cargo[]" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fechaInicio${experienciaCount}" class="required-field">Fecha de Inicio</label>
+                                <input type="date" class="form-control" id="fechaInicio${experienciaCount}" name="fechaInicio[]" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fechaTermino${experienciaCount}">Fecha de Término</label>
+                                <input type="date" class="form-control" id="fechaTermino${experienciaCount}" name="fechaTermino[]">
+                                <small class="form-text text-muted">Dejar vacío si es trabajo actual</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="funciones${experienciaCount}" class="required-field">Funciones Principales</label>
+                        <textarea class="form-control" id="funciones${experienciaCount}" name="funciones[]" rows="3" required></textarea>
+                    </div>
+                </div>
+            `;
+
+            $('#experienciasContainer').append(newExperiencia);
+        });
+
+        // Eliminar experiencia laboral
+        $(document).on('click', '.eliminar-experiencia', function() {
+            if ($('.experiencia-item').length > 1) {
+                $(this).closest('.experiencia-item').remove();
+                experienciaCount--;
+
+                // Renumerar las experiencias restantes
+                $('.experiencia-item').each(function(index) {
+                    $(this).find('h5').text(`Experiencia Laboral ${index + 1}`);
+                });
+            } else {
+                alert('Debe mantener al menos una experiencia laboral');
+            }
+        });
+
+        // Simulación de subida de archivos
+        $('input[type="file"]').change(function() {
+            const fileInput = $(this);
+            const progressBar = fileInput.closest('.form-group').find('.progress');
+            const progressBarInner = progressBar.find('.progress-bar');
+
+            progressBar.show();
+
+            // Simular progreso de carga
+            let progress = 0;
+            const interval = setInterval(function() {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+
+                    // Mostrar mensaje de éxito
+                    setTimeout(function() {
+                        progressBar.hide();
+                        fileInput.closest('.file-upload-area').css({
+                            'border-color': '#28a745',
+                            'background-color': '#f0fff4'
+                        });
+                    }, 500);
+                }
+
+                progressBarInner.css('width', progress + '%');
+            }, 200);
+        });
+
+        // Validación del formulario
+        $('#postulacionForm').submit(function(e) {
+            e.preventDefault();
+
+            // Validación básica
+            let isValid = true;
+            $('.required-field').each(function() {
+                const input = $(this).closest('.form-group').find('input, select, textarea');
+                if (!input.val()) {
+                    isValid = false;
+                    input.addClass('is-invalid');
+                } else {
+                    input.removeClass('is-invalid');
+                }
+            });
+
+            // Validación de checkboxes
+            if (!$('#declaracionVeracidad').is(':checked') || !$('#autorizacionDatos').is(':checked')) {
+                isValid = false;
+                $('.form-check-input').addClass('is-invalid');
+            } else {
+                $('.form-check-input').removeClass('is-invalid');
+            }
+
+            if (isValid) {
+                // Simular envío exitoso
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Postulación Enviada!',
+                    text: 'Su postulación ha sido enviada correctamente. Nos pondremos en contacto con usted pronto.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#0078d4'
+                }).then(() => {
+                    // Aquí iría el código para enviar el formulario realmente
+                    // this.submit();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formulario Incompleto',
+                    text: 'Por favor, complete todos los campos obligatorios.',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

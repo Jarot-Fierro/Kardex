@@ -469,6 +469,7 @@ class FormPaciente(forms.ModelForm):
     class Meta:
         model = Paciente
         fields = [
+            'rut',
             'nip',
             'pasaporte',
             'nombre',

@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Crear Paciente{% endblock %}
 {% block content %}
 
 <div class="container-fluid py-2 small-input">
@@ -147,7 +146,8 @@
 
                             <!-- Botón tipo etiqueta dentro del input -->
                             <div class="input-group-append">
-                                <a href="formulario.html" class="btn btn-primary">
+                                <a id="btn-actualizar-rut" href="#"
+                                   class="btn btn-primary disabled" aria-disabled="true">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </div>
@@ -468,6 +468,24 @@
       // Inicial y cuando cambie (la API cambia hidden dinámicamente)
       updateHref();
       $(document).on('change', '#ficha_id_hidden', updateHref);
+    })();
+</script>
+<script>
+    // Habilitar botón "Actualizar RUT" con la PK dinámica del paciente
+    (function(){
+      const $btn = $('#btn-actualizar-rut');
+      const updateHref = function(){
+        const pacienteId = ($('#paciente_id_hidden').val() || '').trim();
+        if (pacienteId) {
+          const url = window.location.origin + '/kardex/pacientes/' + pacienteId + '/actualizar-rut/';
+          $btn.attr('href', url).removeClass('disabled').removeAttr('aria-disabled');
+        } else {
+          $btn.attr('href', '#').addClass('disabled').attr('aria-disabled','true');
+        }
+      };
+      // Inicial y cuando cambie (la API o el backend cambia el hidden dinámicamente)
+      updateHref();
+      $(document).on('change', '#paciente_id_hidden', updateHref);
     })();
 </script>
 <script src="{% static 'js/apis/rut_scan_control.js' %}"></script>

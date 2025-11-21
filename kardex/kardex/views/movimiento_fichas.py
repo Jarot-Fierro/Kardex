@@ -8,7 +8,7 @@ from django.utils.timezone import now
 from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
 
-from kardex.forms.movimiento_ficha import FormEntradaFicha, FiltroSalidaFichaForm
+from kardex.forms.movimiento_ficha import FormEntradaFicha, FiltroSalidaFichaForm, MovimientoFichaForm
 from kardex.forms.movimiento_ficha import FormSalidaFicha
 from kardex.forms.movimiento_ficha import FormTraspasoFicha
 from kardex.mixin import DataTableMixin
@@ -464,32 +464,11 @@ class MovimientoFichaDetailView(PermissionRequiredMixin, DetailView):
 class MovimientoFichaCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'kardex/movimiento_ficha/form.html'
     model = MovimientoFicha
-    fields = '__all__'
+    form_class = MovimientoFichaForm  # ← ESTE era el error
     success_url = reverse_lazy('kardex:movimiento_ficha_list')
 
     permission_required = 'kardex.add_movimiento_ficha'
     raise_exception = True
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if form.is_valid():
-            obj = form.save()
-            if is_ajax:
-                from django.http import JsonResponse
-                return JsonResponse({'success': True, 'message': 'Movimiento de ficha creado correctamente',
-                                     'redirect_url': str(self.success_url)})
-            from django.contrib import messages
-            from django.shortcuts import redirect
-            messages.success(request, 'Movimiento de ficha creado correctamente')
-            return redirect(self.success_url)
-        if is_ajax:
-            from django.http import JsonResponse
-            return JsonResponse({'success': False, 'error': 'Hay errores en el formulario'}, status=400)
-        from django.contrib import messages
-        messages.error(request, 'Hay errores en el formulario')
-        self.object = None
-        return self.render_to_response(self.get_context_data(form=form, open_modal=True))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

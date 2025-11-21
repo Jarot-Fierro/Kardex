@@ -85,6 +85,19 @@ $(document).ready(function () {
 
         lastRut = rut;
 
+        // Limpiar formulario para evitar datos residuales (conservar el RUT digitado)
+        if (typeof window.resetPacienteForm === 'function') {
+            window.resetPacienteForm();
+        } else {
+            // Fallback mínimo
+            var $pacIdHidden = $('#paciente_id_hidden');
+            if ($pacIdHidden.length) {
+                $pacIdHidden.val('').trigger('change');
+            }
+            $('#ficha_id_hidden').val('');
+            $('#form_action_hidden').val('add');
+        }
+
         console.log('[rut_scan] Consultando RUT:', rut);
 
         $.ajax({
@@ -101,6 +114,9 @@ $(document).ready(function () {
                         return;
                     }
                     if (data.status === 'not_found') {
+                        if (typeof window.resetPacienteForm === 'function') {
+                            window.resetPacienteForm();
+                        }
                         const msg = `El paciente con el RUT ${rut} no existe en el sistema. Presione Continuar para agregar todos sus datos personales en su establecimiento.`;
                         if (window.Swal && Swal.fire) {
                             Swal.fire({
@@ -132,6 +148,9 @@ $(document).ready(function () {
             error: function (xhr, status, error) {
                 console.error('[rut_scan] Error en AJAX:', status, error);
                 if (xhr && xhr.responseJSON && xhr.responseJSON.status === 'not_found') {
+                    if (typeof window.resetPacienteForm === 'function') {
+                        window.resetPacienteForm();
+                    }
                     const msg = `El paciente con el RUT ${rut} no existe en el sistema. Presione Continuar para agregar todos sus datos personales en su establecimiento.`;
                     if (window.Swal && Swal.fire) {
                         Swal.fire({

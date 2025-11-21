@@ -1,6 +1,7 @@
 from django import forms
 
-from kardex.models import MovimientoFicha, Ficha, ServicioClinico, Profesional
+from kardex.models import MovimientoFicha, ServicioClinico, Profesional
+from usuarios.models import UsuarioPersonalizado
 
 
 class FormEntradaFicha(forms.ModelForm):
@@ -479,3 +480,152 @@ class FiltroSalidaFichaForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control select2'}),
         required=False
     )
+
+
+from django import forms
+from django.forms import DateTimeInput
+from kardex.models import MovimientoFicha, ServicioClinico, Profesional, Establecimiento, Ficha
+
+
+class MovimientoFichaForm(forms.ModelForm):
+    fecha_envio = forms.DateTimeField(
+        label="Fecha de envío",
+        widget=DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        required=False
+    )
+    fecha_recepcion = forms.DateTimeField(
+        label="Fecha de recepción",
+        widget=DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        required=False
+    )
+    fecha_traspaso = forms.DateTimeField(
+        label="Fecha de traspaso",
+        widget=DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        required=False
+    )
+
+    observacion_envio = forms.CharField(
+        label="Observación de envío",
+        widget=forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+        required=False
+    )
+    observacion_recepcion = forms.CharField(
+        label="Observación de recepción",
+        widget=forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+        required=False
+    )
+    observacion_traspaso = forms.CharField(
+        label="Observación de traspaso",
+        widget=forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+        required=False
+    )
+
+    estado_envio = forms.CharField(
+        label="Estado de envío",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False
+    )
+    estado_recepcion = forms.CharField(
+        label="Estado de recepción",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False
+    )
+    estado_traspaso = forms.CharField(
+        label="Estado de traspaso",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    servicio_clinico_envio = forms.ModelChoiceField(
+        label="Servicio clínico de envío",
+        queryset=ServicioClinico.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un servicio"
+    )
+    servicio_clinico_recepcion = forms.ModelChoiceField(
+        label="Servicio clínico de recepción",
+        queryset=ServicioClinico.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un servicio"
+    )
+    servicio_clinico_traspaso = forms.ModelChoiceField(
+        label="Servicio clínico de traspaso",
+        queryset=ServicioClinico.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un servicio"
+    )
+
+    usuario_envio = forms.ModelChoiceField(
+        label="Usuario envío",
+        queryset=UsuarioPersonalizado.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un usuario"
+    )
+    usuario_recepcion = forms.ModelChoiceField(
+        label="Usuario recepción",
+        queryset=UsuarioPersonalizado.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un usuario"
+    )
+    usuario_traspaso = forms.ModelChoiceField(
+        label="Usuario traspaso",
+        queryset=UsuarioPersonalizado.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un usuario"
+    )
+
+    profesional_envio = forms.ModelChoiceField(
+        label="Profesional envío",
+        queryset=Profesional.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un profesional"
+    )
+    profesional_recepcion = forms.ModelChoiceField(
+        label="Profesional recepción",
+        queryset=Profesional.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un profesional"
+    )
+    profesional_traspaso = forms.ModelChoiceField(
+        label="Profesional traspaso",
+        queryset=Profesional.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un profesional"
+    )
+
+    establecimiento = forms.ModelChoiceField(
+        label="Establecimiento",
+        queryset=Establecimiento.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione un establecimiento"
+    )
+
+    ficha = forms.ModelChoiceField(
+        label="Ficha",
+        queryset=Ficha.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control select2'}),
+        required=False,
+        empty_label="Seleccione una ficha"
+    )
+
+    class Meta:
+        model = MovimientoFicha
+        fields = [
+            'fecha_envio', 'fecha_recepcion', 'fecha_traspaso',
+            'observacion_envio', 'observacion_recepcion', 'observacion_traspaso',
+            'estado_envio', 'estado_recepcion', 'estado_traspaso',
+            'servicio_clinico_envio', 'servicio_clinico_recepcion', 'servicio_clinico_traspaso',
+            'usuario_envio', 'usuario_recepcion', 'usuario_traspaso',
+            'profesional_envio', 'profesional_recepcion', 'profesional_traspaso',
+            'establecimiento', 'ficha'
+        ]

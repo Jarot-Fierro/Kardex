@@ -21,10 +21,10 @@ function cargarDatosFicha(fichaId) {
             const paciente = data.paciente || {};
             // Establecer modo edición y IDs ocultos cuando viene desde API
             if (paciente && paciente.id) {
-                $('#paciente_id_hidden').val(paciente.id);
+                $('#paciente_id_hidden').val(paciente.id).trigger('change');
                 $('#form_action_hidden').val('edit');
             } else {
-                $('#paciente_id_hidden').val('');
+                $('#paciente_id_hidden').val('').trigger('change');
             }
 
             // Botones
@@ -62,7 +62,7 @@ function cargarDatosFicha(fichaId) {
                     .attr('aria-disabled', 'false')
                     .attr('href', toggleUrl)
                     .text(data.pasivado ? 'Despasivar' : 'Pasivar');
-                $btnPasivarGestion.toggleClass('btn-danger', !!data.pasivado);
+                $btnPasivarGestion.toggleClass('btn-info', !!data.pasivado);
                 $btnPasivarGestion.toggleClass('btn-info', !data.pasivado);
             }
 
@@ -199,6 +199,69 @@ function cargarDatosFicha(fichaId) {
 
 // Exponer globalmente
 window.cargarDatosFicha = cargarDatosFicha;
+
+// Función para vaciar el formulario de paciente (excepto el campo RUT)
+window.resetPacienteForm = function () {
+    try {
+        const $form = $('form');
+        if (!$form.length) return;
+
+        const $rut = $('#id_rut');
+        const rutVal = $rut.val();
+
+        // Limpiar inputs de texto/fecha/número/email, excepto RUT
+        $form.find('input').each(function () {
+            const $el = $(this);
+            const type = ($el.attr('type') || '').toLowerCase();
+            const id = $el.attr('id') || '';
+            if (id === 'id_rut') return; // conservar RUT ingresado
+            if (['hidden'].includes(type)) return; // hiddens se controlan abajo
+            if (['checkbox', 'radio'].includes(type)) {
+                $el.prop('checked', false).trigger('change');
+                return;
+            }
+            // text, number, date, email, tel, etc.
+            $el.val('').trigger('change');
+        });
+
+        // Limpiar textareas
+        $form.find('textarea').val('').trigger('change');
+
+        // Limpiar selects y select2
+        $form.find('select').each(function () {
+            const $sel = $(this);
+            const id = $sel.attr('id') || '';
+            if (id === 'id_rut') return; // no tocar selector de RUT si fuera select2
+            $sel.val(null).trigger('change');
+            // Remover opciones dinámicas para evitar residuos (sin afectar catálogos cargados por AJAX)
+            if ($sel.hasClass('select2-hidden-accessible')) {
+                // mantener placeholder, remover selección actual
+            }
+        });
+
+        // Reset de campos ocultos y modo
+        $('#paciente_id_hidden').val('').trigger('change');
+        $('#ficha_id_hidden').val('').trigger('change');
+        $('#form_action_hidden').val('add');
+
+        // Deshabilitar botones relacionados a una ficha cargada
+        $('#btn-caratula, #btn-stickers').addClass('disabled').attr('aria-disabled', 'true').attr('href', '#');
+        const $btnPasivar = $('#btn-pasivar, #btn-pasivar-gestion');
+        $btnPasivar.addClass('disabled').attr('aria-disabled', 'true').attr('href', '#').text('Pasivar')
+            .removeClass('btn-outline-info btn-info').addClass('btn-outline-warning');
+
+        // Limpiar labels de fechas
+        $('#ficha_created_at_text').text('-');
+        $('#ficha_updated_at_text').text('-');
+
+        // Restaurar el valor del RUT en caso de que algún trigger lo haya afectado
+        if (rutVal !== undefined) {
+            $rut.val(rutVal);
+        }
+    } catch (e) {
+        console.warn('resetPacienteForm fallo:', e);
+    }
+};
 
 $('#id_ficha, #id_rut, #id_codigo').on('select2:select', function (e) {
     const fichaId = e.params.data.id;
