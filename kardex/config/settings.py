@@ -46,13 +46,23 @@ INSTALLED_APPS = [
     'simple_history',
     'reports',
     'dbbackup',
-    'storages',
 ]
 
-# Carpeta donde se guardarán los backups
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'location': BASE_DIR / 'backups',
+STORAGES = {
+    # Solo para que Django no tire error
+    'staticfiles': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'OPTIONS': {
+            'location': BASE_DIR / 'static',
+        },
+    },
+    # Para los backups de la base de datos
+    'dbbackup': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'OPTIONS': {
+            'location': BASE_DIR / 'backups',
+        },
+    },
 }
 
 # Ruta de mysqldump para MySQL
