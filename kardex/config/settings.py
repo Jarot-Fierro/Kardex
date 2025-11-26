@@ -45,7 +45,15 @@ INSTALLED_APPS = [
     'usuarios',
     'simple_history',
     'reports',
+    'dbbackup',
 ]
+
+DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
+DBBACKUP_STORAGE_OPTIONS = {
+    "location": BASE_DIR / "backups",
+}
+
+DBBACKUP_MYSQLDUMP = "/usr/bin/mysqldump"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
