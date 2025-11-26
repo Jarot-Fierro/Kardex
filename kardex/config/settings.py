@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.files.storage.filesystem import FileSystemStorage
+
 from .db import MYSQL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -46,12 +48,11 @@ INSTALLED_APPS = [
     'simple_history',
     'reports',
     'dbbackup',
+    'storages',
 ]
 
-DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
-DBBACKUP_STORAGE_OPTIONS = {
-    "location": BASE_DIR / "backups",
-}
+# Carpeta donde se guardarán los backups
+BACKUP_STORAGE = FileSystemStorage(location=BASE_DIR / "backups")
 
 DBBACKUP_MYSQLDUMP = "/usr/bin/mysqldump"
 
