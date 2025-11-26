@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.8.85.141']
 
 AUTH_USER_MODEL = 'usuarios.UsuarioPersonalizado'
 LOGIN_URL = '/usuarios/login/'
@@ -47,23 +47,6 @@ INSTALLED_APPS = [
     'reports',
     'dbbackup',
 ]
-
-STORAGES = {
-    # Solo para que Django no tire error
-    'staticfiles': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-        'OPTIONS': {
-            'location': BASE_DIR / 'static',
-        },
-    },
-    # Para los backups de la base de datos
-    'dbbackup': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-        'OPTIONS': {
-            'location': BASE_DIR / 'backups',
-        },
-    },
-}
 
 # Ruta de mysqldump para MySQL
 DBBACKUP_MYSQLDUMP = '/usr/bin/mysqldump'

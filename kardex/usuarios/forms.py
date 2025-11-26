@@ -25,7 +25,7 @@ class UsuarioPersonalizadoChangeForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo@correo.com'}),
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '12.345.678-9'}),
+            'username': forms.TextInput(attrs={'class': 'form-control id_rut', 'placeholder': '12.345.678-9'}),
             'establecimiento': forms.Select(attrs={'id': 'usuario_establecimiento', 'class': 'form-control select2'}),
         }
 
@@ -60,7 +60,7 @@ class UsuarioPersonalizadoCreationForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo@correo.com'}),
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '12.345.678-9'}),
+            'username': forms.TextInput(attrs={'class': 'form-control id_rut', 'placeholder': '12.345.678-9'}),
             'tipo_perfil': forms.Select(attrs={'class': 'form-control'}),
             'establecimiento': forms.Select(attrs={'id': 'usuario_establecimiento', 'class': 'form-control select2'}),
         }
