@@ -1,0 +1,70 @@
+NAME_VIEW_KARDEX_FICHA_PACIENTE_ESTABLECIMIENTO = "vista_ficha_paciente"
+
+SELECT
+    -- ========= FICHA ===========
+    f.id                         AS ficha_id,
+    f.numero_ficha_sistema,
+    f.numero_ficha_tarjeta,
+    f.pasivado,
+    f.observacion,
+    f.fecha_creacion_anterior,
+
+    f.usuario_id,
+    f.profesional_id,
+    f.sector_id,
+
+    -- ========= ESTABLECIMIENTO =========
+    f.establecimiento_id,
+    e.nombre                     AS establecimiento_nombre,
+    e.direccion                  AS establecimiento_direccion,
+    e.telefono                   AS establecimiento_telefono,
+    e.comuna_id                  AS establecimiento_comuna_id,
+
+    -- ========= PACIENTE =========
+    p.id                         AS paciente_id,
+    p.codigo                     AS paciente_codigo,
+    p.rut,
+    p.nip,
+    p.nombre,
+    p.apellido_paterno,
+    p.apellido_materno,
+    p.nombre_social,
+    p.genero,
+
+    p.fecha_nacimiento,
+    p.sexo,
+    p.estado_civil,
+
+    p.rut_madre,
+    p.nombres_padre,
+    p.nombres_madre,
+    p.nombre_pareja,
+    p.representante_legal,
+
+    p.pueblo_indigena,
+    p.recien_nacido,
+    p.extranjero,
+    p.fallecido,
+    p.fecha_fallecimiento,
+    p.alergico_a,
+
+    p.direccion,
+    p.sin_telefono,
+    p.numero_telefono1,
+    p.numero_telefono2,
+    p.ocupacion,
+
+    p.comuna_id                  AS paciente_comuna_id,
+    p.prevision_id,
+    p.usuario_id                AS paciente_usuario_id,
+    p.usuario_anterior_id,
+
+    p.pasaporte,
+    p.rut_responsable_temporal,
+    p.usar_rut_madre_como_responsable
+
+FROM kardex_ficha f
+INNER JOIN kardex_paciente p
+        ON f.paciente_id = p.id
+INNER JOIN kardex_establecimiento e
+        ON f.establecimiento_id = e.id
