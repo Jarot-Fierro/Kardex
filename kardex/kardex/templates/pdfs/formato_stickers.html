@@ -13,28 +13,40 @@
     <style>
         body {
             font-family: Calibri, sans-serif;
-            padding: 20px;
+            font-size: 18px; /* texto base más grande */
+            margin-top: 10px;
         }
 
         .sticker {
-            height: 160px;
-            border: 1px solid #000;
-            margin-bottom: 20px;
-            padding: 10px;
+            height: 185px; /* antes 160px */
             text-align: center;
             box-sizing: border-box;
         }
 
+        .sticker strong {
+            font-size: 22px; /* nombres más grandes */
+            display: block;
+        }
+
+        .sticker div {
+            font-size: 18px; /* información adicional más grande */
+        }
+
         .rut {
             font-weight: bold;
+            font-size: 20px; /* RUT más grande */
         }
+
         .barcode {
-            max-height: 50px;
+            max-height: 60px; /* antes 50px */
         }
 
         @media print {
             .no-print {
                 display: none !important;
+            }
+            .sticker {
+                page-break-inside: avoid;
             }
         }
     </style>
@@ -50,20 +62,24 @@
 
 <div class="container">
     <div class="row">
-        <!-- Sticker 1 -->
+        <!-- Stickers -->
         {% for i in sticker_range %}
         <div class="col-4">
             <div class="sticker">
                 <div>
-                    {{ paciente.nombre }}
-                    {{ paciente.apellido_paterno }}
-                    {{ paciente.apellido_materno }}
+                    <strong>
+                        {{ paciente.nombre }}
+                        {{ paciente.apellido_paterno }}
+                        {{ paciente.apellido_materno }}
+                    </strong>
                 </div>
-                <div>Fecha Nac.:
-                    {{ paciente.fecha_nacimiento|date:"d/m/Y" }}&nbsp;&nbsp;&nbsp;
+                <div>
+                    Fecha Nac.: {{ paciente.fecha_nacimiento|date:"d/m/Y" }} &nbsp;&nbsp;&nbsp;
                     {{ paciente.comuna.nombre }}
                 </div>
-                <div>FICHA: {{ ficha.numero_ficha }}</div>
+                <div style="font-size: 20px; font-weight: bold;">
+                    FICHA: {{ ficha.numero_ficha }}
+                </div>
                 <div class="rut">{{ paciente.rut|default:"Sin Rut" }}</div>
                 <img class="barcode" src="{{ codigo_barras_base64 }}" alt="Código de barras">
             </div>
