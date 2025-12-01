@@ -109,7 +109,6 @@ class FichaAdmin(SimpleHistoryAdmin):
         "numero_ficha_sistema",
         "paciente",
         "establecimiento",
-        "profesional",
         "pasivado",
         "fecha_creacion_anterior",
     )
@@ -121,7 +120,7 @@ class FichaAdmin(SimpleHistoryAdmin):
         "paciente__apellido_paterno",
     )
     list_filter = ("pasivado", "establecimiento")
-    autocomplete_fields = ("paciente", "establecimiento", "profesional", "usuario")
+    autocomplete_fields = ("paciente", "establecimiento", "usuario")
     ordering = ("-id",)
 
 

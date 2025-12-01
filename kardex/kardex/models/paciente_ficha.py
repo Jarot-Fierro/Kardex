@@ -10,7 +10,6 @@ class VistaFichaPaciente(models.Model):
     observacion = models.TextField(null=True)
     fecha_creacion_anterior = models.DateTimeField(null=True)
 
-    profesional_id = models.IntegerField(null=True)
     sector_id = models.IntegerField(null=True)
     usuario_id = models.IntegerField(null=True)
 

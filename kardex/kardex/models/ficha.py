@@ -13,8 +13,6 @@ class Ficha(StandardModel):
 
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.PROTECT, null=True, blank=True,
                                 verbose_name='Usuario', related_name='fichas_usuarios')
-    profesional = models.ForeignKey('kardex.Profesional', on_delete=models.PROTECT, null=True, blank=True,
-                                    verbose_name='Profesional', related_name='fichas_profesionales')
 
     fecha_creacion_anterior = models.DateTimeField(null=True, blank=True)
 

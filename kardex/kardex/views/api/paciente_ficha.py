@@ -82,21 +82,36 @@ class PacienteFichaViewSet(ViewSet):
     # CONSULTAR POR RUT
     # ------------------------------------
     def list(self, request):
-
         rut = request.GET.get("rut")
-
-        if not rut:
-            return Response({"error": "Debe indicar RUT"}, status=400)
-
-        rut = rut.strip().lower()
+        numero_ficha = request.GET.get("numero_ficha")
         establecimiento_id = request.user.establecimiento_id
 
-        vista = VistaFichaPaciente.objects.filter(
-            rut=rut,
-            establecimiento_id=establecimiento_id
-        ).first()
+        # Validar que al menos uno de los parámetros exista
+        if not rut and not numero_ficha:
+            return Response({"error": "Debe indicar RUT o número de ficha"}, status=400)
 
-        # ============ CASO 1 ============
+        vista = None
+
+        # Filtrar por RUT
+        if rut:
+            rut = rut.strip().lower()
+            vista = VistaFichaPaciente.objects.filter(
+                rut=rut,
+                establecimiento_id=establecimiento_id
+            ).first()
+
+        # Si no se encontró por RUT, filtrar por número de ficha
+        elif numero_ficha:
+            try:
+                numero_ficha = int(numero_ficha)
+                vista = VistaFichaPaciente.objects.filter(
+                    numero_ficha_sistema=numero_ficha,
+                    establecimiento_id=establecimiento_id
+                ).first()
+            except ValueError:
+                return Response({"error": "Número de ficha inválido"}, status=400)
+
+        # ============ CASO 1: FICHA EXISTE ============
         if vista:
             serializer = VistaFichaPacienteSerializer(vista)
             return Response({
@@ -105,17 +120,17 @@ class PacienteFichaViewSet(ViewSet):
                 "data": serializer.data
             })
 
-        paciente = Paciente.objects.filter(rut=rut).first()
+        # ============ CASO 2: PACIENTE EXISTE PERO SIN FICHA ============
+        if rut:
+            paciente = Paciente.objects.filter(rut=rut).first()
+            if paciente:
+                return Response({
+                    "exists": True,
+                    "has_ficha": False,
+                    "paciente_id": paciente.id,
+                })
 
-        # ============ CASO 2 ============
-        if paciente:
-            return Response({
-                "exists": True,
-                "has_ficha": False,
-                "paciente_id": paciente.id,
-            })
-
-        # ============ CASO 3 ============
+        # ============ CASO 3: NO EXISTE NADA ============
         return Response({
             "exists": False,
             "has_ficha": False
