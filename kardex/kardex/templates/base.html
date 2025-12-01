@@ -94,6 +94,12 @@
             background-color: #f8f9fa;
             font-weight: 600;
         }
+        label.required::after {
+            content: " *";
+            color: red;
+            font-weight: bold;
+        }
+
 
         @media print {
             .no-print {
@@ -332,6 +338,24 @@
         });
       });
     </script>
+
+    <script>
+    $(document).ready(function () {
+        $('input[required], select[required], textarea[required]').each(function () {
+
+            let id = $(this).attr('id')
+            if (!id) return
+
+            // Buscar el label asociado
+            let label = $('label[for="' + id + '"]')
+
+            if (label.length) {
+                label.addClass('required')
+            }
+        })
+    })
+</script>
+
 
     {% block javascript %}
     {% endblock%}

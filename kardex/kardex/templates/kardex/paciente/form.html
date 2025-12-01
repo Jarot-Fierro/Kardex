@@ -4,54 +4,61 @@
 {% block title %}Pacientes - {{ title|default:'Formulario' }}{% endblock %}
 
 {% block content %}
-
 <div class="container-fluid py-2 small-input">
+    <div id="mensaje-rut" class="alert mt-2 d-none"></div>
+
+
     <form method="post" novalidate>
         {% csrf_token %}
-        {{ form.non_field_errors }}
-        <input type="hidden" name="action" id="form_action_hidden" value="{{ action|default:'add' }}">
-        <input type="hidden" name="paciente_id" id="paciente_id_hidden" value="{{ paciente.id|default:'' }}">
-        <input type="hidden" name="ficha_id" id="ficha_id_hidden" value="{{ ficha.id|default:'' }}">
-
         <!-- Encabezado de la ficha -->
         <div class="row align-items-center mb-2">
             <div class="col-md-6 mb-2 mb-md-0">
                 <div class="ficha-header align-items-center">
                     <div class="row">
-                        <div class="col-7">
-                            <span>N° FICHA:</span><br>
-                            <select name="ficha" class="form-control select2-ajax" placeholder="N° Ficha" id="id_ficha"
-                                    style="min-width: 100px;">
-                            </select>
+                        <div class="col-5">
+                            <span>R.U.T:</span><br>
+                            <input type="text" name="rut" class="form-control id_rut" placeholder="12.345.678-9"
+                                   id="id_rut">
                         </div>
                         <div class="col-4">
+                            <span>N° FICHA:</span><br>
+                            <input type="text" name="ficha" class="form-control" placeholder="N° Ficha" id="id_ficha"
+                                   readonly>
+                        </div>
+                        <div class="col-3">
                             <div class="text-muted small">
                                 <div>
-                                    F. creación: <span id="ficha_created_at_text">...</span><br>
-                                    F. modificación: <span id="ficha_updated_at_text">...</span>
-
+                                    Fecha creación:<br>
+                                    <span id="ficha_created_at_text">...</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 text-md-end">
-                <select value="{{ paciente.codigo|default:'' }}" name="codigo" class="form-control"
-                        placeholder="Código" id="id_codigo">
-                </select>
-                <input type="hidden" id="codigo_inicial" value="{{ paciente.codigo }}">
-            </div>
+            <div class="col-md-6 mb-2 mb-md-0">
+                <div class="ficha-header align-items-center">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6">
+                            <span>Acciones</span><br>
+                            <a href="" class="btn btn-sm btn-primary w-100">Actualizar Rut</a>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <span>Pasivar Ficha</span><br>
+                            <a href="" class="btn btn-sm btn-warning w-100">Pasivar</a>
+                        </div>
+                        <div class="col-md-6 col-sm-12 text-md-end">
+                            <span>Imprimir</span><br>
+                            <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
+                                <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50" href="#">Carátula</a>
+                                <a id="btn-stickers" class="btn btn-outline-secondary btn-sm w-50" href="#">Stickers</a>
+                            </div>
+                        </div>
 
-            <div class="col-md-3 text-md-end">
-                <div class="btn-group w-100 no-print" role="group" aria-label="Impresión">
-                    <a id="btn-caratula" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank"
-                       aria-disabled="true" rel="noopener noreferrer">Carátula</a>
-                    <a id="btn-stickers" class="btn btn-outline-secondary btn-sm w-50 disabled" href="#" target="_blank"
-                       aria-disabled="true" rel="noopener noreferrer">Stickers</a>
+                    </div>
+
                 </div>
             </div>
-
 
         </div>
 
@@ -65,68 +72,55 @@
                     <!-- Checkbox 1 -->
                     <div class="col-md-3">
                         <div class="form-check mt-2">
-                            {{ form.recien_nacido }}
+                            <input type="checkbox" class="form-check-input" id="recien_nacido_paciente"
+                                   name="recien_nacido">
                             <label class="form-check-label" for="recien_nacido_paciente">
-                                {{ form.recien_nacido.label }}
+                                Recién Nacido
                             </label>
-                            {% for error in form.recien_nacido.errors %}
-                            <span class="text-danger small d-block">{{ error }}</span>
-                            {% endfor %}
                         </div>
                     </div>
 
                     <!-- Checkbox 2 -->
                     <div class="col-md-3">
                         <div class="form-check mt-2">
-                            {{ form.extranjero }}
+                            <input type="checkbox" class="form-check-input" id="extranjero_paciente" name="extranjero">
                             <label class="form-check-label" for="extranjero_paciente">
-                                {{ form.extranjero.label }}
+                                Extranjero
                             </label>
-                            {% for error in form.extranjero.errors %}
-                            <span class="text-danger small d-block">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <!-- Checkbox 2 -->
-                    <div class="col-md-3">
-                        <div class="form-check mt-2">
-                            {{ form.pueblo_indigena }}
-                            <label class="form-check-label" for="pueblo_indigena_paciente">
-                                {{ form.pueblo_indigena.label }}
-                            </label>
-                            {% for error in form.pueblo_indigena.errors %}
-                            <span class="text-danger small d-block">{{ error }}</span>
-                            {% endfor %}
                         </div>
                     </div>
 
-                    <!-- Checkbox 3 + input date -->
+                    <!-- Checkbox 3 -->
                     <div class="col-md-3">
                         <div class="form-check mt-2">
-                            {{ form.fallecido }}
-                            <label class="form-check-label" for="fallecido_paciente">
-                                {{ form.fallecido.label }}
+                            <input type="checkbox" class="form-check-input" id="pueblo_indigena_paciente"
+                                   name="pueblo_indigena">
+                            <label class="form-check-label" for="pueblo_indigena_paciente">
+                                Pueblo Indigena
                             </label>
-                            {% for error in form.fallecido.errors %}
-                            <span class="text-danger small d-block">{{ error }}</span>
-                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Checkbox 4 + input date -->
+                    <div class="col-md-3">
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input" id="fallecido_paciente" name="fallecido">
+                            <label class="form-check-label" for="fallecido_paciente">
+                                Fallecido
+                            </label>
                         </div>
 
                         <!-- Input de fecha debajo del checkbox fallecido -->
                         <div class="mt-2">
                             <label class="form-label" for="fecha_fallecimiento_paciente">
-                                {{ form.fecha_fallecimiento.label }}
+                                Fecha de Fallecimiento
                             </label>
-                            {{ form.fecha_fallecimiento }}
-                            {% for error in form.fecha_fallecimiento.errors %}
-                            <span class="text-danger small d-block">{{ error }}</span>
-                            {% endfor %}
+                            <input type="date" class="form-control" id="fecha_fallecimiento_paciente"
+                                   name="fecha_fallecimiento">
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
 
         <!-- IDENTIFICACIÓN -->
@@ -136,85 +130,49 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-6">
-                        <label class="form-label" for="id_rut">
-                            {{ form.rut.label }}
-                        </label>
 
-                        <!-- Input con botón integrado -->
-                        <div class="input-group">
-                            {{ form.rut }}
-
-                            <!-- Botón tipo etiqueta dentro del input -->
-                            <div class="input-group-append">
-                                <a href="{% url 'kardex:paciente_actualizar_rut' paciente.pk %}"
-                                   class="btn btn-primary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Input hidden con valor inicial -->
-                        <input type="hidden" id="rut_inicial" value="{{ paciente.rut|default:'' }}">
-
-                        {% for error in form.rut.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label" for="pasaporte_paciente">
-                            {{ form.pasaporte.label }}
-                        </label>
-                        {{ form.pasaporte }}
-                        {% for error in form.pasaporte.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="nie_paciente">
-                            {{ form.nie.label }}
-                        </label>
-                        {{ form.nie }}
-                        {% for error in form.nie.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4 col-sm-6">
                         <label class="form-label" for="nombre_paciente">
-                            {{ form.nombre.label }}
+                            Nombres
                         </label>
-                        {{ form.nombre }}
-                        {% for error in form.nombre.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <input type="text" class="form-control" id="nombre_paciente" name="nombre" maxlength="100"
+                               required>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="nombre_social_paciente">
-                            {{ form.nombre_social.label }}
-                        </label>
-                        {{ form.nombre_social }}
-                        {% for error in form.nombre_social.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4 col-sm-6">
                         <label class="form-label" for="apellido_paterno_paciente">
-                            {{ form.apellido_paterno.label }}
+                            Apellido Paterno
                         </label>
-                        {{ form.apellido_paterno }}
-                        {% for error in form.apellido_paterno.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <input type="text" class="form-control" id="apellido_paterno_paciente" name="apellido_paterno"
+                               maxlength="100" required>
                     </div>
-                    <div class="col-md-6">
+
+                    <div class="col-md-4 col-sm-6">
                         <label class="form-label" for="apellido_materno_paciente">
-                            {{ form.apellido_materno.label }}
+                            Apellido Materno
                         </label>
-                        {{ form.apellido_materno }}
-                        {% for error in form.apellido_materno.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <input type="text" class="form-control" id="apellido_materno_paciente" name="apellido_materno"
+                               maxlength="100" required>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label" for="nombre_social_paciente">
+                            Nombre Social
+                        </label>
+                        <input type="text" class="form-control" id="nombre_social_paciente" name="nombre_social"
+                               maxlength="100">
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label" for="pasaporte_paciente">
+                            Pasaporte
+                        </label>
+                        <input type="text" class="form-control" id="pasaporte_paciente" name="pasaporte" maxlength="50">
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label" for="nie_paciente">
+                            NIE
+                        </label>
+                        <input type="text" class="form-control" id="nie_paciente" name="nie" maxlength="100">
                     </div>
                 </div>
             </div>
@@ -227,27 +185,56 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label" for="fecha_nacimiento_paciente">
-                            {{ form.fecha_nacimiento.label }}</label>
-                        {{ form.fecha_nacimiento }}
-                        {% for error in form.fecha_nacimiento.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                            Fecha de Nacimiento
+                        </label>
+                        <input type="date" class="form-control" id="fecha_nacimiento_paciente" name="fecha_nacimiento"
+                               required>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label" for="sexo_paciente">{{ form.sexo.label }}</label>
-                        {{ form.sexo }}
-                        {% for error in form.sexo.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="sexo_paciente">Sexo</label>
+                        <select class="form-control" id="sexo_paciente" name="sexo" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="NO INFORMADO">No Informado</option>
+                            <option value="MASCULINO">Masculino</option>
+                            <option value="FEMENINO">Femenino</option>
+                        </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label" for="estado_civil_paciente">{{ form.estado_civil.label }}</label>
-                        {{ form.estado_civil }}
-                        {% for error in form.estado_civil.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                    <div class="col-md-3">
+                        <label class="form-label" for="genero_paciente">Género</label>
+                        <select class="form-control" id="genero_paciente" name="genero" required>
+                            <option value="">Seleccionar...</option>
+
+                            <option value="NO INFORMADO">No Informado</option>
+                            <option value="MASCULINO">Masculino</option>
+                            <option value="FEMENINO">Femenino</option>
+                            <option value="NO BINARIO">No Binario</option>
+                            <option value="GÉNERO FLUIDO">Género Fluido</option>
+                            <option value="TRANSGÉNERO">Transgénero</option>
+                            <option value="MUJER TRANS">Mujer Trans</option>
+                            <option value="HOMBRE TRANS">Hombre Trans</option>
+                            <option value="INTERSEX">Intersex</option>
+                            <option value="AGÉNERO">Agénero</option>
+                            <option value="PREFIERO NO DECIRLO">Prefiero no decirlo</option>
+                            <option value="OTRO">Otro</option>
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="estado_civil_paciente">Estado Civil</label>
+                        <select class="form-control" id="estado_civil_paciente" name="estado_civil" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="NO INFORMADO">No Informado</option>
+                            <option value="SOLTERO">Soltero</option>
+                            <option value="CASADO">Casado</option>
+                            <option value="DIVORCIADO">Divorciado</option>
+                            <option value="VIUDO">Viudo</option>
+                            <option value="SEPARADO">Separado</option>
+                            <option value="CONVIVIENTE">Conviviente</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -260,63 +247,56 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-6">
-                        <label class="form-label" for="id_rut">{{ form.rut_madre.label }}</label>
-                        {{ form.rut_madre }}
-                        {% for error in form.rut_madre.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                    <div class="col-md-3">
+                        <label class="form-label" for="rut_madre_paciente">R.U.T. Madre</label>
+                        <input type="text" class="form-control id_rut" id="rut_madre_paciente" name="rut_madre"
+                               maxlength="100">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="nombres_madre_paciente">{{ form.nombres_madre.label }}</label>
-                        {{ form.nombres_madre }}
-                        {% for error in form.nombres_madre.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="nombres_madre_paciente">Nombres de la Madre</label>
+                        <input type="text" class="form-control" id="nombres_madre_paciente" name="nombres_madre"
+                               maxlength="100">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="nombres_padre_paciente">{{ form.nombres_padre.label }}</label>
-                        {{ form.nombres_padre }}
-                        {% for error in form.nombres_padre.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="nombres_padre_paciente">Nombres del Padre</label>
+                        <input type="text" class="form-control" id="nombres_padre_paciente" name="nombres_padre"
+                               maxlength="100">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="nombre_pareja_paciente">{{ form.nombre_pareja.label }}</label>
-                        {{ form.nombre_pareja }}
-                        {% for error in form.nombre_pareja.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="nombre_pareja_paciente">Nombre de la Pareja</label>
+                        <input type="text" class="form-control" id="nombre_pareja_paciente" name="nombre_pareja"
+                               maxlength="100">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="rut_responsable_temporal_paciente">
-                            {{ form.rut_responsable_temporal.label }}
+                    <div class="col-md-3">
+                        <label class="form-label" for="representante_legal_paciente">
+                            Representante Legal
                         </label>
-                        {{ form.rut_responsable_temporal }}
-                        {% for error in form.rut_responsable_temporal.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <input type="text" class="form-control" id="representante_legal_paciente"
+                               name="representante_legal" maxlength="100">
                     </div>
-                    <div class="col-md-6">
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="rut_responsable_temporal_paciente">
+                            RUT Responsable Temporal
+                        </label>
+                        <input type="text" class="form-control" id="rut_responsable_temporal_paciente"
+                               name="rut_responsable_temporal" maxlength="100">
+                    </div>
+
+                    <div class="col-md-3">
                         <div class="form-check mt-2">
-                            {{ form.usar_rut_madre_como_responsable }}
+                            <input type="checkbox" class="form-check-input"
+                                   id="usar_rut_madre_como_responsable_paciente" name="usar_rut_madre_como_responsable">
                             <label class="form-check-label" for="usar_rut_madre_como_responsable_paciente">
-                                {{ form.usar_rut_madre_como_responsable.label }}
+                                Usar RUT de la madre como responsable
                             </label>
-                            {% for error in form.usar_rut_madre_como_responsable.errors %}
-                            <span class="text-danger small d-block">{{ error }}</span>
-                            {% endfor %}
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="representante_legal_paciente">
-                            {{ form.representante_legal.label }}
-                        </label>
-                        {{ form.representante_legal }}
-                        {% for error in form.representante_legal.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -328,43 +308,51 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-8">
-                        <label class="form-label" for="direccion_paciente">{{ form.direccion.label }}</label>
-                        {{ form.direccion }}
-                        {% for error in form.direccion.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                    <div class="col-md-4">
+                        <label class="form-label" for="direccion_paciente">Dirección</label>
+                        <input type="text" class="form-control" id="direccion_paciente" name="direccion"
+                               maxlength="200">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="comuna_paciente">Comuna</label>
+                        <select class="form-control select2" id="comuna_paciente" name="comuna" required>
+                            <option value="">Seleccionar comuna...</option>
+                            <!-- Las opciones se cargarán dinámicamente -->
+                        </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" for="comuna_paciente">{{ form.comuna.label }}</label>
-                        {{ form.comuna }}
-                        {% for error in form.comuna.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <label class="form-label" for="ocupacion_paciente">Ocupación</label>
+                        <input type="text" class="form-control" id="ocupacion_paciente" name="ocupacion"
+                               maxlength="100">
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input"
+                                   id="sin_telefono" name="sin_telefono" required>
+                            <label class="form-check-label" for="sin_telefono">
+                                Paciente Sin Teléfono
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="col-md-4">
                         <label class="form-label" for="numero_telefono1_paciente">
-                            {{ form.numero_telefono1.label }}</label>
-                        {{ form.numero_telefono1 }}
-                        {% for error in form.numero_telefono1.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                            Número de Teléfono
+                        </label>
+                        <input type="tel" class="form-control" id="numero_telefono1_paciente" name="numero_telefono1"
+                               maxlength="15">
                     </div>
+
                     <div class="col-md-4">
                         <label class="form-label" for="numero_telefono2_paciente">
-                            {{ form.numero_telefono2.label }}</label>
-                        {{ form.numero_telefono2 }}
-                        {% for error in form.numero_telefono2.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                            Número de Teléfono 2
+                        </label>
+                        <input type="tel" class="form-control" id="numero_telefono2_paciente" name="numero_telefono2"
+                               maxlength="15">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label" for="ocupacion_paciente">{{ form.ocupacion.label }}</label>
-                        {{ form.ocupacion }}
-                        {% for error in form.ocupacion.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -377,25 +365,19 @@
             <div class="card-body">
                 <div class="row g-2">
                     <div class="col-md-6">
-                        <label class="form-label" for="prevision_paciente">{{ form.prevision.label }}</label>
-                        {{ form.prevision }}
-                        {% for error in form.prevision.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <label class="form-label" for="prevision_paciente">Previsión</label>
+                        <select class="form-control" id="prevision_paciente" name="prevision" required>
+                            <option value="">Seleccionar previsión...</option>
+                            <!-- Las opciones se cargarán dinámicamente -->
+                        </select>
                     </div>
+
                     <div class="col-md-6">
-                        <label class="form-label" for="sector_paciente">{{ form.sector.label }}</label>
-                        {{ form.sector }}
-                        {% for error in form.sector.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    <div class="col-md-6 d-none">
-                        <label class="form-label" for="usuario_paciente">{{ form.usuario.label }}</label>
-                        {{ form.usuario }}
-                        {% for error in form.usuario.errors %}
-                        <span class="text-danger small">{{ error }}</span>
-                        {% endfor %}
+                        <label class="form-label" for="sector_paciente">Sector</label>
+                        <select class="form-control" id="sector_paciente" name="sector" required>
+                            <option value="">Seleccionar sector...</option>
+                            <!-- Las opciones se cargarán dinámicamente -->
+                        </select>
                     </div>
                 </div>
             </div>
@@ -404,28 +386,353 @@
         <!-- Pie del formulario -->
         <div class="row mt-3 mb-4">
             <div class="col text-end">
-
-                <a href="{% url 'kardex:paciente_list' %}" class="btn btn-secondary btn-sm no-print">Cancelar</a>
+                <button type="button" class="btn btn-secondary btn-sm no-print" id="btn-cancelar">Cancelar</button>
                 <button type="submit" class="btn btn-primary btn-sm no-print">Guardar</button>
             </div>
         </div>
     </form>
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    // Inicialización de Select2
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+    });
+</script>
 {% endblock %}
+
 
 {% block javascript %}
 <script>
-    $('.select2').select2({
-        theme: 'bootstrap4',
-        width: '100%'
+    document.addEventListener("DOMContentLoaded", async function () {
+
+        const inputRut = document.getElementById("id_rut");
+        const mensaje = document.getElementById("mensaje-rut");
+        const form = document.querySelector("form");
+
+        let timeout = null;
+
+        /* =============================
+           🔹 CSRF
+        ============================= */
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+
+                const cookies = document.cookie.split(";");
+
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(
+                            cookie.substring(name.length + 1)
+                        );
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie("csrftoken");
+
+
+        /* =============================
+           🔹 UTILIDADES
+        ============================= */
+
+        function setValue(id, value) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            if (el.type === "checkbox") {
+                el.checked = Boolean(value);
+            }
+            else if (el.type === "date" && value) {
+                el.value = String(value).split("T")[0];
+            }
+            else {
+                el.value = value ?? "";
+            }
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            mensaje.innerHTML = texto.replace(/\n/g, "<br>");
+            mensaje.className = `alert alert-${tipo} mt-2`;
+            mensaje.classList.remove("d-none");
+        }
+
+        function ocultarMensaje() {
+            mensaje.classList.add("d-none");
+        }
+
+        function limpiarFormulario() {
+            const inputs = document.querySelectorAll("input:not(#id_rut), select, textarea");
+
+            inputs.forEach(el => {
+                if (el.type === "checkbox" || el.type === "radio") {
+                    el.checked = false;
+                } else {
+                    el.value = "";
+                }
+            });
+
+            $(".select2").trigger("change");
+        }
+
+        function refrescarSelect(id) {
+            if (window.$ && $("#" + id).hasClass("select2-hidden-accessible")) {
+                $("#" + id).trigger("change");
+            }
+        }
+
+
+        /* =============================
+           🔹 MAPEO CAMPOS
+        ============================= */
+
+        const MAPA_CAMPOS = {
+            nombre: "nombre_paciente",
+            apellido_paterno: "apellido_paterno_paciente",
+            apellido_materno: "apellido_materno_paciente",
+
+            nombre_social: "nombre_social_paciente",
+            pasaporte: "pasaporte_paciente",
+
+            fecha_nacimiento: "fecha_nacimiento_paciente",
+
+            sexo: "sexo_paciente",
+            genero: "genero_paciente",
+            estado_civil: "estado_civil_paciente",
+
+            direccion: "direccion_paciente",
+            ocupacion: "ocupacion_paciente",
+
+            comuna: "comuna_paciente",
+            prevision: "prevision_paciente",
+            sector: "sector_paciente",
+
+            numero_telefono1: "numero_telefono1_paciente",
+            numero_telefono2: "numero_telefono2_paciente"
+        };
+
+        const MAPA_CHECKBOX = {
+            extranjero: "extranjero_paciente",
+            recien_nacido: "recien_nacido_paciente",
+            pueblo_indigena: "pueblo_indigena_paciente",
+            fallecido: "fallecido_paciente",
+
+            sin_telefono: "sin_telefono",
+            usar_rut_madre_como_responsable: "usar_rut_madre_como_responsable_paciente"
+        };
+
+
+        function rellenarFormulario(data) {
+
+            for (const campo in MAPA_CAMPOS) {
+                setValue(MAPA_CAMPOS[campo], data[campo]);
+                refrescarSelect(MAPA_CAMPOS[campo]);
+            }
+
+            for (const campo in MAPA_CHECKBOX) {
+                setValue(MAPA_CHECKBOX[campo], data[campo]);
+            }
+        }
+
+
+        /* =============================
+           🔹 CARGA SELECTS
+        ============================= */
+
+        async function cargarSelectPaginado(url, selectId, labelField="nombre") {
+
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            try {
+
+                select.innerHTML = '<option value="">Seleccionar...</option>';
+
+                let next = url;
+
+                while (next) {
+                    const resp = await fetch(next);
+                    const json = await resp.json();
+
+                    const data = json.results || [];
+
+                    data.forEach(item => {
+                        select.innerHTML += `
+                            <option value="${item.id}">
+                                ${item[labelField] ?? ""}
+                            </option>
+                        `;
+                    });
+
+                    next = json.next;
+                }
+
+                $("#" + selectId).trigger("change");
+
+            } catch (err) {
+                console.error("❌ Error cargando select:", url, err);
+            }
+        }
+
+        await cargarSelectPaginado("/api/comunas/", "comuna_paciente");
+        await cargarSelectPaginado("/api/prevision/", "prevision_paciente");
+        await cargarSelectPaginado("/api/sector/", "sector_paciente", "color");
+
+
+        if (window.$) {
+            $(".select2").select2({
+                theme: "bootstrap4",
+                width: "100%"
+            });
+        }
+
+
+        /* =============================
+           🔹 BUSCAR PACIENTE
+        ============================= */
+
+        async function buscarPaciente(rut) {
+
+            try {
+
+                const resp = await fetch(
+                    `/kardex/api/api_pacientes/?rut=${encodeURIComponent(rut)}`
+                );
+
+                if (!resp.ok) throw new Error("HTTP " + resp.status);
+
+                const data = await resp.json();
+
+                ocultarMensaje();
+                limpiarFormulario();
+
+                if (data.exists && data.has_ficha) {
+
+                    mostrarMensaje("✅ Paciente encontrado", "success");
+
+                    rellenarFormulario(data.data);
+
+                    setValue("id_ficha", data.data.numero_ficha_sistema);
+                    setValue("fecha_fallecimiento_paciente", data.data.fecha_fallecimiento);
+
+                    if (data.data.fecha_creacion_anterior) {
+                        document.getElementById("ficha_created_at_text").innerText =
+                            data.data.fecha_creacion_anterior.split("T")[0];
+                    }
+
+                    return;
+                }
+
+                if (data.exists && !data.has_ficha) {
+
+                    mostrarMensaje(
+                        "⚠️ El paciente existe pero NO tiene ficha.\nComplete los datos y guarde.",
+                        "warning"
+                    );
+                    return;
+                }
+
+                mostrarMensaje(
+                    "❌ Paciente NO encontrado.\nComplete el formulario para registrarlo.",
+                    "danger"
+                );
+
+            }
+
+            catch (err) {
+                console.error("❌ ERROR API →", err);
+
+                mostrarMensaje(
+                    "🚫 Error al consultar la API.",
+                    "danger"
+                );
+            }
+        }
+
+
+        /* =============================
+           🔹 EVENTO INPUT RUT
+        ============================= */
+
+        inputRut.addEventListener("keyup", function () {
+
+            clearTimeout(timeout);
+
+            timeout = setTimeout(() => {
+
+                const rut = inputRut.value.trim();
+
+                if (rut.length < 5) return;
+
+                buscarPaciente(rut);
+
+            }, 500);
+
+        });
+
+
+        /* =============================
+           🔹 ENVIAR FORMULARIO (POST)
+        ============================= */
+
+        form.addEventListener("submit", async function (e) {
+
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+
+                const resp = await fetch("/kardex/api/api_pacientes/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken
+                    },
+                    body: formData
+                });
+
+                if (!resp.ok) {
+                    throw new Error("HTTP " + resp.status);
+                }
+
+                const data = await resp.json();
+
+                mostrarMensaje("✅ Ficha guardada correctamente.", "success");
+
+                if (data.numero_ficha_sistema) {
+                    setValue("id_ficha", data.numero_ficha_sistema);
+                }
+
+            }
+
+            catch (err) {
+
+                console.error("❌ ERROR GUARDANDO →", err);
+
+                mostrarMensaje(
+                    "🚫 Error al guardar la ficha.<br>Revise consola.",
+                    "danger"
+                );
+            }
+
+        });
+
+
     });
 </script>
-<script src="{% static 'js/apis/api_select2_ficha.js' %}"></script>
-<script src="{% static 'js/apis/api_select2_rut.js' %}"></script>
-<script src="{% static 'js/apis/api_select2_codigo.js' %}"></script>
-<script src="{% static 'js/apis/handle_fichas.js' %}"></script>
-<script src="{% static 'js/fields_form_paciente.js' %}"></script>
-<script src="{% static 'js/apis/api_select2_rut_inicial.js' %}"></script>
+
+
 {% endblock %}

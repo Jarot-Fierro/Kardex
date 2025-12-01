@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.urls import path
 
+from kardex.views.api.paciente_ficha import PacienteFichaViewSet
 from kardex.views.comuna import *
 from kardex.views.establecimiento import *
 from kardex.views.ficha import *
@@ -128,6 +129,15 @@ urlpatterns = [
     path('movimientos/salida/', SalidaFichaView.as_view(), name='salida_ficha'),
     path('movimientos/traspaso/', TraspasoFichaView.as_view(), name='traspaso_ficha'),
     path('movimientos/transito/', MovimientoFichaTransitoListView.as_view(), name='movimiento_ficha_transito'),
+
+    path('api/api_pacientes/', PacienteFichaViewSet.as_view({
+        'get': 'list',
+        'post': 'create'
+    }), name='api_pacientes'),
+
+    path('api/api_pacientes/<int:pk>/', PacienteFichaViewSet.as_view({
+        'put': 'update'
+    }), name='api_paciente_update'),
 
 ]
 
