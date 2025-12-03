@@ -47,6 +47,9 @@
                             <button type="button" class="btn btn-outline-secondary btn-sm no-print"
                                     id="btn-limpiar-arriba">Limpiar Todo
                             </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm no-print"
+                                    id="btn-consultar-denuevo">Consultar Paciente
+                            </button>
                         </div>
                     </div>
 
@@ -114,6 +117,11 @@
                             <button type="button" class="btn btn-secondary btn-sm no-print" id="btn-cancelar">Cancelar
                             </button>
                             <button type="submit" class="btn btn-primary btn-sm no-print">Guardar</button>
+                            <a id="btn-paciente-sin-rut"
+                               href="#"
+                               class="btn btn-sm btn-outline-danger flex-fill mx-1">
+                                Crear Paciente sin RUT
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -167,7 +175,7 @@
                         </div>
                     </div>
                     <!-- Checkbox 4 + input date -->
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <label class="form-label" for="{{ form.fecha_fallecimiento.id_for_label }}">
                             Fecha de Fallecimiento
                         </label>
@@ -495,6 +503,7 @@
         const btnNumeroFicha = $("#btn-numero-ficha");
         const btnCaratula = $("#btn-caratula");
         const btnStickers = $("#btn-stickers");
+        const btnConsultarDenuevo = $("#btn-consultar-denuevo");
 
         let timeout = null;
         let ultimoRut = "";
@@ -519,6 +528,14 @@
             }
         }
 
+        // Actualiza el texto y estilo del botón Pasivar/Activar según el estado de la ficha
+        function setPasivarVisual(pasivado) {
+            const txt = pasivado ? 'Activar Ficha' : 'Pasivar Ficha';
+            btnPasivar.text(txt);
+            // pasivado=true => accion activar (warning); pasivado=false => accion pasivar (danger)
+            btnPasivar.removeClass('btn-danger btn-warning').addClass(pasivado ? 'btn-warning' : 'btn-danger');
+        }
+
         function actualizarURLsBotones() {
             // Actualizar RUT - necesita paciente_id
             if (pacienteId) {
@@ -533,6 +550,9 @@
             if (fichaId) {
                 btnPasivar.attr("href", `/kardex/fichas/${fichaId}/toggle-pasivar/`);
                 habilitarBoton(btnPasivar, true);
+                if (pacienteData && typeof pacienteData.pasivado !== 'undefined') {
+                    setPasivarVisual(Boolean(pacienteData.pasivado));
+                }
 
                 const tarjetaUrl = `/kardex/fichas/${fichaId}/tarjeta/`;
                 btnTarjetaFisica.attr("href", tarjetaUrl);
@@ -745,6 +765,10 @@
 
             // Actualizar URLs de los botones
             actualizarURLsBotones();
+            // Ajustar visual del botón Pasivar/Activar si viene el estado
+            if (typeof data.pasivado !== 'undefined') {
+                setPasivarVisual(Boolean(data.pasivado));
+            }
         }
 
         /* =============================
@@ -1277,6 +1301,44 @@
         }
 
         // Actualizar RUT
+        // Botón Consultar Denuevo: vuelve a consumir la API y refresca el formulario y botones
+        btnConsultarDenuevo.on('click', function (e) {
+            e.preventDefault();
+            const rut = (inputRut.val() || '').trim();
+            const ficha = (inputFicha.val() || '').trim();
+
+            if (!rut && !ficha) {
+                mostrarMensaje('⚠️ Ingrese un RUT o un N° de Ficha para consultar.', 'warning');
+                inputRut.focus();
+                return;
+            }
+
+            if (buscando) {
+                Swal.fire({
+                    title: 'Consultando...',
+                    text: 'Ya hay una consulta en curso. Por favor espere.',
+                    icon: 'info',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+                return;
+            }
+
+            clearTimeout(timeout);
+            if (rut) {
+                ultimoRut = rut; // registrar la última consulta
+                buscarPaciente(rut, null);
+            } else if (ficha) {
+                if (isNaN(ficha)) {
+                    mostrarMensaje('⚠️ El número de ficha debe ser numérico', 'warning');
+                    return;
+                }
+                ultimaFicha = ficha; // registrar la última consulta
+                buscarPaciente(null, ficha);
+            }
+        });
+
+        // Actualizar RUT - Versión con JavaScript puro
         btnActualizarRut.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
@@ -1285,37 +1347,164 @@
             e.preventDefault();
             const href = $(this).attr('href');
             const rutActual = inputRut.val().trim();
+
             Swal.fire({
                 title: '¿Desea cambiar el RUT?',
-                text: 'Esta acción actualizará el RUT del paciente.'
-                , icon: 'question', showCancelButton: true,
-                confirmButtonText: 'Sí, cambiar', cancelButtonText: 'Cancelar'
+                text: 'Esta acción actualizará el RUT del paciente.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
             }).then((res) => {
                 if (!res.isConfirmed) return;
+
+                // Crear HTML personalizado para el input
                 Swal.fire({
                     title: 'Ingrese el nuevo RUT',
-                    input: 'text',
-                    inputValue: rutActual,
-                    inputAttributes: {autocapitalize: 'off'},
+                    html: `
+                <div class="mb-3">
+                    <input type="text"
+                           id="rut-input-sw"
+                           class="form-control text-center"
+                           placeholder="Ej: 12.345.678-9"
+                           value="${rutActual}"
+                           style="font-size: 1.2rem; letter-spacing: 1px; padding: 10px;">
+                    <small class="text-muted mt-2 d-block">
+                        Formato: 9.999.999-9 o 99.999.999-9
+                        <br>Presione Backspace o Delete para borrar
+                    </small>
+                </div>
+            `,
                     showCancelButton: true,
                     confirmButtonText: 'Actualizar',
                     cancelButtonText: 'Cancelar',
-                    preConfirm: (value) => {
-                        if (!value || value.trim().length < 5) {
-                            Swal.showValidationMessage('Ingrese un RUT válido');
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        const input = document.getElementById('rut-input-sw');
+                        const valor = input ? input.value.trim() : '';
+                        const rutLimpio = valor.replace(/[\.\-]/g, '').toUpperCase();
+
+                        if (!rutLimpio) {
+                            Swal.showValidationMessage('Ingrese un RUT');
                             return false;
                         }
-                        return value.trim();
+
+                        // Validar formato
+                        const rutRegex = /^[0-9]{7,8}[0-9K]$/;
+                        if (!rutRegex.test(rutLimpio)) {
+                            Swal.showValidationMessage('RUT inválido. Ejemplos: 12345678-9 o 9876543-2');
+                            return false;
+                        }
+
+                        // Validar dígito verificador
+                        if (!validarRUTChileno(rutLimpio)) {
+                            Swal.showValidationMessage('Dígito verificador incorrecto');
+                            return false;
+                        }
+
+                        return rutLimpio;
+                    },
+                    didOpen: () => {
+                        const input = document.getElementById('rut-input-sw');
+                        if (input) {
+                            // Formatear valor inicial si existe
+                            if (input.value) {
+                                const rutLimpio = input.value.replace(/[\.\-]/g, '').toUpperCase();
+                                if (/^[0-9]{7,8}[0-9K]$/.test(rutLimpio)) {
+                                    input.value = formatRUTChileno(rutLimpio);
+                                }
+                            }
+
+                            // Configurar evento de entrada
+                            input.addEventListener('input', function (e) {
+                                this.value = formatRUTInput(this.value, e);
+                            });
+
+                            // Configurar evento de teclas
+                            input.addEventListener('keydown', function (e) {
+                                // Permitir todas las teclas de control
+                                const controlKeys = [
+                                    8,   // backspace
+                                    9,   // tab
+                                    13,  // enter
+                                    16,  // shift
+                                    17,  // ctrl
+                                    18,  // alt
+                                    27,  // esc
+                                    37,  // left arrow
+                                    38,  // up arrow
+                                    39,  // right arrow
+                                    40,  // down arrow
+                                    46,  // delete
+                                    35,  // end
+                                    36,  // home
+                                    45,  // insert
+                                    33,  // page up
+                                    34,  // page down
+                                    144, // num lock
+                                    20,  // caps lock
+                                    91,  // left windows
+                                    92,  // right windows
+                                    93,  // select
+                                    112, // F1
+                                    113, // F2
+                                    114, // F3
+                                    115, // F4
+                                    116, // F5
+                                    117, // F6
+                                    118, // F7
+                                    119, // F8
+                                    120, // F9
+                                    121, // F10
+                                    122, // F11
+                                    123  // F12
+                                ];
+
+                                // Permitir teclas de control
+                                if (controlKeys.includes(e.keyCode)) {
+                                    return true;
+                                }
+
+                                // Permitir Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A
+                                if (e.ctrlKey && [65, 67, 86, 88].includes(e.keyCode)) {
+                                    return true;
+                                }
+
+                                // Solo permitir números y K
+                                const allowedChars = '0123456789kK';
+                                if (!allowedChars.includes(e.key)) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+
+                                return true;
+                            });
+
+                            // Permitir pegar
+                            input.addEventListener('paste', function (e) {
+                                setTimeout(() => {
+                                    this.value = formatRUTInput(this.value, {inputType: 'insertFromPaste'});
+                                }, 10);
+                            });
+
+                            // Enfocar y seleccionar
+                            setTimeout(() => {
+                                input.focus();
+                                input.select();
+                            }, 50);
+                        }
                     }
                 }).then((r2) => {
                     if (!r2.isConfirmed) return;
+
                     mostrarMensajeProcesando('Actualizando RUT...');
                     ajaxPostJSON(href, {rut: r2.value}, function (resp) {
                         cerrarMensajeProcesando();
                         if (resp && resp.success) {
                             const nuevoRut = resp.rut || r2.value;
-                            inputRut.val(nuevoRut);
-                            ultimoRut = nuevoRut;
+                            const rutFormateado = formatRUTChileno(nuevoRut);
+                            inputRut.val(rutFormateado);
+                            ultimoRut = rutFormateado;
                             mostrarMensaje('✅ RUT actualizado correctamente.', 'success');
                         } else {
                             mostrarMensaje('❌ No se pudo actualizar el RUT', 'danger');
@@ -1328,6 +1517,185 @@
                 });
             });
         });
+
+// Función para formatear el input de RUT en tiempo real
+        function formatRUTInput(value, event) {
+            if (!value) return '';
+
+            // Guardar posición del cursor
+            const input = event.target;
+            const cursorPos = input.selectionStart;
+            const originalLength = value.length;
+
+            // Limpiar all excepto números y K
+            let cleanValue = value.replace(/[^0-9kK]/g, '').toUpperCase();
+
+            // Limitar a 9 caracteres máximo (8 dígitos + 1 DV)
+            if (cleanValue.length > 9) {
+                cleanValue = cleanValue.substring(0, 9);
+            }
+
+            // Si estamos borrando (backspace o delete), no formatear aún
+            if (event.inputType === 'deleteContentBackward' ||
+                event.inputType === 'deleteContentForward') {
+                // Si el usuario está borrando, mantener el valor limpio
+                // y permitir que borre caracteres individuales
+                return cleanValue;
+            }
+
+            // Solo formatear cuando tenemos suficientes caracteres
+            if (cleanValue.length < 2) {
+                return cleanValue;
+            }
+
+            // Separar cuerpo y DV
+            const cuerpo = cleanValue.slice(0, -1);
+            const dv = cleanValue.slice(-1);
+
+            let cuerpoFormateado = '';
+            const longitud = cuerpo.length;
+
+            // Formatear según la longitud
+            if (longitud <= 3) {
+                cuerpoFormateado = cuerpo;
+            } else if (longitud <= 6) {
+                // 4-6 dígitos: 1.234
+                cuerpoFormateado = cuerpo.slice(0, longitud - 3) + '.' + cuerpo.slice(longitud - 3);
+            } else if (longitud === 7) {
+                // 7 dígitos: 1.234.567
+                cuerpoFormateado = cuerpo.slice(0, 1) + '.' + cuerpo.slice(1, 4) + '.' + cuerpo.slice(4);
+            } else if (longitud === 8) {
+                // 8 dígitos: 12.345.678
+                cuerpoFormateado = cuerpo.slice(0, 2) + '.' + cuerpo.slice(2, 5) + '.' + cuerpo.slice(5);
+            } else {
+                // Más de 8 dígitos (raro, pero por si acaso)
+                cuerpoFormateado = cuerpo;
+            }
+
+            const resultado = cuerpoFormateado + '-' + dv;
+
+            // Ajustar posición del cursor
+            setTimeout(() => {
+                const newCursorPos = calcularNuevaPosicionCursor(
+                    cursorPos, originalLength, value, resultado
+                );
+                input.setSelectionRange(newCursorPos, newCursorPos);
+            }, 0);
+
+            return resultado;
+        }
+
+// Función para calcular nueva posición del cursor después del formateo
+        function calcularNuevaPosicionCursor(oldPos, oldLength, oldValue, newValue) {
+            if (oldPos <= 0) return 0;
+
+            // Contar caracteres numéricos antes de la posición antigua
+            let numericCharsBefore = 0;
+            for (let i = 0; i < Math.min(oldPos, oldValue.length); i++) {
+                if (/[0-9kK]/i.test(oldValue.charAt(i))) {
+                    numericCharsBefore++;
+                }
+            }
+
+            // Encontrar posición equivalente en el nuevo valor
+            let newPos = 0;
+            let numericCount = 0;
+
+            for (let i = 0; i < newValue.length; i++) {
+                if (/[0-9kK]/i.test(newValue.charAt(i))) {
+                    numericCount++;
+                }
+                if (numericCount >= numericCharsBefore) {
+                    newPos = i + 1;
+                    break;
+                }
+            }
+
+            return Math.min(newPos, newValue.length);
+        }
+
+        // Función para formatear RUT chileno
+        function formatRUTChileno(rut) {
+            if (!rut) return '';
+
+            // Limpiar el RUT
+            let rutLimpio = rut.toString().replace(/[\.\-]/g, '').toUpperCase();
+
+            // Separar cuerpo y dígito verificador
+            const cuerpo = rutLimpio.slice(0, -1);
+            const dv = rutLimpio.slice(-1);
+
+            // Formatear cuerpo con puntos
+            let cuerpoFormateado = '';
+            const longitud = cuerpo.length;
+
+            if (longitud <= 3) {
+                cuerpoFormateado = cuerpo;
+            } else if (longitud <= 6) {
+                // Para 4-6 dígitos: 1.234
+                cuerpoFormateado = cuerpo.slice(0, longitud - 3) + '.' + cuerpo.slice(longitud - 3);
+            } else if (longitud === 7) {
+                // Para 7 dígitos: 1.234.567
+                cuerpoFormateado = cuerpo.slice(0, 1) + '.' + cuerpo.slice(1, 4) + '.' + cuerpo.slice(4);
+            } else if (longitud === 8) {
+                // Para 8 dígitos: 12.345.678
+                cuerpoFormateado = cuerpo.slice(0, 2) + '.' + cuerpo.slice(2, 5) + '.' + cuerpo.slice(5);
+            } else {
+                // Para más de 8 dígitos (caso especial)
+                let contador = 0;
+                for (let i = cuerpo.length - 1; i >= 0; i--) {
+                    cuerpoFormateado = cuerpo[i] + cuerpoFormateado;
+                    contador++;
+                    if (contador === 3 && i !== 0) {
+                        cuerpoFormateado = '.' + cuerpoFormateado;
+                        contador = 0;
+                    }
+                }
+            }
+
+            return cuerpoFormateado + '-' + dv;
+        }
+
+        // Función para validar RUT chileno (algoritmo oficial)
+        function validarRUTChileno(rut) {
+            if (!rut) return false;
+
+            // Limpiar y convertir a mayúsculas
+            const rutLimpio = rut.toString().replace(/[\.\-]/g, '').toUpperCase();
+
+            // Validar formato básico
+            if (!/^[0-9]{7,8}[0-9K]$/.test(rutLimpio)) {
+                return false;
+            }
+
+            // Separar cuerpo y dígito verificador
+            const cuerpo = rutLimpio.slice(0, -1);
+            const dvIngresado = rutLimpio.slice(-1);
+
+            // Calcular dígito verificador esperado
+            let suma = 0;
+            let multiplicador = 2;
+
+            // Recorrer el cuerpo de derecha a izquierda
+            for (let i = cuerpo.length - 1; i >= 0; i--) {
+                suma += parseInt(cuerpo.charAt(i)) * multiplicador;
+                multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+            }
+
+            // Calcular dígito verificador
+            const dvEsperado = 11 - (suma % 11);
+            let dvCalculado = dvEsperado.toString();
+
+            // Casos especiales
+            if (dvEsperado === 11) {
+                dvCalculado = '0';
+            } else if (dvEsperado === 10) {
+                dvCalculado = 'K';
+            }
+
+            // Comparar dígito verificador
+            return dvCalculado === dvIngresado;
+        }
 
         // Pasivar
         btnPasivar.on("click", function (e) {
@@ -1352,6 +1720,7 @@
                         cerrarMensajeProcesando();
                         if (resp && resp.success) {
                             const txt = resp.pasivado ? 'La ficha fue pasivada.' : 'La ficha fue despasivada.';
+                            setPasivarVisual(Boolean(resp.pasivado));
                             mostrarMensaje('✅ ' + txt, 'success');
                         } else {
                             mostrarMensaje('❌ No se pudo actualizar el estado de la ficha.', 'danger');
@@ -1397,7 +1766,17 @@
                     ajaxPostJSON(href, {numero_ficha_tarjeta: r2.value}, function (resp) {
                         cerrarMensajeProcesando();
                         if (resp && resp.success) {
-                            mostrarMensaje('✅ Número de tarjeta física actualizado.', 'success');
+                            // Actualizar el campo N° de Ficha (sistema) del formulario y el estado local sin recargar
+                            if (resp.numero_ficha_sistema) {
+                                inputFicha.val(resp.numero_ficha_sistema);
+                                ultimaFicha = resp.numero_ficha_sistema;
+                            }
+                            // Mantener datos en memoria
+                            if (!pacienteData) pacienteData = {};
+                            if (typeof resp.numero_ficha_sistema !== 'undefined') pacienteData.numero_ficha_sistema = resp.numero_ficha_sistema;
+                            if (typeof resp.numero_ficha_tarjeta !== 'undefined') pacienteData.numero_ficha_tarjeta = resp.numero_ficha_tarjeta;
+
+                            mostrarMensaje(`✅ ${resp.message || 'Número de tarjeta física actualizado.'}`, 'success');
                         } else {
                             mostrarMensaje('❌ No se pudo actualizar el número de tarjeta.', 'danger');
                         }
@@ -1411,6 +1790,7 @@
         });
 
         // Número de Ficha (sistema)
+        // En tu archivo JavaScript, en la función para el botón Número de Ficha
         btnNumeroFicha.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
@@ -1419,44 +1799,82 @@
             e.preventDefault();
             const href = $(this).attr('href');
             const numeroActual = inputFicha.val().trim();
+
             Swal.fire({
                 title: '¿Desea cambiar el número de ficha?',
-                text: 'Esta acción será informada y quedará registro de la modificación.',
-                icon: 'warning', showCancelButton: true,
-                confirmButtonText: 'Sí, cambiar', cancelButtonText: 'Cancelar'
+                text: 'Esta acción actualizará tanto el número de ficha tarjeta como el del sistema.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
             }).then((res) => {
                 if (!res.isConfirmed) return;
+
                 Swal.fire({
                     title: 'Ingrese el nuevo N° de ficha',
                     input: 'number',
                     inputValue: numeroActual || '',
                     inputAttributes: {min: 1},
                     showCancelButton: true,
-                    confirmButtonText: 'Actualizar', cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Cancelar',
                     preConfirm: (value) => {
                         if (!value || isNaN(value)) {
                             Swal.showValidationMessage('Ingrese un número válido');
+                            return false;
+                        }
+                        if (value <= 0) {
+                            Swal.showValidationMessage('El número debe ser mayor a 0');
                             return false;
                         }
                         return value;
                     }
                 }).then((r2) => {
                     if (!r2.isConfirmed) return;
+
                     mostrarMensajeProcesando('Actualizando N° de ficha...');
-                    ajaxPostJSON(href, {numero_ficha_sistema: r2.value}, function (resp) {
+
+                    ajaxPostJSON(href, {numero_ficha_tarjeta: r2.value}, function (resp) {
                         cerrarMensajeProcesando();
+
                         if (resp && resp.success) {
-                            const nuevo = resp.numero_ficha_sistema || r2.value;
-                            inputFicha.val(nuevo);
-                            ultimaFicha = nuevo;
-                            mostrarMensaje('✅ Número de ficha actualizado.', 'success');
+                            // Actualizar ambos campos en el formulario
+                            inputFicha.val(resp.numero_ficha_sistema);
+                            ultimaFicha = resp.numero_ficha_sistema;
+
+                            mostrarMensaje(
+                                `✅ ${resp.message || 'Número de ficha actualizado correctamente.'}`,
+                                'success'
+                            );
+
+                            // Si quieres actualizar algún otro campo en la interfaz
+                            if (resp.paciente_nombre) {
+                                console.log(`Ficha actualizada para ${resp.paciente_nombre} (${resp.paciente_rut})`);
+                            }
+
                         } else {
-                            mostrarMensaje('❌ No se pudo actualizar el número de ficha.', 'danger');
+                            // Manejar errores específicos
+                            let errorMsg = '❌ No se pudo actualizar el número de ficha.';
+                            if (resp && resp.errors && resp.errors.numero_ficha_tarjeta) {
+                                errorMsg = `❌ ${resp.errors.numero_ficha_tarjeta[0]}`;
+                            }
+                            mostrarMensaje(errorMsg, 'danger');
                         }
+
                     }, function (xhr) {
                         cerrarMensajeProcesando();
-                        const msg = xhr.responseJSON && xhr.responseJSON.errors ? JSON.stringify(xhr.responseJSON.errors) : 'Error inesperado';
-                        mostrarMensaje('🚫 Error al actualizar N° de ficha: ' + msg, 'danger');
+
+                        let errorMsg = '🚫 Error al actualizar N° de ficha';
+                        try {
+                            const resp = JSON.parse(xhr.responseText);
+                            if (resp.errors && resp.errors.numero_ficha_tarjeta) {
+                                errorMsg = `🚫 ${resp.errors.numero_ficha_tarjeta[0]}`;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                        }
+
+                        mostrarMensaje(errorMsg, 'danger');
                     });
                 });
             });

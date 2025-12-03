@@ -33,7 +33,8 @@ class Paciente(StandardModel):
     fecha_nacimiento = models.DateField(null=True, blank=True, verbose_name='Fecha de Nacimiento')
     sexo = models.CharField(max_length=10, choices=[('MASCULINO', 'Masculino'), ('FEMENINO', 'Femenino')], null=False,
                             verbose_name='Sexo')
-    estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL, null=False, verbose_name='Estado Civil')
+    estado_civil = models.CharField(max_length=20, choices=ESTADO_CIVIL, null=False, verbose_name='Estado Civil',
+                                    default='NO INFORMADO')
 
     # DATOS FAMILIARES
     nombres_padre = models.CharField(max_length=100, verbose_name='Nombres del Padre', null=True, blank=True)
@@ -56,9 +57,9 @@ class Paciente(StandardModel):
     alergico_a = models.CharField(null=True, blank=True, max_length=200, verbose_name='Alergico a')
 
     comuna = models.ForeignKey('kardex.Comuna', on_delete=models.PROTECT, null=False,
-                               verbose_name='Comuna', related_name='pacientes_comuna')
+                               verbose_name='Comuna', related_name='pacientes_comuna', default=1)
     prevision = models.ForeignKey('kardex.Prevision', on_delete=models.SET_NULL, null=True, blank=True,
-                                  verbose_name='Previsión', related_name='pacientes_prevision')
+                                  verbose_name='Previsión', related_name='pacientes_prevision', default=1)
 
     usuario = models.ForeignKey('usuarios.UsuarioPersonalizado', on_delete=models.SET_NULL, null=True, blank=True,
                                 verbose_name='Usuario', related_name='pacientes_usuario')

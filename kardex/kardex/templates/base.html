@@ -260,21 +260,26 @@
 
 <!--    SCRIPT DE RUT PARA INPUTMASK-->
     <script>
-      $(document).ready(function() {
-        const $rut = $('.id_rut');
-        if ($rut.length && typeof $rut.inputmask === 'function') {
-          $rut.inputmask({
-            mask: '9{1,2}.999.999-@',
-            definitions: {
-              '@': { validator: '[0-9Kk]' }
-            },
-            showMaskOnHover: false,
-            showMaskOnFocus: true,
-            clearIncomplete: false
-          });
-        }
-      });
-    </script>
+    $(document).ready(function() {
+      const $rut = $('.id_rut');
+
+      if ($rut.length && typeof $rut.inputmask === 'function') {
+        $rut.inputmask({
+          mask: '9{1,2}.999.999-@',
+          definitions: {
+            '@': {
+              validator: '[0-9Kk]'
+            }
+          },
+          placeholder: '_',
+          showMaskOnHover: false,
+          showMaskOnFocus: true,
+          clearIncomplete: true
+        });
+      }
+    });
+</script>
+
 
 <!--    SCRIPT DE TELEFONO PERSONAL CON INPUTMASK-->
     <script>

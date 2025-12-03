@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
+from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -240,36 +241,143 @@ class FichaTarjetaView(PermissionRequiredMixin, UpdateView):
     permission_required = 'kardex.change_ficha'
     raise_exception = True
 
+    def get_initial(self):
+        """Precargar datos iniciales"""
+        initial = super().get_initial()
+        initial['establecimiento'] = self.object.establecimiento
+        return initial
+
+    def validate_unique_number(self, number, ficha_id, establecimiento_id):
+        """
+        Valida que el número no exista en el mismo establecimiento
+        """
+        from django.db.models import Q
+
+        # Verificar si ya existe en el mismo establecimiento
+        exists = Ficha.objects.filter(
+            establecimiento_id=establecimiento_id
+        ).filter(
+            Q(numero_ficha_sistema=number) | Q(numero_ficha_tarjeta=number)
+        ).exclude(id=ficha_id).exists()
+
+        return exists
+
+    def get_conflicting_ficha(self, number, ficha_id, establecimiento_id):
+        """
+        Obtiene la ficha que causa conflicto
+        """
+        from django.db.models import Q
+
+        return Ficha.objects.filter(
+            establecimiento_id=establecimiento_id
+        ).filter(
+            Q(numero_ficha_sistema=number) | Q(numero_ficha_tarjeta=number)
+        ).exclude(id=ficha_id).first()
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
+
+        # Obtener datos importantes
+        numero_ficha_tarjeta = request.POST.get('numero_ficha_tarjeta')
+        establecimiento_id = self.object.establecimiento_id
+
+        # Validación personalizada si se proporciona número
+        if numero_ficha_tarjeta and numero_ficha_tarjeta.strip():
+            try:
+                numero = int(numero_ficha_tarjeta.strip())
+
+                # Validaciones básicas
+                if numero <= 0:
+                    error_msg = 'El número de ficha debe ser mayor a 0.'
+                    return self.handle_validation_error(request, 'numero_ficha_tarjeta', error_msg)
+
+                # Validar unicidad en el establecimiento
+                if self.validate_unique_number(numero, self.object.id, establecimiento_id):
+                    ficha_conflicto = self.get_conflicting_ficha(numero, self.object.id, establecimiento_id)
+
+                    if ficha_conflicto:
+                        paciente_conflicto = ficha_conflicto.paciente
+                        campo_conflicto = "número de ficha sistema" if ficha_conflicto.numero_ficha_sistema == numero else "número de ficha tarjeta"
+
+                        # Construir nombre completo de forma segura (sin depender de nombre_completo())
+                        _nombre_completo = f"{(getattr(paciente_conflicto, 'nombre', '') or '').strip()} {(getattr(paciente_conflicto, 'apellido_paterno', '') or '').strip()} {(getattr(paciente_conflicto, 'apellido_materno', '') or '').strip()}".strip()
+                        error_msg = (
+                            f'El número {numero} ya está asignado como {campo_conflicto} '
+                            f'al paciente: {_nombre_completo} '
+                            f'(RUT: {paciente_conflicto.rut}). '
+                            f'Por favor, seleccione otro número.'
+                        )
+                        return self.handle_validation_error(request, 'numero_ficha_tarjeta', error_msg)
+
+            except ValueError:
+                error_msg = 'El número de ficha debe ser un valor numérico válido.'
+                return self.handle_validation_error(request, 'numero_ficha_tarjeta', error_msg)
+
+        # Si el formulario es válido
         if form.is_valid():
-            self.object = form.save()
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                from django.http import JsonResponse
-                return JsonResponse({
-                    'success': True,
-                    'ficha_id': self.object.id,
-                    'numero_ficha_sistema': self.object.numero_ficha_sistema,
-                    'numero_ficha_tarjeta': self.object.numero_ficha_tarjeta,
-                    'message': 'Datos de ficha actualizados correctamente.'
-                })
-            messages.success(request, 'Datos de ficha actualizados correctamente')
-            return redirect(self.success_url)
-        # inválido
+            # Guardar los datos del formulario
+            self.object = form.save(commit=False)
+
+            # Si se proporcionó número de ficha tarjeta, sincronizar con sistema
+            if numero_ficha_tarjeta and numero_ficha_tarjeta.strip():
+                self.object.numero_ficha_sistema = numero_ficha_tarjeta.strip()
+
+            # Guardar cambios
+            self.object.save()
+
+            # Manejar respuesta
+            return self.handle_success_response(request)
+
+        # Formulario inválido
+        return self.handle_form_error(request, form)
+
+    def handle_validation_error(self, request, field, message):
+        """Maneja errores de validación"""
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            from django.http import JsonResponse
+            return JsonResponse({
+                'success': False,
+                'errors': {field: [message]}
+            }, status=400)
+        messages.error(request, message)
+        return self.form_invalid(self.get_form())
+
+    def handle_success_response(self, request):
+        """Maneja respuesta exitosa"""
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Construir nombre completo de forma segura (sin depender de nombre_completo())
+            _pac = getattr(self.object, 'paciente', None)
+            _nombre_completo = ''
+            if _pac:
+                _nombre_completo = f"{(getattr(_pac, 'nombre', '') or '').strip()} {(getattr(_pac, 'apellido_paterno', '') or '').strip()} {(getattr(_pac, 'apellido_materno', '') or '').strip()}".strip()
+            return JsonResponse({
+                'success': True,
+                'ficha_id': self.object.id,
+                'paciente_id': self.object.paciente.id,
+                'establecimiento_id': self.object.establecimiento_id,
+                'numero_ficha_sistema': self.object.numero_ficha_sistema,
+                'numero_ficha_tarjeta': self.object.numero_ficha_tarjeta,
+                'paciente_nombre': _nombre_completo,
+                'paciente_rut': self.object.paciente.rut,
+                'establecimiento_nombre': str(self.object.establecimiento),
+                'message': f'Ficha actualizada correctamente en {self.object.establecimiento}. '
+                           f'Número de ficha: {self.object.numero_ficha_tarjeta}'
+            })
+
+        messages.success(
+            request,
+            f'Ficha actualizada correctamente en {self.object.establecimiento}. '
+            f'Número de ficha: {self.object.numero_ficha_tarjeta}'
+        )
+        return redirect(self.success_url)
+
+    def handle_form_error(self, request, form):
+        """Maneja errores del formulario"""
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
         messages.error(request, 'Hay errores en el formulario de ficha')
         return self.form_invalid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Asignar N° de Ficha de Tarjeta'
-        context['list_url'] = self.success_url
-        context['action'] = 'edit'  # siempre modo actualizar
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class FichaDeleteView(PermissionRequiredMixin, DeleteView):
