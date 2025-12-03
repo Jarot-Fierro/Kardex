@@ -42,6 +42,14 @@
                             {% endif %}
                         </div>
                     </div>
+                    <div class="row mt-1">
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-outline-secondary btn-sm no-print"
+                                    id="btn-limpiar-arriba">Limpiar Todo
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <!-- En tu template, modifica la sección de botones así: -->
@@ -72,6 +80,12 @@
                                    style="pointer-events: none; opacity: 0.6;">
                                     Tarjeta Física
                                 </a>
+                                <a href="#"
+                                   id="btn-numero-ficha"
+                                   class="btn btn-sm btn-info flex-fill mx-1 disabled"
+                                   style="pointer-events: none; opacity: 0.6;">
+                                    N° Ficha
+                                </a>
                             </div>
                         </div>
 
@@ -95,6 +109,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mt-1">
+                        <div class="col text-end">
+                            <button type="button" class="btn btn-secondary btn-sm no-print" id="btn-cancelar">Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-sm no-print">Guardar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,7 +128,7 @@
             <div class="card-body">
                 <div class="row g-2">
                     <!-- Checkbox 1 -->
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-check mt-2">
                             {{ form.recien_nacido }}
                             <label class="form-check-label" for="{{ form.recien_nacido.id_for_label }}">
@@ -117,7 +138,7 @@
                     </div>
 
                     <!-- Checkbox 2 -->
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-check mt-2">
                             {{ form.extranjero }}
                             <label class="form-check-label" for="{{ form.extranjero.id_for_label }}">
@@ -127,7 +148,7 @@
                     </div>
 
                     <!-- Checkbox 3 -->
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-check mt-2">
                             {{ form.pueblo_indigena }}
                             <label class="form-check-label" for="{{ form.pueblo_indigena.id_for_label }}">
@@ -137,24 +158,23 @@
                     </div>
 
                     <!-- Checkbox 4 + input date -->
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-check mt-2">
                             {{ form.fallecido }}
                             <label class="form-check-label" for="{{ form.fallecido.id_for_label }}">
                                 Fallecido
                             </label>
                         </div>
-
-                        <!-- Input de fecha debajo del checkbox fallecido -->
-                        <div class="mt-2">
-                            <label class="form-label" for="{{ form.fecha_fallecimiento.id_for_label }}">
-                                Fecha de Fallecimiento
-                            </label>
-                            {{ form.fecha_fallecimiento }}
-                            {% if form.fecha_fallecimiento.errors %}
-                            <div class="text-danger small">{{ form.fecha_fallecimiento.errors }}</div>
-                            {% endif %}
-                        </div>
+                    </div>
+                    <!-- Checkbox 4 + input date -->
+                    <div class="col-md-2">
+                        <label class="form-label" for="{{ form.fecha_fallecimiento.id_for_label }}">
+                            Fecha de Fallecimiento
+                        </label>
+                        {{ form.fecha_fallecimiento }}
+                        {% if form.fecha_fallecimiento.errors %}
+                        <div class="text-danger small">{{ form.fecha_fallecimiento.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -472,6 +492,7 @@
         const btnActualizarRut = $("#btn-actualizar-rut");
         const btnPasivar = $("#btn-pasivar");
         const btnTarjetaFisica = $("#btn-tarjeta-fisica");
+        const btnNumeroFicha = $("#btn-numero-ficha");
         const btnCaratula = $("#btn-caratula");
         const btnStickers = $("#btn-stickers");
 
@@ -491,10 +512,10 @@
         function habilitarBoton(boton, habilitado = true) {
             if (habilitado) {
                 boton.removeClass("disabled");
-                boton.css({ "pointer-events": "auto", "opacity": "1" });
+                boton.css({"pointer-events": "auto", "opacity": "1"});
             } else {
                 boton.addClass("disabled");
-                boton.css({ "pointer-events": "none", "opacity": "0.6" });
+                boton.css({"pointer-events": "none", "opacity": "0.6"});
             }
         }
 
@@ -513,8 +534,13 @@
                 btnPasivar.attr("href", `/kardex/fichas/${fichaId}/toggle-pasivar/`);
                 habilitarBoton(btnPasivar, true);
 
-                btnTarjetaFisica.attr("href", `/kardex/fichas/${fichaId}/tarjeta/`);
+                const tarjetaUrl = `/kardex/fichas/${fichaId}/tarjeta/`;
+                btnTarjetaFisica.attr("href", tarjetaUrl);
                 habilitarBoton(btnTarjetaFisica, true);
+
+                // N° Ficha (sistema) reutiliza la misma vista de tarjeta
+                btnNumeroFicha.attr("href", tarjetaUrl);
+                habilitarBoton(btnNumeroFicha, true);
 
                 // Botones de impresión
                 btnCaratula.attr("href", `/kardex/pdfs/ficha/${fichaId}/`);
@@ -528,6 +554,9 @@
 
                 btnTarjetaFisica.attr("href", "#");
                 habilitarBoton(btnTarjetaFisica, false);
+
+                btnNumeroFicha.attr("href", "#");
+                habilitarBoton(btnNumeroFicha, false);
 
                 btnCaratula.attr("href", "#");
                 habilitarBoton(btnCaratula, false);
@@ -611,7 +640,7 @@
 
         function limpiarFormulario() {
             // Limpiar todos los campos excepto RUT y Ficha
-            $("input:not(#{{ form.rut.id_for_label }}):not(#{{ form.ficha.id_for_label }}), select, textarea", form).each(function() {
+            $("input:not(#{{ form.rut.id_for_label }}):not(#{{ form.ficha.id_for_label }}), select, textarea", form).each(function () {
                 const el = $(this);
                 if (this.type === "checkbox" || this.type === "radio") {
                     el.prop('checked', false);
@@ -740,7 +769,7 @@
                 headers: {
                     'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() || getCookie('csrftoken')
                 },
-                success: function(data) {
+                success: function (data) {
                     cerrarMensajeProcesando();
                     buscando = false;
 
@@ -794,7 +823,7 @@
                     if (rut) ultimoRut = rut;
                     if (numeroFicha) ultimaFicha = numeroFicha;
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     cerrarMensajeProcesando();
                     buscando = false;
                     console.error("❌ ERROR API →", error);
@@ -860,7 +889,7 @@
                 }, 300);
             });
 
-            inputRut.on("input", function() {
+            inputRut.on("input", function () {
                 const rut = inputRut.val().trim();
                 if (!rut && ultimoRut) {
                     if (!inputFicha.val().trim()) {
@@ -871,7 +900,7 @@
                 }
             });
 
-            inputRut.on("blur", function() {
+            inputRut.on("blur", function () {
                 const rut = inputRut.val().trim();
                 if (!rut && !inputFicha.val().trim() && (ultimoRut || ultimaFicha)) {
                     limpiarFormulario();
@@ -889,7 +918,7 @@
                 }, 300);
             });
 
-            inputFicha.on("input", function() {
+            inputFicha.on("input", function () {
                 const ficha = inputFicha.val().trim();
                 if (!ficha && ultimaFicha) {
                     if (!inputRut.val().trim()) {
@@ -900,7 +929,7 @@
                 }
             });
 
-            inputFicha.on("blur", function() {
+            inputFicha.on("blur", function () {
                 const ficha = inputFicha.val().trim();
                 if (!ficha && !inputRut.val().trim() && (ultimoRut || ultimaFicha)) {
                     limpiarFormulario();
@@ -968,7 +997,7 @@
                 headers: {
                     'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
                 },
-                success: function(response) {
+                success: function (response) {
                     Swal.close();
 
                     if (response.success) {
@@ -990,7 +1019,7 @@
                         mostrarMensaje("❌ Error al guardar: " + (response.error || "Error desconocido"), "danger");
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("❌ ERROR GUARDANDO →", error);
                     Swal.close();
 
@@ -1013,7 +1042,7 @@
                         });
                     }
                 },
-                complete: function() {
+                complete: function () {
                     submitBtn.prop('disabled', false);
                     submitBtn.text('Guardar');
                 }
@@ -1086,7 +1115,7 @@
         /* =============================
            🔹 BOTÓN CANCELAR
         ============================= */
-        $("#btn-cancelar").on("click", function() {
+        $("#btn-cancelar").on("click", function () {
             Swal.fire({
                 title: '¿Cancelar?',
                 text: '¿Está seguro de que desea cancelar? Los datos no guardados se perderán.',
@@ -1116,7 +1145,7 @@
                     text: 'Limpiar Todo'
                 });
 
-                btnLimpiar.on('click', function() {
+                btnLimpiar.on('click', function () {
                     Swal.fire({
                         title: '¿Limpiar formulario?',
                         text: '¿Está seguro de que desea limpiar todos los campos del formulario?',
@@ -1151,6 +1180,37 @@
         }
 
         agregarBotonLimpiar();
+
+        // Botón Limpiar superior (arriba del RUT)
+        $('#btn-limpiar-arriba').on('click', function () {
+            Swal.fire({
+                title: '¿Limpiar formulario?',
+                text: '¿Está seguro de que desea limpiar todos los campos del formulario?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, limpiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    inputRut.val("");
+                    inputFicha.val("");
+                    limpiarFormulario();
+                    ultimoRut = "";
+                    ultimaFicha = "";
+                    inputRut.focus();
+
+                    Swal.fire({
+                        title: '¡Formulario limpiado!',
+                        text: 'Todos los campos han sido limpiados.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
 
         /* =============================
            🔹 FUNCIÓN AUXILIAR PARA CSRF TOKEN
@@ -1196,34 +1256,214 @@
         /* =============================
            🔹 EVENTOS PARA LOS BOTONES DE ACCIÓN
         ============================= */
+
+        // Helper para POST AJAX con CSRF
+        function ajaxPostJSON(url, data, onSuccess, onError) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                headers: {
+                    'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() || getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (resp) {
+                    if (onSuccess) onSuccess(resp);
+                },
+                error: function (xhr) {
+                    if (onError) onError(xhr);
+                }
+            });
+        }
+
         // Actualizar RUT
-        btnActualizarRut.on("click", function(e) {
+        btnActualizarRut.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
                 return false;
             }
-            // Puedes agregar lógica adicional aquí si es necesario
+            e.preventDefault();
+            const href = $(this).attr('href');
+            const rutActual = inputRut.val().trim();
+            Swal.fire({
+                title: '¿Desea cambiar el RUT?',
+                text: 'Esta acción actualizará el RUT del paciente.'
+                , icon: 'question', showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar', cancelButtonText: 'Cancelar'
+            }).then((res) => {
+                if (!res.isConfirmed) return;
+                Swal.fire({
+                    title: 'Ingrese el nuevo RUT',
+                    input: 'text',
+                    inputValue: rutActual,
+                    inputAttributes: {autocapitalize: 'off'},
+                    showCancelButton: true,
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: (value) => {
+                        if (!value || value.trim().length < 5) {
+                            Swal.showValidationMessage('Ingrese un RUT válido');
+                            return false;
+                        }
+                        return value.trim();
+                    }
+                }).then((r2) => {
+                    if (!r2.isConfirmed) return;
+                    mostrarMensajeProcesando('Actualizando RUT...');
+                    ajaxPostJSON(href, {rut: r2.value}, function (resp) {
+                        cerrarMensajeProcesando();
+                        if (resp && resp.success) {
+                            const nuevoRut = resp.rut || r2.value;
+                            inputRut.val(nuevoRut);
+                            ultimoRut = nuevoRut;
+                            mostrarMensaje('✅ RUT actualizado correctamente.', 'success');
+                        } else {
+                            mostrarMensaje('❌ No se pudo actualizar el RUT', 'danger');
+                        }
+                    }, function (xhr) {
+                        cerrarMensajeProcesando();
+                        const msg = xhr.responseJSON && xhr.responseJSON.errors ? JSON.stringify(xhr.responseJSON.errors) : 'Error inesperado';
+                        mostrarMensaje('🚫 Error al actualizar RUT: ' + msg, 'danger');
+                    });
+                });
+            });
         });
 
         // Pasivar
-        btnPasivar.on("click", function(e) {
+        btnPasivar.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
                 return false;
             }
-            // Puedes agregar confirmación antes de pasar
+            e.preventDefault();
+            const href = $(this).attr('href');
+            Swal.fire({
+                title: '¿Desea cambiar el estado de pasivado?',
+                icon: 'warning', showCancelButton: true,
+                confirmButtonText: 'Sí', cancelButtonText: 'No'
+            }).then((res) => {
+                if (!res.isConfirmed) return;
+                mostrarMensajeProcesando('Actualizando estado...');
+                $.ajax({
+                    url: href,
+                    type: 'GET',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    success: function (resp) {
+                        cerrarMensajeProcesando();
+                        if (resp && resp.success) {
+                            const txt = resp.pasivado ? 'La ficha fue pasivada.' : 'La ficha fue despasivada.';
+                            mostrarMensaje('✅ ' + txt, 'success');
+                        } else {
+                            mostrarMensaje('❌ No se pudo actualizar el estado de la ficha.', 'danger');
+                        }
+                    },
+                    error: function () {
+                        cerrarMensajeProcesando();
+                        mostrarMensaje('🚫 Error al cambiar el estado de pasivado.', 'danger');
+                    }
+                });
+            });
         });
 
-        // Tarjeta Física
-        btnTarjetaFisica.on("click", function(e) {
+        // Tarjeta Física (numero_ficha_tarjeta)
+        btnTarjetaFisica.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
                 return false;
             }
+            e.preventDefault();
+            const href = $(this).attr('href');
+            Swal.fire({
+                title: '¿Desea agregar un número de ficha de tarjeta física?',
+                icon: 'question', showCancelButton: true,
+                confirmButtonText: 'Sí', cancelButtonText: 'No'
+            }).then((res) => {
+                if (!res.isConfirmed) return;
+                Swal.fire({
+                    title: 'Ingrese N° de ficha de tarjeta física',
+                    input: 'number', inputAttributes: {min: 1},
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar', cancelButtonText: 'Cancelar',
+                    preConfirm: (value) => {
+                        if (!value) {
+                            Swal.showValidationMessage('Ingrese un número válido');
+                            return false;
+                        }
+                        return value;
+                    }
+                }).then((r2) => {
+                    if (!r2.isConfirmed) return;
+                    mostrarMensajeProcesando('Guardando número de tarjeta...');
+                    ajaxPostJSON(href, {numero_ficha_tarjeta: r2.value}, function (resp) {
+                        cerrarMensajeProcesando();
+                        if (resp && resp.success) {
+                            mostrarMensaje('✅ Número de tarjeta física actualizado.', 'success');
+                        } else {
+                            mostrarMensaje('❌ No se pudo actualizar el número de tarjeta.', 'danger');
+                        }
+                    }, function (xhr) {
+                        cerrarMensajeProcesando();
+                        const msg = xhr.responseJSON && xhr.responseJSON.errors ? JSON.stringify(xhr.responseJSON.errors) : 'Error inesperado';
+                        mostrarMensaje('🚫 Error al actualizar tarjeta: ' + msg, 'danger');
+                    });
+                });
+            });
+        });
+
+        // Número de Ficha (sistema)
+        btnNumeroFicha.on("click", function (e) {
+            if ($(this).hasClass("disabled")) {
+                e.preventDefault();
+                return false;
+            }
+            e.preventDefault();
+            const href = $(this).attr('href');
+            const numeroActual = inputFicha.val().trim();
+            Swal.fire({
+                title: '¿Desea cambiar el número de ficha?',
+                text: 'Esta acción será informada y quedará registro de la modificación.',
+                icon: 'warning', showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar', cancelButtonText: 'Cancelar'
+            }).then((res) => {
+                if (!res.isConfirmed) return;
+                Swal.fire({
+                    title: 'Ingrese el nuevo N° de ficha',
+                    input: 'number',
+                    inputValue: numeroActual || '',
+                    inputAttributes: {min: 1},
+                    showCancelButton: true,
+                    confirmButtonText: 'Actualizar', cancelButtonText: 'Cancelar',
+                    preConfirm: (value) => {
+                        if (!value || isNaN(value)) {
+                            Swal.showValidationMessage('Ingrese un número válido');
+                            return false;
+                        }
+                        return value;
+                    }
+                }).then((r2) => {
+                    if (!r2.isConfirmed) return;
+                    mostrarMensajeProcesando('Actualizando N° de ficha...');
+                    ajaxPostJSON(href, {numero_ficha_sistema: r2.value}, function (resp) {
+                        cerrarMensajeProcesando();
+                        if (resp && resp.success) {
+                            const nuevo = resp.numero_ficha_sistema || r2.value;
+                            inputFicha.val(nuevo);
+                            ultimaFicha = nuevo;
+                            mostrarMensaje('✅ Número de ficha actualizado.', 'success');
+                        } else {
+                            mostrarMensaje('❌ No se pudo actualizar el número de ficha.', 'danger');
+                        }
+                    }, function (xhr) {
+                        cerrarMensajeProcesando();
+                        const msg = xhr.responseJSON && xhr.responseJSON.errors ? JSON.stringify(xhr.responseJSON.errors) : 'Error inesperado';
+                        mostrarMensaje('🚫 Error al actualizar N° de ficha: ' + msg, 'danger');
+                    });
+                });
+            });
         });
 
         // Carátula
-        btnCaratula.on("click", function(e) {
+        btnCaratula.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
                 return false;
@@ -1234,7 +1474,7 @@
         });
 
         // Stickers
-        btnStickers.on("click", function(e) {
+        btnStickers.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
                 return false;
@@ -1247,7 +1487,7 @@
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // ... (tu código existente en vanilla JS) ...
 
         const inputRut = document.getElementById('{{ form.rut.id_for_label }}');
@@ -1298,7 +1538,7 @@
         document.addEventListener('keydown', bloquearEnter, true);
 
         // Prevenir submit por Enter
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             // Verificar si el último evento fue un Enter en RUT
             e.preventDefault();
             return false;

@@ -199,8 +199,23 @@ class PacienteActualizarRut(PermissionRequiredMixin, UpdateView):
     raise_exception = True
 
     def form_valid(self, form):
+        # Guardar y responder acorde al tipo de solicitud
+        self.object = form.save()
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'paciente_id': self.object.id,
+                'rut': self.object.rut,
+                'message': 'RUT del paciente actualizado correctamente.'
+            })
         messages.success(self.request, 'RUT del paciente actualizado correctamente.')
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+        messages.error(self.request, 'Errores al actualizar el RUT del paciente.')
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

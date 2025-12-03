@@ -206,11 +206,24 @@ class TogglePasivadoFichaView(PermissionRequiredMixin, View):
         try:
             ficha = Ficha.objects.get(pk=pk)
         except Ficha.DoesNotExist:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                from django.http import JsonResponse
+                return JsonResponse({'success': False, 'error': 'La ficha indicada no existe.'}, status=404)
             messages.error(request, 'La ficha indicada no existe.')
             return redirect('kardex:paciente_query')
 
         ficha.pasivado = not bool(ficha.pasivado)
         ficha.save(update_fields=['pasivado'])
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            from django.http import JsonResponse
+            return JsonResponse({
+                'success': True,
+                'ficha_id': ficha.id,
+                'pasivado': bool(ficha.pasivado),
+                'message': 'La ficha fue pasivada correctamente.' if ficha.pasivado else 'La ficha fue despasivada correctamente.'
+            })
+
         if ficha.pasivado:
             messages.success(request, 'La ficha fue pasivada correctamente.')
         else:
@@ -226,6 +239,29 @@ class FichaTarjetaView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('kardex:ficha_list')
     permission_required = 'kardex.change_ficha'
     raise_exception = True
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            self.object = form.save()
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                from django.http import JsonResponse
+                return JsonResponse({
+                    'success': True,
+                    'ficha_id': self.object.id,
+                    'numero_ficha_sistema': self.object.numero_ficha_sistema,
+                    'numero_ficha_tarjeta': self.object.numero_ficha_tarjeta,
+                    'message': 'Datos de ficha actualizados correctamente.'
+                })
+            messages.success(request, 'Datos de ficha actualizados correctamente')
+            return redirect(self.success_url)
+        # inválido
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            from django.http import JsonResponse
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+        messages.error(request, 'Hay errores en el formulario de ficha')
+        return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
