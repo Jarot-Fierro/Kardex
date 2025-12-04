@@ -12,3 +12,19 @@ db.sqlite3
 
 # IDE
 .idea/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual env
+.venv/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
