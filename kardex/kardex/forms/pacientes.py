@@ -20,30 +20,7 @@ class PacienteFechaRangoForm(forms.Form):
     )
 
 
-class FormPaciente(forms.ModelForm):
-    # def __init__(self, *args, **kwargs):
-    #     # Permite asignar el RUT seleccionado «desde el init del formulario».
-    #     # Si viene una instancia (p. ej., desde PacienteCreateView con paciente_id),
-    #     # inicializamos el campo rut con instance.rut para que el select quede seleccionado.
-    #     # Si en initial ya vino un rut explícito, lo respetamos.
-    #     initial = kwargs.get('initial') or {}
-    #     instance = kwargs.get('instance')
-    #     super().__init__(*args, **kwargs)
-    #     try:
-    #         # Si initial trae 'rut', se mantiene. Si no, usar el de la instancia si existe.
-    #         if not initial.get('rut') and instance is not None:
-    #             rut_val = getattr(instance, 'rut', None)
-    #             if rut_val:
-    #                 self.fields['rut'].initial = rut_val
-    #         else:
-    #             # Si initial trae rut explícito, reflectarlo en el widget/field initial
-    #             rut_ini = initial.get('rut')
-    #             if rut_ini:
-    #                 self.fields['rut'].initial = rut_ini
-    #     except Exception:
-    #         # Fallback silencioso para no romper el formulario ante situaciones inesperadas
-    #         pass
-    #
+class FormPacienteSinRut(forms.ModelForm):
     def clean(self):
         cleaned = super().clean()
         # Validar unicidad de identificadores excluyendo la propia instancia cuando existe (modo actualización)
@@ -202,7 +179,7 @@ class FormPaciente(forms.ModelForm):
             'placeholder': 'Ejemplo: O’Higgins 123',
             'id': 'direccion_paciente'
         }),
-        required=True
+        required=False
     )
 
     numero_telefono1 = forms.CharField(
@@ -465,57 +442,6 @@ class FormPaciente(forms.ModelForm):
         if value:
             validate_spaces(value)
         return value
-
-    class Meta:
-        model = Paciente
-        fields = [
-            'rut',
-            'nip',
-            'pasaporte',
-            'nombre',
-            'apellido_paterno',
-            'apellido_materno',
-            'rut_madre',
-            'rut_responsable_temporal',
-            'usar_rut_madre_como_responsable',
-            'fecha_nacimiento',
-            'sexo',
-            'estado_civil',
-            'nombres_padre',
-            'nombres_madre',
-            'nombre_pareja',
-            'direccion',
-            'numero_telefono1',
-            'numero_telefono2',
-            'recien_nacido',
-            'extranjero',
-            'fallecido',
-            'fecha_fallecimiento',
-            'ocupacion',
-            'representante_legal',
-            'nombre_social',
-            'comuna',
-            'prevision',
-            'usuario',
-            'genero',
-            'pueblo_indigena',
-            'alergico_a',
-            'sin_telefono',
-            'sector',
-        ]
-
-
-class FormPacienteCreacion(FormPaciente):
-    # Igual que FormPaciente pero el campo RUT es un input de texto en lugar de Select2
-    rut = forms.CharField(
-        label='R.U.T.',
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control id_rut',
-            'id': 'id_rut',
-            'placeholder': 'Ingrese RUT (ej: 12345678-9)'
-        })
-    )
 
     class Meta:
         model = Paciente

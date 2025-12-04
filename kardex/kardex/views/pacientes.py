@@ -8,7 +8,7 @@ from django.views.generic import DeleteView, DetailView, UpdateView
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
-from kardex.forms.pacientes import FormPaciente, FormPacienteActualizarRut
+from kardex.forms.pacientes import FormPacienteActualizarRut, FormPacienteSinRut
 from kardex.forms.pacientes import PacienteFechaRangoForm
 from kardex.forms.pacientes_fichas import PacienteForm
 from kardex.mixin import DataTableMixin
@@ -103,91 +103,6 @@ class PacienteDetailView(PermissionRequiredMixin, DetailView):
             html = render_to_string(self.template_name, context=context, request=self.request)
             return HttpResponse(html)
         return super().render_to_response(context, **response_kwargs)
-
-
-class PacienteUpdateView(PermissionRequiredMixin, UpdateView):
-    template_name = 'kardex/paciente/form_update.html'
-    model = Paciente
-    form_class = FormPaciente
-    success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'kardex.change_paciente'
-    raise_exception = True
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Paciente actualizado correctamente')
-            return redirect(self.success_url)
-        messages.error(request, 'Hay errores en el formulario')
-        return self.form_invalid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Editar Paciente'
-        context['list_url'] = self.success_url
-        context['action'] = 'edit'
-        context['module_name'] = MODULE_NAME
-
-        # Obtener la ficha del paciente asociada al establecimiento del usuario logueado
-        user = getattr(self.request, 'user', None)
-        establecimiento = getattr(user, 'establecimiento', None) if user else None
-
-        ingreso = None  # Mantener en contexto por compatibilidad
-        ficha = None
-        if establecimiento:
-            ficha = Ficha.objects.filter(paciente=self.object, establecimiento=establecimiento).first()
-            if ficha is None:
-                from django.contrib import messages
-                messages.info(self.request, 'No existe ficha asociada a este paciente en su establecimiento.')
-        else:
-            from django.contrib import messages
-            messages.warning(self.request, 'El usuario no tiene un establecimiento asociado.')
-
-        # Datos derivados para el template (sin consumir API)
-        paciente = self.object
-
-        def fmt_dt(dt):
-            try:
-                return dt.strftime('%d/%m/%Y') if dt else ''
-            except Exception:
-                return ''
-
-        ficha_numero = getattr(ficha, 'numero_ficha_sistema', '') if ficha else ''
-        ficha_created_at_text = fmt_dt(getattr(ficha, 'created_at', None)) if ficha else ''
-        ficha_updated_at_text = fmt_dt(getattr(ficha, 'updated_at', None)) if ficha else ''
-        paciente_codigo = getattr(paciente, 'codigo', '')
-
-        # URLs para botones (Carátula, Stickers, Pasivar, Ficha Tarjeta)
-        caratula_url = stickers_url = pasivar_url = ficha_tarjeta_url = ''
-        ficha_pasivado = False
-        if ficha and getattr(ficha, 'id', None):
-            fid = ficha.id
-            caratula_url = f"/kardex/pdfs/ficha/{fid}/"
-            stickers_url = f"/kardex/pdfs/stickers/ficha/{fid}/"
-            pasivar_url = f"/kardex/fichas/{fid}/toggle-pasivar/"
-            ficha_tarjeta_url = f"/kardex/fichas/{fid}/tarjeta/"
-            ficha_pasivado = bool(getattr(ficha, 'pasivado', False))
-
-        # Exponer objetos esperados por el template
-        context['paciente'] = paciente
-        context['ingreso'] = ingreso
-        context['ficha'] = ficha
-        context['ficha_numero'] = ficha_numero
-        context['ficha_created_at_text'] = ficha_created_at_text
-        context['ficha_updated_at_text'] = ficha_updated_at_text
-        context['paciente_codigo'] = paciente_codigo
-        context['caratula_url'] = caratula_url
-        context['stickers_url'] = stickers_url
-        context['pasivar_url'] = pasivar_url
-        context['ficha_tarjeta_url'] = ficha_tarjeta_url
-        context['ficha_pasivado'] = ficha_pasivado
-
-        return context
 
 
 class PacienteActualizarRut(PermissionRequiredMixin, UpdateView):
@@ -629,6 +544,96 @@ class PacienteQueryView(PermissionRequiredMixin, FormView):
 
         messages.error(self.request, 'Por favor corrija los errores en el formulario.')
         return super().form_invalid(form)
+
+
+class PacienteCreateSinRutView(PermissionRequiredMixin, FormView):
+    template_name = 'kardex/paciente/sin_rut.html'
+    form_class = FormPacienteSinRut
+    permission_required = 'kardex.add_paciente'
+    raise_exception = True
+
+    def form_valid(self, form):
+        paciente = form.save(commit=False)
+        try:
+            paciente.usuario = getattr(self.request, 'user', None)
+        except Exception:
+            pass
+        paciente.save()
+
+        # Crear ficha automáticamente usando el establecimiento del usuario
+        try:
+            establecimiento = getattr(self.request.user, 'establecimiento', None)
+        except Exception:
+            establecimiento = None
+
+        if establecimiento:
+            ficha = Ficha(
+                paciente=paciente,
+                establecimiento=establecimiento,
+                usuario=getattr(self.request, 'user', None),
+                sector=form.cleaned_data.get('sector')
+            )
+            ficha.save()
+
+        messages.success(self.request, 'Paciente creado y ficha asociada correctamente.')
+        from django.shortcuts import redirect
+        from django.urls import reverse
+        return redirect(reverse('kardex:paciente_detail', kwargs={'pk': paciente.pk}))
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Por favor corrija los errores en el formulario.')
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        hay_ficha = None
+
+        # Obtener el próximo número de ficha
+        try:
+            establecimiento = getattr(self.request.user, 'establecimiento', None)
+
+            if establecimiento:
+                # Obtener el máximo número de ficha para este establecimiento
+                from django.db.models import Max
+                max_ficha = Ficha.objects.filter(
+                    establecimiento=establecimiento
+                ).aggregate(
+                    max_numero=Max('numero_ficha_sistema')
+                )
+
+                siguiente_numero = (max_ficha['max_numero'] or 0) + 1
+                context['siguiente_numero_ficha'] = siguiente_numero
+            else:
+                context['siguiente_numero_ficha'] = "No disponible"
+
+        except Exception as e:
+            context['siguiente_numero_ficha'] = "No disponible"
+
+        # ===================
+        # CODIGO PACIENTE
+        # ===================
+
+        try:
+            ultimo_paciente = Paciente.objects.order_by('-id').first()
+
+            if ultimo_paciente and ultimo_paciente.codigo:
+
+                # Eliminar all excepto números
+                import re
+                numero = int(re.sub(r'\D', '', ultimo_paciente.codigo))
+
+                nuevo_codigo = f"PAC-{numero + 1:06d}"
+
+            else:
+                nuevo_codigo = "PAC-000001"
+
+            context['codigo_paciente_preview'] = nuevo_codigo
+
+        except:
+            context['codigo_paciente_preview'] = "PAC-000001"
+
+        context['title'] = f'Formulario de Paciente Sin Rut'
+        return context
 
 
 class PacientesHistoryListView(GenericHistoryListView):

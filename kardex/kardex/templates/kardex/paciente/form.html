@@ -118,7 +118,7 @@
                             </button>
                             <button type="submit" class="btn btn-primary btn-sm no-print">Guardar</button>
                             <a id="btn-paciente-sin-rut"
-                               href="#"
+                               href="{% url 'kardex:paciente_create_sin_rut' %}"
                                class="btn btn-sm btn-outline-danger flex-fill mx-1">
                                 Crear Paciente sin RUT
                             </a>
@@ -1972,4 +1972,6 @@
 
     });
 </script>
+<script src="{% static 'js/apis/handle_fichas.js' %}"></script>
+    <script src="{% static 'js/fields_form_paciente.js' %}"></script>
 {% endblock %}
