@@ -25,10 +25,10 @@
                        aria-expanded="false" class="nav-link dropdown-toggle">Mantenedores</a>
                     <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
                         {% if request.user.is_superuser %}
-                        <li><a href="{% url 'kardex:pais_list' %}"
-                               class="dropdown-item">Paises</a>
-                        </li>
-                        <li class="dropdown-divider"></li>
+                            <li><a href="{% url 'kardex:pais_list' %}"
+                                   class="dropdown-item">Paises</a>
+                            </li>
+                            <li class="dropdown-divider"></li>
                         {% endif %}
                         <li>
                             <a href="{% url 'kardex:comuna_list' %}" class="dropdown-item">Comunas</a></li>
@@ -128,7 +128,7 @@
                     <ul aria-labelledby="dropdownSubMenu3" class="dropdown-menu border-0 shadow">
                         <li><a href="{% url 'kardex:recepcion_ficha' %}" class="dropdown-item">Entrada
                             fichas</a></li>
-                        <li><a href="{% url 'kardex:salida_ficha' %}" class="dropdown-item">Salida
+                        <li><a href="{% url 'kardex:salida_ficha_masiva' %}" class="dropdown-item">Salida
                             fichas</a></li>
                         <li class="dropdown-divider"></li>
                         <li><a href="{% url 'kardex:movimiento_ficha_transito' %}" class="dropdown-item">Ficha en
@@ -146,27 +146,27 @@
                 <a id="dropdownUserMenu" href="#" data-toggle="dropdown" aria-haspopup="true"
                    aria-expanded="false" class="nav-link dropdown-toggle">
                     {% if request.user.is_superuser %}
-                    <span class="badge badge-danger">Administrador</span>
+                        <span class="badge badge-danger">Administrador</span>
                     {% else %}
-                    <span class="badge badge-success">{{ request.user.first_name|default:request.user.username }}</span>
+                        <span class="badge badge-success">{{ request.user.first_name|default:request.user.username }}</span>
                     {% endif %}
 
                     <i class="fas fa-user ml-1"></i>
                 </a>
                 <ul aria-labelledby="dropdownUserMenu" class="dropdown-menu dropdown-menu-right border-0 shadow">
                     {% if request.user.is_superuser %}
-                    <li>
-                        <a href="{% url 'admin:index' %}" class="dropdown-item">
-                            <i class="fas fa-cog"></i>
-                            Panel de Administrador
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'usuarios:creacion_usuario' %}" class="dropdown-item">
-                            <i class="fas fa-plus"></i>
-                            Crear Usuario
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{% url 'admin:index' %}" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                Panel de Administrador
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'usuarios:creacion_usuario' %}" class="dropdown-item">
+                                <i class="fas fa-plus"></i>
+                                Crear Usuario
+                            </a>
+                        </li>
                     {% endif %}
                     <li><a href="{% url 'usuarios:perfil' %}" class="dropdown-item"><i class="fas fa-id-badge mr-2"></i>
                         Perfil</a></li>

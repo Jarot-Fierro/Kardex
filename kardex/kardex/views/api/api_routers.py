@@ -3,6 +3,7 @@ from rest_framework import routers
 from kardex.views.api.catalogos import ServicioClinicoViewSet, ProfesionalViewSet
 from kardex.views.api.comunas import ComunaViewSet
 from kardex.views.api.fichas import FichaViewSet
+from kardex.views.api.movimiento_fichas_update import FichaPacienteViewSet
 from kardex.views.api.pacientes import PacienteViewSet
 from kardex.views.api.prevision import PrevisionViewSet
 from kardex.views.api.recepcion_ficha import RecepcionFichaViewSet
@@ -19,3 +20,5 @@ router.register(r'profesionales', ProfesionalViewSet, basename='profesional')
 router.register(r"comunas", ComunaViewSet)
 router.register(r"prevision", PrevisionViewSet)
 router.register(r"sector", SectorViewSet)
+
+router.register(r'fichas', FichaPacienteViewSet, basename='ficha-paciente')

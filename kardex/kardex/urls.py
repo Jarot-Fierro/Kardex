@@ -6,6 +6,7 @@ from kardex.views.comuna import *
 from kardex.views.establecimiento import *
 from kardex.views.ficha import *
 from kardex.views.movimiento_fichas import *
+from kardex.views.movimiento_fichas_update import SalidaFicha2View
 from kardex.views.pacientes import *
 from kardex.views.pais import *
 from kardex.views.pdfs import pdf_index, pdf_stickers
@@ -138,6 +139,8 @@ urlpatterns = [
     path('api/api_pacientes/<int:pk>/', PacienteFichaViewSet.as_view({
         'put': 'update'
     }), name='api_paciente_update'),
+
+    path('salida-ficha-masiva/', SalidaFicha2View.as_view(), name='salida_ficha_masiva'),
 
 ]
 

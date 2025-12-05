@@ -155,4 +155,4 @@ class MovimientoFichaAdmin(SimpleHistoryAdmin):
         "profesional_envio",
         "profesional_recepcion",
     )
-    ordering = ("-fecha_envio",)
+    ordering = ("-updated_at",)
