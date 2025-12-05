@@ -124,10 +124,66 @@ class PacienteFichaViewSet(ViewSet):
         if rut:
             paciente = Paciente.objects.filter(rut=rut).first()
             if paciente:
+                # Devolver también los datos básicos del paciente para rellenar el formulario en el template
+                data_paciente = {
+                    # IDs básicos
+                    "paciente_id": paciente.id,
+
+                    # IDENTIFICACIÓN
+                    "codigo": getattr(paciente, "codigo", "") or "",
+                    "rut": getattr(paciente, "rut", "") or "",
+                    "nip": getattr(paciente, "nip", "") or "",
+                    "nombre": getattr(paciente, "nombre", "") or "",
+                    "apellido_paterno": getattr(paciente, "apellido_paterno", "") or "",
+                    "apellido_materno": getattr(paciente, "apellido_materno", "") or "",
+                    "rut_madre": getattr(paciente, "rut_madre", "") or "",
+                    "rut_responsable_temporal": getattr(paciente, "rut_responsable_temporal", "") or "",
+
+                    "pueblo_indigena": bool(getattr(paciente, "pueblo_indigena", False)),
+                    "usar_rut_madre_como_responsable": bool(
+                        getattr(paciente, "usar_rut_madre_como_responsable", False)),
+
+                    # DOCUMENTOS / IDENTIDAD
+                    "pasaporte": getattr(paciente, "pasaporte", "") or "",
+                    "nombre_social": getattr(paciente, "nombre_social", "") or "",
+                    "genero": getattr(paciente, "genero", "") or "",
+
+                    # DATOS DE NACIMIENTO
+                    "fecha_nacimiento": getattr(paciente, "fecha_nacimiento", None),
+                    "sexo": getattr(paciente, "sexo", "") or "",
+                    "estado_civil": getattr(paciente, "estado_civil", "") or "",
+
+                    # DATOS FAMILIARES
+                    "nombres_padre": getattr(paciente, "nombres_padre", "") or "",
+                    "nombres_madre": getattr(paciente, "nombres_madre", "") or "",
+                    "nombre_pareja": getattr(paciente, "nombre_pareja", "") or "",
+                    "representante_legal": getattr(paciente, "representante_legal", "") or "",
+
+                    # CONTACTO Y DIRECCIÓN
+                    "direccion": getattr(paciente, "direccion", "") or "",
+                    "sin_telefono": bool(getattr(paciente, "sin_telefono", False)),
+                    "numero_telefono1": getattr(paciente, "numero_telefono1", "") or "",
+                    "numero_telefono2": getattr(paciente, "numero_telefono2", "") or "",
+                    "ocupacion": getattr(paciente, "ocupacion", "") or "",
+
+                    # ESTADO DEL PACIENTE
+                    "recien_nacido": bool(getattr(paciente, "recien_nacido", False)),
+                    "extranjero": bool(getattr(paciente, "extranjero", False)),
+                    "fallecido": bool(getattr(paciente, "fallecido", False)),
+                    "fecha_fallecimiento": getattr(paciente, "fecha_fallecimiento", None),
+                    "alergico_a": getattr(paciente, "alergico_a", "") or "",
+
+                    # RELACIONES
+                    "paciente_comuna_id": getattr(paciente, "comuna_id", None),
+                    "prevision_id": getattr(paciente, "prevision_id", None),
+                    "usuario_id": getattr(paciente, "usuario_id", None),
+                    "usuario_anterior_id": getattr(paciente, "usuario_anterior_id", None),
+                }
+
                 return Response({
                     "exists": True,
                     "has_ficha": False,
-                    "paciente_id": paciente.id,
+                    **data_paciente,
                 })
 
         # ============ CASO 3: NO EXISTE NADA ============

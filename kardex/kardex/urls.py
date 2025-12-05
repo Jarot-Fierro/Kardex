@@ -6,7 +6,7 @@ from kardex.views.comuna import *
 from kardex.views.establecimiento import *
 from kardex.views.ficha import *
 from kardex.views.movimiento_fichas import *
-from kardex.views.movimiento_fichas_update import SalidaFicha2View
+from kardex.views.movimiento_fichas_update import SalidaFicha2View, SalidaTablaFichaView, RecepcionTablaFichaView
 from kardex.views.pacientes import *
 from kardex.views.pais import *
 from kardex.views.pdfs import pdf_index, pdf_stickers
@@ -141,6 +141,8 @@ urlpatterns = [
     }), name='api_paciente_update'),
 
     path('salida-ficha-masiva/', SalidaFicha2View.as_view(), name='salida_ficha_masiva'),
+    path('salida-tabla-ficha/', SalidaTablaFichaView.as_view(), name='salida_tabla_ficha'),
+    path('entrada-tabla-ficha/', RecepcionTablaFichaView.as_view(), name='entrada_tabla_ficha'),
 
 ]
 

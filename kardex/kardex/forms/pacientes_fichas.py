@@ -393,7 +393,7 @@ class PacienteForm(forms.Form):
         label='Sector',
         empty_label="Selecciona una Opción",
         queryset=Sector.objects.all(),
-        required=True,
+        required=False,
         widget=forms.Select(attrs={
             'class': 'form-control',
             'id': 'sector_paciente'

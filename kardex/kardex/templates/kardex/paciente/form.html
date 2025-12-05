@@ -827,13 +827,37 @@
                         // Paciente existe pero no tiene ficha
                         pacienteId = data.paciente_id || null;
                         fichaId = null;
+
+                        // Rellenar el formulario con los datos básicos del paciente recibidos
+                        try {
+                            rellenarFormulario(data);
+                        } catch (e) {
+                            console.warn('No fue posible rellenar el formulario con los datos del paciente sin ficha:', e);
+                        }
+
+                        // Forzar RUT visible y limpiar N° ficha (se generará automáticamente al guardar)
+                        if (data.rut) {
+                            inputRut.val(data.rut);
+                            ultimoRut = data.rut;
+                        } else if (rut) {
+                            inputRut.val(rut);
+                            ultimoRut = rut;
+                        }
+                        inputFicha.val("");
+                        ultimaFicha = "";
+
+                        // Hacer que el campo ficha no sea requerido y ponerlo solo-lectura (se generará automáticamente)
+                        try {
+                            inputFicha.prop('readonly', true).attr('placeholder', 'Se generará automáticamente al guardar');
+                            inputFicha.removeAttr('required');
+                        } catch (e) {}
+
                         actualizarURLsBotones();
 
                         mostrarMensaje(
-                            "⚠️ El paciente existe pero NO tiene ficha.<br>Complete los datos y guarde.",
+                            "⚠️ El paciente existe pero NO tiene ficha en su establecimiento.<br>Al guardar se generará automáticamente un N° de ficha.",
                             "warning"
                         );
-                        if (rut) ultimoRut = rut;
                         if (numeroFicha) ultimaFicha = numeroFicha;
                         return;
                     }
