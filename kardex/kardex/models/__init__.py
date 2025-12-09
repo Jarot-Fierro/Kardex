@@ -9,4 +9,5 @@ from .profesion import Profesion
 from .profesionales import Profesional
 from .sectores import Sector
 from .servicio_clinico import ServicioClinico
+from .soporte import Soporte
 from .usuario_anterior import UsuarioAnterior

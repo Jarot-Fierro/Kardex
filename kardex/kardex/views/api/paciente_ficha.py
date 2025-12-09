@@ -1,6 +1,7 @@
+from django.core.exceptions import PermissionDenied
 from rest_framework import serializers
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
@@ -76,23 +77,27 @@ class VistaFichaPacienteSerializer(serializers.Serializer):
 
 
 class PacienteFichaViewSet(ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
+    queryset = Paciente.objects.all()
 
-    # ------------------------------------
-    # CONSULTAR POR RUT
-    # ------------------------------------
+    # =================================================
+    # CONSULTA
+    # =================================================
     def list(self, request):
+
+        if not request.user.has_perm('kardex.view_paciente'):
+            raise PermissionDenied("No tienes permiso para consultar pacientes.")
+
         rut = request.GET.get("rut")
         numero_ficha = request.GET.get("numero_ficha")
         establecimiento_id = request.user.establecimiento_id
 
-        # Validar que al menos uno de los parámetros exista
         if not rut and not numero_ficha:
-            return Response({"error": "Debe indicar RUT o número de ficha"}, status=400)
+            return Response({"error": "Debe indicar RUT o número de ficha."}, status=400)
 
         vista = None
 
-        # Filtrar por RUT
+        # Buscar por RUT
         if rut:
             rut = rut.strip().lower()
             vista = VistaFichaPaciente.objects.filter(
@@ -100,18 +105,19 @@ class PacienteFichaViewSet(ViewSet):
                 establecimiento_id=establecimiento_id
             ).first()
 
-        # Si no se encontró por RUT, filtrar por número de ficha
+        # Buscar por número de ficha
         elif numero_ficha:
             try:
                 numero_ficha = int(numero_ficha)
-                vista = VistaFichaPaciente.objects.filter(
-                    numero_ficha_sistema=numero_ficha,
-                    establecimiento_id=establecimiento_id
-                ).first()
             except ValueError:
-                return Response({"error": "Número de ficha inválido"}, status=400)
+                return Response({"error": "Número de ficha inválido."}, status=400)
 
-        # ============ CASO 1: FICHA EXISTE ============
+            vista = VistaFichaPaciente.objects.filter(
+                numero_ficha_sistema=numero_ficha,
+                establecimiento_id=establecimiento_id
+            ).first()
+
+        # ============ CASO 1: EXISTE FICHA ============
         if vista:
             serializer = VistaFichaPacienteSerializer(vista)
             return Response({
@@ -120,113 +126,102 @@ class PacienteFichaViewSet(ViewSet):
                 "data": serializer.data
             })
 
-        # ============ CASO 2: PACIENTE EXISTE PERO SIN FICHA ============
+        # ============ CASO 2: EXISTE PACIENTE SIN FICHA ============
         if rut:
             paciente = Paciente.objects.filter(rut=rut).first()
             if paciente:
-                # Devolver también los datos básicos del paciente para rellenar el formulario en el template
                 data_paciente = {
-                    # IDs básicos
                     "paciente_id": paciente.id,
-
-                    # IDENTIFICACIÓN
                     "codigo": getattr(paciente, "codigo", "") or "",
-                    "rut": getattr(paciente, "rut", "") or "",
-                    "nip": getattr(paciente, "nip", "") or "",
-                    "nombre": getattr(paciente, "nombre", "") or "",
-                    "apellido_paterno": getattr(paciente, "apellido_paterno", "") or "",
-                    "apellido_materno": getattr(paciente, "apellido_materno", "") or "",
-                    "rut_madre": getattr(paciente, "rut_madre", "") or "",
-                    "rut_responsable_temporal": getattr(paciente, "rut_responsable_temporal", "") or "",
+                    "rut": paciente.rut or "",
+                    "nip": paciente.nip or "",
+                    "nombre": paciente.nombre or "",
+                    "apellido_paterno": paciente.apellido_paterno or "",
+                    "apellido_materno": paciente.apellido_materno or "",
+                    "rut_madre": paciente.rut_madre or "",
+                    "rut_responsable_temporal": paciente.rut_responsable_temporal or "",
 
-                    "pueblo_indigena": bool(getattr(paciente, "pueblo_indigena", False)),
+                    "pueblo_indigena": bool(paciente.pueblo_indigena),
                     "usar_rut_madre_como_responsable": bool(
-                        getattr(paciente, "usar_rut_madre_como_responsable", False)),
+                        paciente.usar_rut_madre_como_responsable
+                    ),
 
-                    # DOCUMENTOS / IDENTIDAD
-                    "pasaporte": getattr(paciente, "pasaporte", "") or "",
-                    "nombre_social": getattr(paciente, "nombre_social", "") or "",
-                    "genero": getattr(paciente, "genero", "") or "",
+                    "pasaporte": paciente.pasaporte or "",
+                    "nombre_social": paciente.nombre_social or "",
+                    "genero": paciente.genero or "",
 
-                    # DATOS DE NACIMIENTO
-                    "fecha_nacimiento": getattr(paciente, "fecha_nacimiento", None),
-                    "sexo": getattr(paciente, "sexo", "") or "",
-                    "estado_civil": getattr(paciente, "estado_civil", "") or "",
+                    "fecha_nacimiento": paciente.fecha_nacimiento,
+                    "sexo": paciente.sexo or "",
+                    "estado_civil": paciente.estado_civil or "",
 
-                    # DATOS FAMILIARES
-                    "nombres_padre": getattr(paciente, "nombres_padre", "") or "",
-                    "nombres_madre": getattr(paciente, "nombres_madre", "") or "",
-                    "nombre_pareja": getattr(paciente, "nombre_pareja", "") or "",
-                    "representante_legal": getattr(paciente, "representante_legal", "") or "",
+                    "nombres_padre": paciente.nombres_padre or "",
+                    "nombres_madre": paciente.nombres_madre or "",
+                    "nombre_pareja": paciente.nombre_pareja or "",
+                    "representante_legal": paciente.representante_legal or "",
 
-                    # CONTACTO Y DIRECCIÓN
-                    "direccion": getattr(paciente, "direccion", "") or "",
-                    "sin_telefono": bool(getattr(paciente, "sin_telefono", False)),
-                    "numero_telefono1": getattr(paciente, "numero_telefono1", "") or "",
-                    "numero_telefono2": getattr(paciente, "numero_telefono2", "") or "",
-                    "ocupacion": getattr(paciente, "ocupacion", "") or "",
+                    "direccion": paciente.direccion or "",
+                    "sin_telefono": bool(paciente.sin_telefono),
 
-                    # ESTADO DEL PACIENTE
-                    "recien_nacido": bool(getattr(paciente, "recien_nacido", False)),
-                    "extranjero": bool(getattr(paciente, "extranjero", False)),
-                    "fallecido": bool(getattr(paciente, "fallecido", False)),
-                    "fecha_fallecimiento": getattr(paciente, "fecha_fallecimiento", None),
-                    "alergico_a": getattr(paciente, "alergico_a", "") or "",
+                    "numero_telefono1": paciente.numero_telefono1 or "",
+                    "numero_telefono2": paciente.numero_telefono2 or "",
 
-                    # RELACIONES
-                    "paciente_comuna_id": getattr(paciente, "comuna_id", None),
-                    "prevision_id": getattr(paciente, "prevision_id", None),
-                    "usuario_id": getattr(paciente, "usuario_id", None),
-                    "usuario_anterior_id": getattr(paciente, "usuario_anterior_id", None),
+                    "ocupacion": paciente.ocupacion or "",
+
+                    "recien_nacido": bool(paciente.recien_nacido),
+                    "extranjero": bool(paciente.extranjero),
+                    "fallecido": bool(paciente.fallecido),
+                    "fecha_fallecimiento": paciente.fecha_fallecimiento,
+
+                    "alergico_a": paciente.alergico_a or "",
+
+                    "paciente_comuna_id": paciente.comuna_id,
+                    "prevision_id": paciente.prevision_id,
+
+                    "usuario_id": paciente.usuario_id,
+                    "usuario_anterior_id": paciente.usuario_anterior_id,
                 }
 
                 return Response({
                     "exists": True,
                     "has_ficha": False,
-                    **data_paciente,
+                    **data_paciente
                 })
 
-        # ============ CASO 3: NO EXISTE NADA ============
-        return Response({
-            "exists": False,
-            "has_ficha": False
-        })
+        # ============ CASO 3: NO EXISTE ============
+        return Response({"exists": False, "has_ficha": False})
 
-    # ------------------------------------
-    # CREAR PACIENTE + FICHA
-    # ------------------------------------
+    # =================================================
+    # CREAR
+    # =================================================
     def create(self, request):
+
+        if not request.user.has_perm('kardex.add_paciente'):
+            raise PermissionDenied("No tienes permiso para crear fichas.")
 
         establecimiento = request.user.establecimiento
 
         rut = request.data.get("rut")
         if not rut:
-            return Response({"error": "RUT requerido"}, status=400)
+            return Response({"error": "RUT requerido."}, status=400)
 
-        paciente = Paciente.objects.filter(rut=rut).first()
+        paciente, creado = Paciente.objects.get_or_create(
+            rut=rut,
+            defaults={
+                "nombre": request.data.get("nombre"),
+                "apellido_paterno": request.data.get("apellido_paterno"),
+                "apellido_materno": request.data.get("apellido_materno"),
+            }
+        )
 
-        # Crear paciente si no existe
-        if not paciente:
-            paciente = Paciente.objects.create(
-                rut=rut,
-                nombre=request.data.get("nombre"),
-                apellido_paterno=request.data.get("apellido_paterno"),
-                apellido_materno=request.data.get("apellido_materno"),
-            )
-
-        # Verificar si ya existe ficha para este establecimiento
-        ficha_existe = Ficha.objects.filter(
-            paciente=paciente,
-            establecimiento=establecimiento
-        ).exists()
-
-        if ficha_existe:
+        if Ficha.objects.filter(
+                paciente=paciente,
+                establecimiento=establecimiento
+        ).exists():
             return Response(
-                {"error": "El paciente ya tiene ficha en este establecimiento"},
+                {"error": "El paciente ya tiene ficha en este establecimiento."},
                 status=409
             )
 
-        # Crear ficha
         ficha = Ficha.objects.create(
             paciente=paciente,
             establecimiento=establecimiento,
@@ -236,26 +231,38 @@ class PacienteFichaViewSet(ViewSet):
         return Response({
             "success": True,
             "ficha_id": ficha.id,
-            "numero_ficha": ficha.numero_ficha_sistema
+            "numero_ficha": ficha.numero_ficha_sistema,
         }, status=status.HTTP_201_CREATED)
 
-    # ------------------------------------
-    # ACTUALIZAR DATOS
-    # ------------------------------------
+    # =================================================
+    # ACTUALIZAR
+    # =================================================
     def update(self, request, pk=None):
+
+        if not request.user.has_perm('kardex.change_paciente'):
+            raise PermissionDenied("No tienes permiso para modificar pacientes.")
 
         try:
             paciente = Paciente.objects.get(pk=pk)
         except Paciente.DoesNotExist:
-            return Response({"error": "Paciente no encontrado"}, status=404)
+            return Response(
+                {"error": "Paciente no encontrado."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        CAMBIOS = [
-            "nombre", "apellido_paterno", "apellido_materno",
-            "nombre_social", "genero", "sexo", "estado_civil",
-            "direccion", "ocupacion"
+        CAMPOS_EDITABLES = [
+            "nombre",
+            "apellido_paterno",
+            "apellido_materno",
+            "nombre_social",
+            "genero",
+            "sexo",
+            "estado_civil",
+            "direccion",
+            "ocupacion"
         ]
 
-        for campo in CAMBIOS:
+        for campo in CAMPOS_EDITABLES:
             if campo in request.data:
                 setattr(paciente, campo, request.data[campo])
 

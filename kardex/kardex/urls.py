@@ -3,6 +3,7 @@ from django.urls import path
 
 from kardex.views.api.paciente_ficha import PacienteFichaViewSet
 from kardex.views.comuna import *
+from kardex.views.contacto import ContactoView
 from kardex.views.establecimiento import *
 from kardex.views.ficha import *
 from kardex.views.movimiento_fichas import *
@@ -15,6 +16,7 @@ from kardex.views.profesion import *
 from kardex.views.profesionales import *
 from kardex.views.sectores import *
 from kardex.views.servicio_clinico import *
+from kardex.views.soporte import TicketCreateView
 
 app_name = 'kardex'
 
@@ -132,6 +134,10 @@ urlpatterns = [
     path('salida-ficha-masiva/', SalidaFicha2View.as_view(), name='salida_ficha_masiva'),
     path('salida-tabla-ficha/', SalidaTablaFichaView.as_view(), name='salida_tabla_ficha'),
     path('entrada-tabla-ficha/', RecepcionTablaFichaView.as_view(), name='entrada_tabla_ficha'),
+
+    #     Soporte
+    path('contacto/', ContactoView.as_view(), name='contacto'),
+    path('tickets/nuevo/', TicketCreateView.as_view(), name='ticket_create'),
 
 ]
 

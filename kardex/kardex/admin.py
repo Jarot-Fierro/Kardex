@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from simple_history.admin import SimpleHistoryAdmin
 
 from .models import *
+from .models import Soporte
 
 
 # === PAÍS ===
@@ -13,6 +15,21 @@ class PaisAdmin(SimpleHistoryAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+# === SOPORTE ===
+
+
+@admin.register(Soporte)
+class TicketAdmin(SimpleHistoryAdmin):
+    list_display = ("id", "titulo", "estado", "creado_por", "ver_adjunto")
+
+    def ver_adjunto(self, obj):
+        if obj.adjunto:
+            return format_html('<a href="{}" target="_blank">{}</a>', obj.adjunto.url, obj.adjunto.label)
+        return "-"
+
+    ver_adjunto.short_description = "Adjunto"
 
 
 # === COMUNA ===

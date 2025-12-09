@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
-from django.views.generic import DeleteView, DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
@@ -160,8 +160,6 @@ class PacienteActualizarRut(PermissionRequiredMixin, UpdateView):
             fields_info.append((str(label).capitalize(), '' if value is None else str(value)))
         context['paciente_fields'] = fields_info
         return context
-
-
 
 
 class PacienteRecienNacidoListView(PacienteListView):
@@ -409,23 +407,36 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 class PacienteQueryView(PermissionRequiredMixin, FormView):
     template_name = 'kardex/paciente/form.html'
     form_class = PacienteForm
-    permission_required = 'kardex.add_paciente'
+
+    # SOLO PARA ENTRAR A LA VISTA
+    permission_required = 'kardex.view_paciente'
     raise_exception = True
+
     success_url = reverse_lazy('kardex:paciente_query')
 
+    # --------------------------------------------------
+    # CONTEXTO
+    # --------------------------------------------------
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context['title'] = f'Formulario de Paciente {self.request.user.establecimiento.nombre}'
-        # Debug en template: mostrar datos enviados por POST
+
         try:
             if self.request.method == 'POST':
-                context['debug_post'] = {k: self.request.POST.getlist(k) for k in self.request.POST.keys()}
+                context['debug_post'] = {
+                    k: self.request.POST.getlist(k)
+                    for k in self.request.POST.keys()
+                }
         except Exception:
             context['debug_post'] = {}
+
         return context
 
+    # --------------------------------------------------
+    # LOG POST
+    # --------------------------------------------------
     def _log_post(self):
-        # Log detallado de cada campo recibido por consola
         try:
             print("===== POST DATA (PacienteQueryView) =====")
             for k in self.request.POST.keys():
@@ -435,90 +446,155 @@ class PacienteQueryView(PermissionRequiredMixin, FormView):
         except Exception as e:
             print(f"[WARN] No se pudo loguear POST: {e}")
 
+    # --------------------------------------------------
+    # RESPUESTA DE PERMISOS
+    # --------------------------------------------------
+    def _forbidden(self, mensaje):
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': mensaje}, status=403)
+
+        raise PermissionDenied(mensaje)
+
+    # --------------------------------------------------
+    # FORM VALID
+    # --------------------------------------------------
     def form_valid(self, form):
-        """Procesa el formulario cuando es válido: crea o actualiza Paciente y su Ficha."""
+
         self._log_post()
+
         try:
             datos = form.cleaned_data
 
-            # Buscar o crear Paciente por RUT
+            # --------------------------------------------
+            # BUSCAR O CREAR PACIENTE
+            # --------------------------------------------
             rut = datos.get('rut')
             paciente = Paciente.objects.filter(rut=rut).first()
+
             creating = False
             if not paciente:
                 creating = True
+
+            # --------------------------------------------
+            # VALIDACIÓN DE PERMISOS
+            # --------------------------------------------
+            if creating:
+                if not self.request.user.has_perm('kardex.add_paciente'):
+                    return self._forbidden("No tienes permiso para crear pacientes.")
+            else:
+                if not self.request.user.has_perm('kardex.change_paciente'):
+                    return self._forbidden("No tienes permiso para modificar pacientes.")
+
+            # --------------------------------------------
+            # ASIGNAR / ACTUALIZAR PACIENTE
+            # --------------------------------------------
+            if creating:
                 paciente = Paciente(rut=rut)
 
-            # Campos simples del modelo Paciente
             ATTRS = [
                 'nombre', 'apellido_paterno', 'apellido_materno', 'nombre_social', 'genero',
                 'fecha_nacimiento', 'sexo', 'estado_civil', 'rut_madre', 'nombres_madre', 'nombres_padre',
-                'nombre_pareja', 'representante_legal', 'pueblo_indigena', 'recien_nacido', 'extranjero',
-                'fallecido', 'fecha_fallecimiento', 'alergico_a', 'direccion', 'sin_telefono',
-                'numero_telefono1', 'numero_telefono2', 'ocupacion', 'pasaporte',
-                'rut_responsable_temporal', 'usar_rut_madre_como_responsable'
+                'nombre_pareja', 'representante_legal', 'pueblo_indigena', 'recien_nacido',
+                'extranjero', 'fallecido', 'fecha_fallecimiento', 'alergico_a', 'direccion',
+                'sin_telefono', 'numero_telefono1', 'numero_telefono2', 'ocupacion', 'pasaporte',
+                'rut_responsable_temporal', 'usar_rut_madre_como_responsable',
             ]
+
             for attr in ATTRS:
                 if attr in datos:
                     setattr(paciente, attr, datos.get(attr))
 
-            # Relaciones FK en Paciente
+            # Relaciones
             paciente.comuna = datos.get('comuna')
             paciente.prevision = datos.get('prevision')
             paciente.usuario = getattr(self.request, 'user', None)
 
             paciente.save()
 
-            # Crear o actualizar Ficha para el establecimiento actual
+            # --------------------------------------------
+            # FICHA
+            # --------------------------------------------
             numero_ficha_sistema = None
+
             try:
                 establecimiento = self.request.user.establecimiento
             except Exception:
                 establecimiento = None
 
             sector = datos.get('sector')
-            observacion = datos.get('observacion')  # Obtener el campo de observación del formulario
+            observacion = datos.get('observacion')
+
             if establecimiento:
-                ficha = Ficha.objects.filter(paciente=paciente, establecimiento=establecimiento).first()
+                ficha = Ficha.objects.filter(
+                    paciente=paciente,
+                    establecimiento=establecimiento
+                ).first()
+
                 if not ficha:
-                    ficha = Ficha(paciente=paciente, establecimiento=establecimiento, usuario=self.request.user)
-                # Actualizar sector si viene
+                    ficha = Ficha(
+                        paciente=paciente,
+                        establecimiento=establecimiento,
+                        usuario=self.request.user
+                    )
+
                 if sector:
                     ficha.sector = sector
-                # Actualizar observación si viene (ahora se guarda en Ficha)
+
                 if observacion:
                     ficha.observacion = observacion
+
                 ficha.save()
                 numero_ficha_sistema = ficha.numero_ficha_sistema
 
-            # Respuesta AJAX
+            # --------------------------------------------
+            # RESPUESTA AJAX
+            # --------------------------------------------
             if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
                     'success': True,
-                    'message': 'Paciente guardado correctamente' if not creating else 'Paciente creado correctamente',
+                    'message': (
+                        'Paciente creado correctamente'
+                        if creating else
+                        'Paciente actualizado correctamente'
+                    ),
                     'paciente_id': paciente.id,
                     'numero_ficha_sistema': numero_ficha_sistema
                 })
 
-            # Para solicitudes tradicionales
-            messages.success(self.request, 'Paciente guardado correctamente.')
+            # --------------------------------------------
+            # RESPUESTA NORMAL
+            # --------------------------------------------
+            messages.success(
+                self.request,
+                'Paciente creado correctamente.' if creating
+                else 'Paciente actualizado correctamente.'
+            )
+
             return super().form_valid(form)
 
+        # --------------------------------------------
+        # ERRORES GENERALES
+        # --------------------------------------------
         except Exception as e:
             if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
             messages.error(self.request, f'Error al guardar: {str(e)}')
             return self.form_invalid(form)
 
+    # --------------------------------------------------
+    # FORM INVALID
+    # --------------------------------------------------
     def form_invalid(self, form):
-        """Procesa el formulario cuando es inválido"""
+
         self._log_post()
+
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            # Retornar errores en formato JSON
             errors = {}
             for field, error_list in form.errors.items():
                 errors[field] = error_list
                 print(f"Error en {field}: {error_list}")
+
             return JsonResponse({'success': False, 'errors': errors}, status=400)
 
         messages.error(self.request, 'Por favor corrija los errores en el formulario.')

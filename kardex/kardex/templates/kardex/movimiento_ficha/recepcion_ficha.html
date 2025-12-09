@@ -161,6 +161,12 @@
 {% endblock %}
 
 {% block javascript %}
+    <script>
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+    </script>
     <script src="{% static 'js/apis/api_recepcion_ficha.js' %}"></script>
     <script>
         // Marcar campos de envío como solo lectura en UI (rut y nombre ya tienen readonly en los widgets)

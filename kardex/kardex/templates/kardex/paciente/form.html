@@ -523,6 +523,60 @@
         let pacienteData = null; // Para almacenar todos los datos del paciente
 
         /* =============================
+           🔹 FUNCIÓN PARA MANEJAR EL FOCO DEL RUT CON INPUTMASK
+        ============================= */
+        function focusRutInput() {
+            if (!inputRut.length) return;
+
+            inputRut.focus();
+
+            // Obtener el valor actual del RUT
+            const rutValue = inputRut.val();
+            if (!rutValue) return;
+
+            // Para Inputmask, necesitamos manejar los caracteres especiales
+            // Inputmask usa guiones bajos (_) como placeholders
+
+            // 1. Si hay guiones bajos, poner el cursor antes del primer guión bajo
+            if (rutValue.includes('_')) {
+                const firstUnderscore = rutValue.indexOf('_');
+                try {
+                    inputRut[0].setSelectionRange(firstUnderscore, firstUnderscore);
+                } catch (e) {
+                    // Fallback
+                    inputRut[0].setSelectionRange(rutValue.length, rutValue.length);
+                }
+                return;
+            }
+
+            // 2. Si no hay guiones bajos, buscar la última posición útil
+            let lastUsefulPosition = 0;
+
+            // Recorrer de derecha a izquierda para encontrar la última posición útil
+            for (let i = rutValue.length - 1; i >= 0; i--) {
+                const char = rutValue[i];
+                // Considerar útil: números, puntos, guiones, K/k
+                if (/[0-9\.\-kK]/.test(char)) {
+                    lastUsefulPosition = i + 1;
+                    break;
+                }
+            }
+
+            // Si no encontramos nada útil, poner el cursor al final
+            if (lastUsefulPosition === 0) {
+                lastUsefulPosition = rutValue.length;
+            }
+
+            // Establecer la posición del cursor
+            try {
+                inputRut[0].setSelectionRange(lastUsefulPosition, lastUsefulPosition);
+            } catch (e) {
+                // Fallback: poner el cursor al final
+                inputRut[0].setSelectionRange(rutValue.length, rutValue.length);
+            }
+        }
+
+        /* =============================
            🔹 FUNCIONES PARA MANEJAR BOTONES
         ============================= */
         function habilitarBoton(boton, habilitado = true) {
@@ -782,10 +836,14 @@
         }
 
         /* =============================
-           🔹 BUSCAR PACIENTE CON AJAX
+           🔹 BUSCAR PACIENTE CON AJAX - VERSIÓN CORREGIDA
         ============================= */
         function buscarPaciente(rut = null, numeroFicha = null) {
             if (buscando) return;
+
+            // ✅ NUEVO: Guardar el valor ACTUAL del RUT antes de buscar
+            const rutActual = inputRut.val();
+            const fichaActual = inputFicha.val();
 
             buscando = true;
             mostrarMensajeProcesando(rut ? "Buscando por RUT..." : "Buscando por número de ficha...");
@@ -811,15 +869,26 @@
                         // Llenar formulario con datos del paciente
                         rellenarFormulario(data.data);
 
-                        // Actualizar campos RUT y Ficha
-                        if (data.data.rut) {
+                        // ✅ CORRECCIÓN: Mantener el RUT que el usuario escribió
+                        // Solo actualizar si el RUT de la API es DIFERENTE
+                        if (data.data.rut && data.data.rut !== rutActual) {
                             inputRut.val(data.data.rut);
                             ultimoRut = data.data.rut;
+                        } else {
+                            // Mantener EXACTAMENTE lo que el usuario escribió
+                            ultimoRut = rutActual || data.data.rut;
                         }
 
+                        // ✅ CORRECCIÓN: Mantener la ficha que el usuario escribió
                         if (data.data.numero_ficha_sistema) {
-                            inputFicha.val(data.data.numero_ficha_sistema);
-                            ultimaFicha = data.data.numero_ficha_sistema;
+                            // Si buscamos por RUT, actualizar la ficha
+                            if (rut) {
+                                inputFicha.val(data.data.numero_ficha_sistema);
+                                ultimaFicha = data.data.numero_ficha_sistema;
+                            } else {
+                                // Si buscamos por ficha, mantener lo que el usuario escribió
+                                ultimaFicha = fichaActual || data.data.numero_ficha_sistema;
+                            }
                         }
 
                         // Actualizar fecha de creación
@@ -845,18 +914,28 @@
                             console.warn('No fue posible rellenar el formulario con los datos del paciente sin ficha:', e);
                         }
 
-                        // Forzar RUT visible y limpiar N° ficha (se generará automáticamente al guardar)
-                        if (data.rut) {
+                        // ✅ CORRECCIÓN: Mantener el RUT del usuario
+                        if (rutActual) {
+                            inputRut.val(rutActual);
+                            ultimoRut = rutActual;
+                        } else if (data.rut) {
                             inputRut.val(data.rut);
                             ultimoRut = data.rut;
                         } else if (rut) {
                             inputRut.val(rut);
                             ultimoRut = rut;
                         }
-                        inputFicha.val("");
-                        ultimaFicha = "";
 
-                        // Hacer que el campo ficha no sea requerido y ponerlo solo-lectura (se generará automáticamente)
+                        // Mantener la ficha si se buscó por ella
+                        if (numeroFicha) {
+                            inputFicha.val(numeroFicha);
+                            ultimaFicha = numeroFicha;
+                        } else {
+                            inputFicha.val("");
+                            ultimaFicha = "";
+                        }
+
+                        // Hacer que el campo ficha no sea requerido
                         try {
                             inputFicha.prop('readonly', true).attr('placeholder', 'Se generará automáticamente al guardar');
                             inputFicha.removeAttr('required');
@@ -868,18 +947,32 @@
                             "⚠️ El paciente existe pero NO tiene ficha en su establecimiento.<br>Al guardar se generará automáticamente un N° de ficha.",
                             "warning"
                         );
-                        if (numeroFicha) ultimaFicha = numeroFicha;
                         return;
                     }
 
                     // No se encontró paciente
                     limpiarBotones();
+
+                    // ✅ CORRECCIÓN: Mantener lo que el usuario escribió
+                    if (rutActual) {
+                        inputRut.val(rutActual);
+                        ultimoRut = rutActual;
+                    }
+
+                    if (fichaActual) {
+                        inputFicha.val(fichaActual);
+                        ultimaFicha = fichaActual;
+                    }
+
+                    // ✅ ENFOCAR EL RUT CON EL CURSOR EN LA POSICIÓN CORRECTA
+                    setTimeout(() => {
+                        focusRutInput();
+                    }, 100);
+
                     mostrarMensaje(
                         "❌ Paciente NO encontrado.<br>Complete el formulario para registrarlo.",
                         "danger"
                     );
-                    if (rut) ultimoRut = rut;
-                    if (numeroFicha) ultimaFicha = numeroFicha;
                 },
                 error: function (xhr, status, error) {
                     cerrarMensajeProcesando();
@@ -887,6 +980,23 @@
                     console.error("❌ ERROR API →", error);
 
                     // Limpiar botones en caso de error
+
+                    // ✅ CORRECCIÓN: Mantener lo que el usuario escribió incluso en error
+                    if (rutActual) {
+                        inputRut.val(rutActual);
+                        ultimoRut = rutActual;
+                    }
+
+                    if (fichaActual) {
+                        inputFicha.val(fichaActual);
+                        ultimaFicha = fichaActual;
+                    }
+
+                    // ✅ ENFOCAR EL RUT CON EL CURSOR EN LA POSICIÓN CORRECTA
+                    setTimeout(() => {
+                        focusRutInput();
+                    }, 100);
+
                     limpiarBotones();
 
                     if (xhr.status === 400) {
@@ -915,15 +1025,29 @@
                 return;
             }
 
-            // Si se está ingresando RUT (mínimo 5 caracteres)
-            if (rut && rut.length >= 5 && rut !== ultimoRut) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    buscarPaciente(rut, null);
-                }, 500);
+            // ✅ CORRECCIÓN: Buscar RUT solo cuando tenga formato COMPLETO
+            if (rut && rut !== ultimoRut) {
+                // Limpiar el RUT para contar dígitos
+                const rutLimpio = rut.replace(/[\.\-]/g, '');
+
+                // Solo buscar si tiene al menos 8 dígitos (RUT completo mínimo)
+                if (rutLimpio.length >= 8) {
+                    // Verificar si ya tiene el guión (formateado completo)
+                    const tieneGuion = rut.includes('-');
+
+                    clearTimeout(timeout);
+
+                    // ✅ Aumentar timeout para dar tiempo al usuario
+                    timeout = setTimeout(() => {
+                        // Solo buscar si tiene guión o 9+ dígitos
+                        if (tieneGuion || rutLimpio.length >= 9) {
+                            buscarPaciente(rut, null);
+                        }
+                    }, 800); // 800ms en lugar de 500ms
+                }
             }
 
-            // Si se está ingresando número de ficha (mínimo 1 carácter)
+            // Si se está ingresando número de ficha
             if (ficha && ficha !== ultimaFicha) {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
@@ -932,7 +1056,7 @@
                     } else {
                         mostrarMensaje("⚠️ El número de ficha debe ser numérico", "warning");
                     }
-                }, 500);
+                }, 800); // Mismo timeout
             }
         }
 
@@ -1024,7 +1148,7 @@
             const rut = inputRut.val().trim();
             if (!rut) {
                 mostrarMensaje("⚠️ Por favor ingrese un RUT válido", "warning");
-                inputRut.focus();
+                focusRutInput();
                 return false;
             }
 
@@ -1090,6 +1214,15 @@
                             confirmButtonColor: '#3085d6'
                         }).then((result) => {
                             procesarErroresFormulario(xhr.responseJSON.errors);
+                        });
+                    } else if (xhr.responseJSON.error) {
+                        // 🚫 PERMISOS U OTRO ERROR CONTROLADO POR BACKEND
+                        Swal.fire({
+                            title: '🚫 Acción no permitida',
+                            text: xhr.responseJSON.error,
+                            icon: 'warning',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#FF8800'
                         });
                     } else {
                         Swal.fire({
@@ -1193,7 +1326,7 @@
         });
 
         /* =============================
-           🔹 BOTÓN LIMPIAR
+           🔹 BOTÓN LIMPIAR - VERSIÓN CORREGIDA
         ============================= */
         function agregarBotonLimpiar() {
             const pieFormulario = $('.row.mt-3.mb-4 .col.text-end');
@@ -1222,7 +1355,11 @@
                             limpiarFormulario();
                             ultimoRut = "";
                             ultimaFicha = "";
-                            inputRut.focus();
+
+                            // ✅ Usar la nueva función de foco
+                            setTimeout(() => {
+                                focusRutInput();
+                            }, 100);
 
                             Swal.fire({
                                 title: '¡Formulario limpiado!',
@@ -1241,7 +1378,7 @@
 
         agregarBotonLimpiar();
 
-        // Botón Limpiar superior (arriba del RUT)
+        // Botón Limpiar superior (arriba del RUT) - VERSIÓN CORREGIDA
         $('#btn-limpiar-arriba').on('click', function () {
             Swal.fire({
                 title: '¿Limpiar formulario?',
@@ -1259,7 +1396,11 @@
                     limpiarFormulario();
                     ultimoRut = "";
                     ultimaFicha = "";
-                    inputRut.focus();
+
+                    // ✅ Usar la nueva función de foco
+                    setTimeout(() => {
+                        focusRutInput();
+                    }, 100);
 
                     Swal.fire({
                         title: '¡Formulario limpiado!',
@@ -1345,7 +1486,7 @@
 
             if (!rut && !ficha) {
                 mostrarMensaje('⚠️ Ingrese un RUT o un N° de Ficha para consultar.', 'warning');
-                inputRut.focus();
+                focusRutInput();
                 return;
             }
 
@@ -1554,7 +1695,7 @@
             });
         });
 
-// Función para formatear el input de RUT en tiempo real
+        // Función para formatear el input de RUT en tiempo real
         function formatRUTInput(value, event) {
             if (!value) return '';
 
@@ -1621,7 +1762,7 @@
             return resultado;
         }
 
-// Función para calcular nueva posición del cursor después del formateo
+        // Función para calcular nueva posición del cursor después del formateo
         function calcularNuevaPosicionCursor(oldPos, oldLength, oldValue, newValue) {
             if (oldPos <= 0) return 0;
 
@@ -1826,7 +1967,6 @@
         });
 
         // Número de Ficha (sistema)
-        // En tu archivo JavaScript, en la función para el botón Número de Ficha
         btnNumeroFicha.on("click", function (e) {
             if ($(this).hasClass("disabled")) {
                 e.preventDefault();
@@ -1937,6 +2077,11 @@
             e.preventDefault();
             window.open($(this).attr("href"), '_blank');
         });
+
+        // ✅ INICIALIZACIÓN: Auto-focus con posición correcta del cursor
+        setTimeout(() => {
+            focusRutInput();
+        }, 300);
     });
 </script>
 

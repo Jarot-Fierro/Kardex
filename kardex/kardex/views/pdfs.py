@@ -48,12 +48,11 @@ def pdf_index(request, ficha_id=None, paciente_id=None):
     rut_paciente = getattr(paciente, 'rut', '') or ''
     numero_rut = obtener_numero_rut(rut_paciente)
     # Fallbacks por si no hay RUT válido
-    if not rut_paciente:
+    if not numero_rut:
         # Usar el código interno de paciente si existe, de lo contrario el número de ficha del sistema
-        rut_paciente = (
+        numero_rut = (
                 getattr(paciente, 'codigo', '') or str(getattr(ficha, 'numero_ficha_sistema', '') or '')).strip()
-    codigo_barras_base64 = generar_barcode_base64(rut_paciente)
-    print(rut_paciente)
+    codigo_barras_base64 = generar_barcode_base64(numero_rut)
 
     context = {
         'paciente': paciente,
@@ -98,11 +97,12 @@ def pdf_stickers(request, ficha_id=None, paciente_id=None):
 
     # Generar código de barras basado en el número de RUT del paciente
     rut_paciente = getattr(paciente, 'rut', '') or ''
+    numero_rut = obtener_numero_rut(rut_paciente)
     # Fallbacks por si no hay RUT válido
-    if not rut_paciente:
-        rut_paciente = (
-                    getattr(paciente, 'codigo', '') or str(getattr(ficha, 'numero_ficha_sistema', '') or '')).strip()
-    codigo_barras_base64 = generar_barcode_base64(rut_paciente)
+    if not numero_rut:
+        numero_rut = (
+                getattr(paciente, 'codigo', '') or str(getattr(ficha, 'numero_ficha_sistema', '') or '')).strip()
+    codigo_barras_base64 = generar_barcode_base64(numero_rut)
 
     context = {
         'paciente': paciente,
