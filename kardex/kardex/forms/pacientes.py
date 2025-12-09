@@ -415,8 +415,6 @@ class FormPacienteSinRut(forms.ModelForm):
 
     def clean_direccion(self):
         value = self.cleaned_data.get('direccion', '')
-        if value:
-            validate_spaces(value)
         return value
 
     def clean_ocupacion(self):

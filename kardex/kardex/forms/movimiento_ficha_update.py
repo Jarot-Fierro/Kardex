@@ -8,6 +8,7 @@ class FormSalidaFicha(forms.ModelForm):
     """
     Formulario para registro de salida de fichas con carga dinámica de datos del paciente.
     """
+
     busqueda = forms.CharField(
         label='Buscar por RUT o Número de Ficha',
         widget=forms.TextInput(attrs={
@@ -55,9 +56,13 @@ class FormSalidaFicha(forms.ModelForm):
         required=False
     )
 
+    # -------------------------------------------------
+    # Campos filtrables por establecimiento
+    # -------------------------------------------------
+
     servicio_clinico_envio = forms.ModelChoiceField(
         label='Servicio Clínico de Envío',
-        queryset=ServicioClinico.objects.filter(status='ACTIVE'),
+        queryset=ServicioClinico.objects.none(),
         widget=forms.Select(attrs={
             'class': 'form-control select2',
             'id': 'id_servicio_clinico_envio'
@@ -67,7 +72,7 @@ class FormSalidaFicha(forms.ModelForm):
 
     servicio_clinico_recepcion = forms.ModelChoiceField(
         label='Servicio Clínico de Recepción',
-        queryset=ServicioClinico.objects.filter(status='ACTIVE'),
+        queryset=ServicioClinico.objects.none(),
         widget=forms.Select(attrs={
             'class': 'form-control select2',
             'id': 'id_servicio_clinico_recepcion'
@@ -77,7 +82,7 @@ class FormSalidaFicha(forms.ModelForm):
 
     profesional_envio = forms.ModelChoiceField(
         label='Profesional Responsable',
-        queryset=Profesional.objects.filter(status='ACTIVE'),
+        queryset=Profesional.objects.none(),
         widget=forms.Select(attrs={
             'class': 'form-control select2',
             'id': 'id_profesional_envio'
@@ -95,14 +100,38 @@ class FormSalidaFicha(forms.ModelForm):
         required=False
     )
 
+    # -------------------------------------------------
+    # Constructor: filtrado por usuario
+    # -------------------------------------------------
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        # Establecer valores iniciales si es necesario
-        if self.user and not self.initial:
-            # Podrías establecer valores por defecto basados en el usuario
-            pass
+        if not self.user:
+            return
+
+        establecimiento = self.user.establecimiento
+
+        # Filtrar todos los selects por establecimiento
+        self.fields['servicio_clinico_envio'].queryset = ServicioClinico.objects.filter(
+            status='ACTIVE',
+            establecimiento=establecimiento
+        )
+
+        self.fields['servicio_clinico_recepcion'].queryset = ServicioClinico.objects.filter(
+            status='ACTIVE',
+            establecimiento=establecimiento
+        )
+
+        self.fields['profesional_envio'].queryset = Profesional.objects.filter(
+            status='ACTIVE',
+            establecimiento=establecimiento
+        )
+
+    # -------------------------------------------------
+    # Validaciones
+    # -------------------------------------------------
 
     def clean(self):
         cleaned_data = super().clean()
@@ -126,6 +155,10 @@ class FormSalidaFicha(forms.ModelForm):
             )
 
         return cleaned_data
+
+    # -------------------------------------------------
+    # Guardado
+    # -------------------------------------------------
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -163,3 +196,4 @@ class FormSalidaFicha(forms.ModelForm):
             'profesional_envio',
             'observacion_envio',
         ]
+

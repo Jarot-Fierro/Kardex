@@ -24,11 +24,9 @@ class ComunaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
 
     permission_view = 'kardex.view_comuna'
     permission_update = 'kardex.change_comuna'
-    permission_delete = 'kardex.delete_comuna'
 
     url_detail = 'kardex:comuna_detail'
     url_update = 'kardex:comuna_update'
-    url_delete = 'kardex:comuna_delete'
 
     def render_row(self, obj):
         return {
@@ -131,32 +129,6 @@ class ComunaUpdateView(PermissionRequiredMixin, UpdateView):
         context['action'] = 'edit'
         context['module_name'] = MODULE_NAME
         return context
-
-
-class ComunaDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Comuna
-    template_name = 'kardex/comuna/confirm_delete.html'
-    success_url = reverse_lazy('kardex:comuna_list')
-    permission_required = 'kardex:delete_comuna'
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Comuna eliminada correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar la comuna: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Comuna'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
-
 
 class ComunaHistoryListView(GenericHistoryListView):
     base_model = Comuna

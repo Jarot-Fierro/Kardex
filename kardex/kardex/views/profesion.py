@@ -24,11 +24,9 @@ class ProfesionListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
 
     permission_view = 'kardex.view_profesion'
     permission_update = 'kardex.change_profesion'
-    permission_delete = 'kardex.delete_profesion'
 
     url_detail = 'kardex:profesion_detail'
     url_update = 'kardex:profesion_update'
-    url_delete = 'kardex:profesion_delete'
 
     def render_row(self, obj):
         return {
@@ -131,32 +129,6 @@ class ProfesionUpdateView(PermissionRequiredMixin, UpdateView):
         context['module_name'] = MODULE_NAME
         return context
 
-
-class ProfesionDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Profesion
-    template_name = 'kardex/profesion/confirm_delete.html'
-    success_url = reverse_lazy('kardex:profesion_list')
-
-    permission_required = 'kardex.delete_profesion'
-    raise_exception = True
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Profesión eliminada correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar la profesión: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Profesión'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class ProfesionHistoryListView(GenericHistoryListView):

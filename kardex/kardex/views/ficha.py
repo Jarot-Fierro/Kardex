@@ -39,7 +39,6 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
 
     url_detail = 'kardex:ficha_detail'
     url_update = 'kardex:ficha_update'
-    url_delete = 'kardex:ficha_delete'
     export_report_url_name = 'reports:export_ficha'
 
     def render_row(self, obj):
@@ -378,34 +377,6 @@ class FichaTarjetaView(PermissionRequiredMixin, UpdateView):
 
         messages.error(request, 'Hay errores en el formulario de ficha')
         return self.form_invalid(form)
-
-
-class FichaDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Ficha
-    template_name = 'kardex/ficha/confirm_delete.html'
-    success_url = reverse_lazy('kardex:ficha_list')
-
-    permission_required = 'kardex.delete_ficha'
-    raise_exception = True
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Ficha eliminada correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar la ficha: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Ficha'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
-
 
 class PacientePasivadosListView(FichaListView):
     export_report_url_name = 'reports:export_ficha_pasivada'

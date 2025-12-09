@@ -21,4 +21,4 @@ class PacienteViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         # Se deja que SearchFilter maneje el parámetro ?search=...
         # Solo definimos un orden por defecto estable.
-        return Paciente.objects.all().order_by('id')
+        return Paciente.objects.all().order_by('-id')

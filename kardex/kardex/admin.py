@@ -9,7 +9,10 @@ from .models import *
 class PaisAdmin(SimpleHistoryAdmin):
     list_display = ("id", "nombre", "cod_pais")
     search_fields = ("nombre", "cod_pais")
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === COMUNA ===
@@ -18,7 +21,10 @@ class ComunaAdmin(SimpleHistoryAdmin):
     list_display = ("id", "nombre", "codigo", "pais")
     search_fields = ("nombre", "codigo", "pais__nombre")
     autocomplete_fields = ("pais",)
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === ESTABLECIMIENTO ===
@@ -27,7 +33,10 @@ class EstablecimientoAdmin(SimpleHistoryAdmin):
     list_display = ("id", "nombre", "direccion", "telefono", "comuna")
     search_fields = ("nombre", "direccion", "comuna__nombre")
     autocomplete_fields = ("comuna",)
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === PREVISIÓN ===
@@ -35,7 +44,10 @@ class EstablecimientoAdmin(SimpleHistoryAdmin):
 class PrevisionAdmin(SimpleHistoryAdmin):
     list_display = ("id", "nombre")
     search_fields = ("nombre",)
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === PROFESIÓN ===
@@ -43,7 +55,10 @@ class PrevisionAdmin(SimpleHistoryAdmin):
 class ProfesionAdmin(SimpleHistoryAdmin):
     list_display = ("id", "nombre")
     search_fields = ("nombre",)
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === SERVICIO CLÍNICO ===
@@ -52,7 +67,10 @@ class ServicioClinicoAdmin(SimpleHistoryAdmin):
     list_display = ("id", "nombre", "tiempo_horas", "correo_jefe", "establecimiento")
     search_fields = ("nombre", "establecimiento__nombre")
     autocomplete_fields = ("establecimiento",)
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === PROFESIONAL ===
@@ -61,7 +79,10 @@ class ProfesionalAdmin(SimpleHistoryAdmin):
     list_display = ("id", "rut", "nombres", "correo", "telefono", "profesion", "establecimiento")
     search_fields = ("rut", "nombres", "correo", "profesion__nombre", "establecimiento__nombre")
     autocomplete_fields = ("profesion", "establecimiento")
-    ordering = ("nombres",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === USUARIO ANTERIOR ===
@@ -70,7 +91,10 @@ class UsuarioAnteriorAdmin(SimpleHistoryAdmin):
     list_display = ("rut", "nombre", "correo", "establecimiento")
     search_fields = ("rut", "nombre", "correo", "establecimiento__nombre")
     autocomplete_fields = ("establecimiento",)
-    ordering = ("nombre",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === PACIENTE ===
@@ -98,7 +122,10 @@ class PacienteAdmin(SimpleHistoryAdmin):
     )
     list_filter = ("fallecido", "sexo", "estado_civil", "extranjero", "recien_nacido")
     autocomplete_fields = ("comuna", "prevision", "usuario", "usuario_anterior")
-    ordering = ("nombre", "apellido_paterno")
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === FICHA ===
@@ -107,10 +134,11 @@ class FichaAdmin(SimpleHistoryAdmin):
     list_display = (
         "id",
         "numero_ficha_sistema",
+        "numero_ficha_tarjeta",
         "paciente",
         "establecimiento",
         "pasivado",
-        "fecha_creacion_anterior",
+        "sector",
     )
     search_fields = (
         "numero_ficha_sistema",
@@ -118,10 +146,14 @@ class FichaAdmin(SimpleHistoryAdmin):
         "paciente__rut",
         "paciente__nombre",
         "paciente__apellido_paterno",
+        'establecimiento__nombre'
     )
     list_filter = ("pasivado", "establecimiento")
     autocomplete_fields = ("paciente", "establecimiento", "usuario")
-    ordering = ("-id",)
+    ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === MOVIMIENTO FICHA ===
@@ -156,3 +188,6 @@ class MovimientoFichaAdmin(SimpleHistoryAdmin):
         "profesional_recepcion",
     )
     ordering = ("-updated_at",)
+
+    def has_delete_permission(self, request, obj=None):
+        return False

@@ -29,11 +29,9 @@ class SectorListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
 
     permission_view = 'kardex.view_sector'
     permission_update = 'kardex.change_sector'
-    permission_delete = 'kardex.delete_sector'
 
     url_detail = 'kardex:sector_detail'
     url_update = 'kardex:sector_update'
-    url_delete = 'kardex:sector_delete'
 
     def render_row(self, obj):
         return {
@@ -138,30 +136,6 @@ class SectorUpdateView(PermissionRequiredMixin, UpdateView):
         context['module_name'] = MODULE_NAME
         return context
 
-
-class SectorDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Sector
-    template_name = 'kardex/sector/confirm_delete.html'
-    success_url = reverse_lazy('kardex:sector_list')
-    permission_required = 'kardex:delete_sector'
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Sector eliminado correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar el sector: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Sector'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class SectorHistoryListView(GenericHistoryListView):

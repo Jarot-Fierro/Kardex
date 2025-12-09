@@ -410,6 +410,16 @@ class PacienteForm(forms.Form):
             'id': 'comuna_paciente'
         })
     )
+    observacion = forms.CharField(
+        label='Observación',
+        widget=forms.Textarea(attrs={
+            'id': 'observacion_paciente',
+            'class': 'form-control',
+            'placeholder': 'Ingrese una observación (opcional)',
+            'rows': 3
+        }),
+        required=False
+    )
 
     # =============================
     # 🔹 MÉTODOS DE VALIDACIÓN

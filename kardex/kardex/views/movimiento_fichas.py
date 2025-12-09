@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView, FormView
 from django.views.generic import TemplateView
 
 from kardex.forms.movimiento_ficha import FormEntradaFicha, FiltroSalidaFichaForm, MovimientoFichaForm
@@ -28,7 +28,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
                          'Estado']
     datatable_order_fields = ['id', None, 'ficha__paciente__rut', 'ficha__numero_ficha_sistema',
                               'ficha__paciente__apellido_paterno',
-                              'servicio_clinico_envio__nombre', 'usuario_envio__username', 'fecha_envio',
+                              'servicio_clinico_envio__nombre', 'profesional_envio__username', 'fecha_envio',
                               'estado_recepcion']
     datatable_search_fields = [
         'ficha__paciente__rut__icontains',
@@ -37,7 +37,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
         'ficha__paciente__apellido_paterno__icontains',
         'ficha__paciente__apellido_materno__icontains',
         'servicio_clinico_envio__nombre__icontains',
-        'usuario_envio__username__icontains',
+        'profesional_envio__nombres__icontains',
     ]
 
     def get(self, request, *args, **kwargs):
@@ -122,7 +122,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             'title': 'Recepción de Fichas',
             'list_url': reverse_lazy('kardex:recepcion_ficha'),
             'datatable_enabled': True,
-            'datatable_order': [[0, 'asc']],
+            'datatable_order': [[0, 'desc']],
             'columns': self.datatable_columns,
             'form': form,
             'filter_form': filter_form,
@@ -137,7 +137,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
         ).select_related(
             'ficha__paciente',
             'servicio_clinico_envio',
-            'usuario_envio'
+            'profesional_envio'
         )
 
         # Filtros desde filter_form (análogos a salida, pero por recepción)
@@ -176,7 +176,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
             'Ficha': getattr(obj.ficha, 'numero_ficha_sistema', '') if obj.ficha else '',
             'Nombre completo': nombre.strip(),
             'Servicio Clínico': getattr(obj.servicio_clinico_envio, 'nombre', ''),
-            'Profesional': getattr(obj.usuario_envio, 'username', ''),
+            'Profesional': getattr(obj.profesional_envio, 'nombres', ''),
             'Fecha de salida': obj.fecha_envio.strftime('%Y-%m-%d %H:%M') if obj.fecha_envio else '',
             'Estado': obj.estado_recepcion,
         }
@@ -262,7 +262,7 @@ class SalidaFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableMixi
             'filter_form': filter_form,
             'list_url': reverse_lazy('kardex:salida_ficha'),
             'datatable_enabled': True,
-            'datatable_order': [[0, 'asc']],
+            'datatable_order': [[0, 'desc']],
             'columns': self.datatable_columns,
         })
         return context
@@ -342,7 +342,7 @@ class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
                 mov = MovimientoFicha.objects.filter(
                     ficha=ficha,
                     fecha_envio__isnull=False
-                ).order_by('-fecha_envio').first()
+                ).order_by('-updated_at').first()
             except Exception:
                 mov = None
 
@@ -392,7 +392,19 @@ class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateVie
 class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     template_name = 'kardex/movimiento_ficha/list.html'
     model = MovimientoFicha
-    datatable_columns = ['ID', 'Ficha', 'Servicio Clínico', 'Estado', 'Fecha Movimiento']
+    datatable_columns = [
+        'ID',
+        'RUT',
+        'Ficha',
+        'Nombre completo',
+        'Servicio Clínico Envío',
+        'Servicio Clínico Recepción',
+        'Profesional Envío',
+        'Observación Envío',
+        'Fecha/hora Envío',
+        'Estado Envío',
+    ]
+
     datatable_order_fields = ['id', None, 'ficha__numero_ficha_sistema', 'servicio_clinico_envio__nombre',
                               'estado_envio',
                               'fecha_envio']
@@ -405,11 +417,9 @@ class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateV
 
     permission_view = 'kardex.view_movimiento_ficha'
     permission_update = 'kardex.change_movimiento_ficha'
-    permission_delete = 'kardex.delete_movimiento_ficha'
 
     url_detail = 'kardex:movimiento_ficha_detail'
     url_update = 'kardex:movimiento_ficha_update'
-    url_delete = 'kardex:movimiento_ficha_delete'
 
     def render_row(self, obj):
         pac = obj.ficha.paciente if obj.ficha else None
@@ -421,7 +431,7 @@ class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateV
             'Nombre completo': nombre.strip(),
             'Servicio Clínico Envío': getattr(obj.servicio_clinico_envio, 'nombre', ''),
             'Servicio Clínico Recepción': getattr(obj.servicio_clinico_recepcion, 'nombre', ''),
-            'Profesional Envío': getattr(obj.profesional_envio, 'nombre_completo', '') if obj.profesional_envio else '',
+            'Profesional Envío': getattr(obj.profesional_envio, 'nombres', '') if obj.profesional_envio else '',
             'Observación Envío': obj.observacion_envio or '',
             'Fecha/hora Envío': obj.fecha_envio.strftime('%Y-%m-%d %H:%M') if obj.fecha_envio else '',
             'Estado Envío': obj.estado_envio,
@@ -439,7 +449,7 @@ class MovimientoFichaListView(PermissionRequiredMixin, DataTableMixin, TemplateV
             'list_url': reverse_lazy('kardex:movimiento_ficha_list'),
             'create_url': reverse_lazy('kardex:movimiento_ficha_create'),
             'datatable_enabled': True,
-            'datatable_order': [[0, 'asc']],
+            'datatable_order': [[0, 'desc']],
             'datatable_page_length': 100,
             'columns': self.datatable_columns,
         })
@@ -479,69 +489,50 @@ class MovimientoFichaCreateView(PermissionRequiredMixin, CreateView):
         return context
 
 
-class MovimientoFichaUpdateView(PermissionRequiredMixin, UpdateView):
-    template_name = 'kardex/movimiento_ficha/form.html'
+class MovimientoFichaUpdateView(UpdateView, FormView):
+    template_name = 'kardex/movimiento_ficha/form_update.html'
     model = MovimientoFicha
-    fields = '__all__'
+    form_class = MovimientoFichaForm
     success_url = reverse_lazy('kardex:movimiento_ficha_list')
-    permission_required = 'kardex:change_movimientoficha'
-    raise_exception = True
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
+
+        if self.object.estado_recepcion == 'RECIBIDO':
+            messages.error(request, 'Este movimiento ya fue recepcionado.')
+            return redirect(self.success_url)
+
         return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if form.is_valid():
-            obj = form.save()
-            if is_ajax:
-                from django.http import JsonResponse
-                return JsonResponse({'success': True, 'message': 'Movimiento de ficha actualizado correctamente',
-                                     'redirect_url': str(self.success_url)})
-
-            messages.success(request, 'Movimiento de ficha actualizado correctamente')
-            return redirect(self.success_url)
-        if is_ajax:
-            from django.http import JsonResponse
-            return JsonResponse({'success': False, 'error': 'Hay errores en el formulario'}, status=400)
-
-        messages.error(request, 'Hay errores en el formulario')
-        return self.form_invalid(form)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Editar Movimiento de Ficha'
-        context['list_url'] = self.success_url
-        context['action'] = 'edit'
-        context['module_name'] = MODULE_NAME
+
+        context.update({
+            'title': 'Editar Movimiento de Ficha',
+            'list_url': self.success_url,
+            'action': 'edit',
+            'module_name': MODULE_NAME,
+        })
+
         return context
 
-
-class MovimientoFichaDeleteView(PermissionRequiredMixin, DeleteView):
-    model = MovimientoFicha
-    template_name = 'kardex/movimiento_ficha/confirm_delete.html'
-    success_url = reverse_lazy('kardex:movimiento_ficha_list')
-    permission_required = 'kardex:delete_movimientoficha'
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Movimiento de ficha eliminado correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar el movimiento de ficha: {e}')
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        user = self.request.user
+        # Usuario que recepciona
+        if hasattr(obj, 'usuario_recepcion'):
+            obj.usuario_recepcion = user
+        # Servicio clínico de recepción desde el usuario, si existe
+        if hasattr(user, 'servicio_clinico') and user.servicio_clinico:
+            obj.servicio_clinico_recepcion = user.servicio_clinico
+        # Fecha de recepción si no viene desde el formulario
+        if not getattr(obj, 'fecha_recepcion', None):
+            obj.fecha_recepcion = now()
+        # Estado de recepción pasa a RECIBIDO
+        obj.estado_recepcion = 'RECIBIDO'
+        obj.save()
+        messages.success(self.request, 'Movimiento actualizado y recepcionado correctamente.')
         return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Movimiento de Ficha'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class MovimientoFichaTransitoListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
@@ -575,11 +566,9 @@ class MovimientoFichaTransitoListView(PermissionRequiredMixin, DataTableMixin, T
 
     permission_view = 'kardex.view_movimiento_ficha'
     permission_update = 'kardex.change_movimiento_ficha'
-    permission_delete = 'kardex.delete_movimiento_ficha'
 
     url_detail = 'kardex:movimiento_ficha_detail'
     url_update = 'kardex:movimiento_ficha_update'
-    url_delete = 'kardex:movimiento_ficha_delete'
 
     def render_row(self, obj):
         pac = obj.ficha.paciente if obj.ficha else None

@@ -22,7 +22,7 @@ class FormServicioClinico(forms.ModelForm):
             'placeholder': 'correo@ejemplo.cl',
             'id': 'correo_jefe_servicioclinico'
         }),
-        required=True
+        required=False
     )
 
     telefono = forms.CharField(
@@ -32,7 +32,7 @@ class FormServicioClinico(forms.ModelForm):
             'placeholder': '+56912345678',
             'id': 'telefono_servicioclinico'
         }),
-        required=True
+        required=False
     )
 
     establecimiento = forms.ModelChoiceField(

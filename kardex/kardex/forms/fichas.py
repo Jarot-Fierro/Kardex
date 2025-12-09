@@ -32,7 +32,7 @@ class FormFicha(forms.ModelForm):
             'id': 'establecimiento_numero_ficha_sistema',
             'class': 'form-control select2'
         }),
-        required=False
+        required=True
     )
     paciente = forms.ModelChoiceField(
         label='Paciente',
@@ -42,18 +42,7 @@ class FormFicha(forms.ModelForm):
             'id': 'paciente-select',
             'class': 'form-control'
         }),
-        required=False
-    )
-
-    profesional = forms.ModelChoiceField(
-        label='Profesional',
-        empty_label='Seleccione un Profesional',
-        queryset=Profesional.objects.filter(status='ACTIVE').all(),
-        widget=forms.Select(attrs={
-            'id': 'profesional_numero_ficha_sistema',
-            'class': 'form-control select2'
-        }),
-        required=False
+        required=True
     )
 
     sector = forms.ModelChoiceField(
@@ -72,10 +61,9 @@ class FormFicha(forms.ModelForm):
         fields = [
             'numero_ficha_sistema',
             'paciente',
-            'observacion',
             'establecimiento',
-            'profesional',
             'sector',
+            'observacion',
         ]
 
 

@@ -26,23 +26,35 @@ class UsuarioPersonalizadoChangeForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'ejemplo@correo.com'}),
             'username': forms.TextInput(attrs={'class': 'form-control id_rut', 'placeholder': '12.345.678-9'}),
-            'establecimiento': forms.Select(attrs={'id': 'usuario_establecimiento', 'class': 'form-control select2'}),
+            'establecimiento': forms.Select(
+                attrs={'id': 'usuario_establecimiento', 'class': 'form-control select2'}
+            ),
+            'tipo_perfil': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # Limitar establecimientos activos únicamente
         self.fields['establecimiento'].queryset = Establecimiento.objects.filter(status="ACTIVE")
 
+        # Forzar todos los campos como obligatorios
+        for field in self.fields.values():
+            field.required = True
+
 
 class UsuarioPersonalizadoCreationForm(forms.ModelForm):
+
     password1 = forms.CharField(
         label='Contraseña',
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'})
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'}),
+        required=True
     )
+
     password2 = forms.CharField(
         label='Confirmar contraseña',
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmar contraseña'})
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmar contraseña'}),
+        required=True
     )
 
     class Meta:
@@ -67,26 +79,13 @@ class UsuarioPersonalizadoCreationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Limitar establecimientos activos únicamente
-        if 'establecimiento' in self.fields:
-            self.fields['establecimiento'].queryset = Establecimiento.objects.filter(status="ACTIVE")
 
-    def clean(self):
-        cleaned_data = super().clean()
-        p1 = cleaned_data.get('password1')
-        p2 = cleaned_data.get('password2')
-        if p1 and p2 and p1 != p2:
-            self.add_error('password2', 'Las contraseñas no coinciden.')
-        return cleaned_data
+        # Limitar establecimientos activos
+        self.fields['establecimiento'].queryset = Establecimiento.objects.filter(status="ACTIVE")
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        password = self.cleaned_data.get('password1')
-        if password:
-            user.set_password(password)
-        if commit:
-            user.save()
-        return user
+        # Forzar todos los campos obligatorios (incluye password1 y password2)
+        for field in self.fields.values():
+            field.required = True
 
 
 class CustomLoginForm(forms.Form):

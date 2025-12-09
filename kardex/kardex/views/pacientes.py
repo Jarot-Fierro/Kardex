@@ -45,15 +45,12 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     ]
 
     permission_view = 'kardex.view_paciente'
-    permission_update = 'kardex.change_paciente'
-    permission_delete = 'kardex.delete_paciente'
 
     permission_required = 'kardex.view_paciente'
     raise_exception = True
 
     url_detail = 'kardex:paciente_detail'
     url_update = 'kardex:paciente_update'
-    url_delete = 'kardex:paciente_delete'
 
     def get_base_queryset(self):
         # Vista libre: no limitar por establecimiento, mostrar todos los pacientes
@@ -81,9 +78,9 @@ class PacienteListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
         context.update({
             'title': 'Listado de Pacientes',
             'list_url': reverse_lazy('kardex:paciente_list'),
-            'create_url': reverse_lazy('kardex:paciente_create'),
+            'create_url': reverse_lazy('kardex:paciente_query'),
             'datatable_enabled': True,
-            'datatable_order': [[0, 'asc']],
+            'datatable_order': [[0, 'desc']],
             'datatable_page_length': 100,
             'columns': self.datatable_columns,
             'export_csv_url': reverse_lazy('reports:export_paciente_csv'),
@@ -165,28 +162,6 @@ class PacienteActualizarRut(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class PacienteDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Paciente
-    template_name = 'kardex/paciente/confirm_delete.html'
-    success_url = reverse_lazy('kardex:paciente_list')
-    permission_required = 'kardex.delete_paciente'
-    raise_exception = True
-
-    def post(self, request, *args, **kwargs):
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Paciente eliminado correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar el paciente: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Paciente'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class PacienteRecienNacidoListView(PacienteListView):
@@ -502,6 +477,7 @@ class PacienteQueryView(PermissionRequiredMixin, FormView):
                 establecimiento = None
 
             sector = datos.get('sector')
+            observacion = datos.get('observacion')  # Obtener el campo de observación del formulario
             if establecimiento:
                 ficha = Ficha.objects.filter(paciente=paciente, establecimiento=establecimiento).first()
                 if not ficha:
@@ -509,6 +485,9 @@ class PacienteQueryView(PermissionRequiredMixin, FormView):
                 # Actualizar sector si viene
                 if sector:
                     ficha.sector = sector
+                # Actualizar observación si viene (ahora se guarda en Ficha)
+                if observacion:
+                    ficha.observacion = observacion
                 ficha.save()
                 numero_ficha_sistema = ficha.numero_ficha_sistema
 

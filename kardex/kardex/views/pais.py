@@ -24,11 +24,9 @@ class PaisListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
 
     permission_view = 'kardex.view_pais'
     permission_update = 'kardex.change_pais'
-    permission_delete = 'kardex.delete_pais'
 
     url_detail = 'kardex:pais_detail'
     url_update = 'kardex:pais_update'
-    url_delete = 'kardex:pais_delete'
 
     def render_row(self, obj):
         return {
@@ -134,30 +132,6 @@ class PaisUpdateView(PermissionRequiredMixin, UpdateView):
         return context
 
 
-class PaisDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Pais
-    template_name = 'kardex/pais/confirm_delete.html'
-    success_url = reverse_lazy('kardex:pais_list')
-    permission_required = 'kardex:delete_pais'
-    raise_exception = True
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'País eliminado correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar el país: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar País'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class PaisHistoryListView(GenericHistoryListView):

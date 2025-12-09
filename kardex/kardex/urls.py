@@ -23,7 +23,6 @@ urlpatterns = [
     path('paises/', PaisListView.as_view(), name='pais_list'),
     path('paises/crear/', PaisCreateView.as_view(), name='pais_create'),
     path('paises/<int:pk>/editar/', PaisUpdateView.as_view(), name='pais_update'),
-    path('paises/<int:pk>/eliminar/', PaisDeleteView.as_view(), name='pais_delete'),
     path('paises/<int:pk>/detalle/', PaisDetailView.as_view(), name='pais_detail'),
     path('paises/historial/', PaisHistoryListView.as_view(), name='pais_history'),
 
@@ -31,7 +30,6 @@ urlpatterns = [
     path('comunas/', ComunaListView.as_view(), name='comuna_list'),
     path('comunas/crear/', ComunaCreateView.as_view(), name='comuna_create'),
     path('comunas/<int:pk>/editar/', ComunaUpdateView.as_view(), name='comuna_update'),
-    path('comunas/<int:pk>/eliminar/', ComunaDeleteView.as_view(), name='comuna_delete'),
     path('comunas/<int:pk>/detalle/', ComunaDetailView.as_view(), name='comuna_detail'),
     path('comunas/historial/', ComunaHistoryListView.as_view(), name='comuna_history'),
 
@@ -39,7 +37,6 @@ urlpatterns = [
     path('establecimientos/', EstablecimientoListView.as_view(), name='establecimiento_list'),
     path('establecimientos/crear/', EstablecimientoCreateView.as_view(), name='establecimiento_create'),
     path('establecimientos/<int:pk>/editar/', EstablecimientoUpdateView.as_view(), name='establecimiento_update'),
-    path('establecimientos/<int:pk>/eliminar/', EstablecimientoDeleteView.as_view(), name='establecimiento_delete'),
     path('establecimientos/<int:pk>/detalle/', EstablecimientoDetailView.as_view(), name='establecimiento_detail'),
     path('establecimientos/historial/', EstablecimientoHistoryListView.as_view(), name='establecimiento_history'),
 
@@ -47,7 +44,6 @@ urlpatterns = [
     path('profesiones/', ProfesionListView.as_view(), name='profesion_list'),
     path('profesiones/crear/', ProfesionCreateView.as_view(), name='profesion_create'),
     path('profesiones/<int:pk>/editar/', ProfesionUpdateView.as_view(), name='profesion_update'),
-    path('profesiones/<int:pk>/eliminar/', ProfesionDeleteView.as_view(), name='profesion_delete'),
     path('profesiones/<int:pk>/detalle/', ProfesionDetailView.as_view(), name='profesion_detail'),
     path('profesiones/historial/', ProfesionalHistoryListView.as_view(), name='profesion_history'),
 
@@ -55,7 +51,6 @@ urlpatterns = [
     path('profesionales/', ProfesionalListView.as_view(), name='profesional_list'),
     path('profesionales/crear/', ProfesionalCreateView.as_view(), name='profesional_create'),
     path('profesionales/<int:pk>/editar/', ProfesionalUpdateView.as_view(), name='profesional_update'),
-    path('profesionales/<int:pk>/eliminar/', ProfesionalDeleteView.as_view(), name='profesional_delete'),
     path('profesionales/<int:pk>/detalle/', ProfesionalDetailView.as_view(), name='profesional_detail'),
     path('profesionales/history/', ProfesionalHistoryListView.as_view(), name='profesional_history'),
 
@@ -63,7 +58,6 @@ urlpatterns = [
     path('prevision/', PrevisionListView.as_view(), name='prevision_list'),
     path('prevision/crear/', PrevisionCreateView.as_view(), name='prevision_create'),
     path('prevision/<int:pk>/editar/', PrevisionUpdateView.as_view(), name='prevision_update'),
-    path('prevision/<int:pk>/eliminar/', PrevisionDeleteView.as_view(), name='prevision_delete'),
     path('prevision/<int:pk>/detalle/', PrevisionDetailView.as_view(), name='prevision_detail'),
     path('prevision/historial', PrevisionHistoryListView.as_view(), name='prevision_history'),
 
@@ -75,7 +69,6 @@ urlpatterns = [
     path('pacientes/fallecidos/', PacienteFallecidoListView.as_view(), name='paciente_fallecido_list'),
     path('pacientes/por-fecha/', PacientePorFechaListView.as_view(), name='paciente_por_fecha_list'),
     path('pacientes/por-fecha/form/', PacienteFechaFormView.as_view(), name='paciente_fecha_form'),
-    path('pacientes/<int:pk>/eliminar/', PacienteDeleteView.as_view(), name='paciente_delete'),
     path('pacientes/<int:pk>/detalle/', PacienteDetailView.as_view(), name='paciente_detail'),
     path('consulta-pacientes/', PacienteQueryView.as_view(), name='paciente_query'),
     path('pacientes/<int:pk>/actualizar-rut/', PacienteActualizarRut.as_view(), name='paciente_actualizar_rut'),
@@ -87,7 +80,6 @@ urlpatterns = [
     path('fichas/', FichaListView.as_view(), name='ficha_list'),
     path('fichas/crear/', FichaCreateView.as_view(), name='ficha_create'),
     path('fichas/<int:pk>/editar/', FichaUpdateView.as_view(), name='ficha_update'),
-    path('fichas/<int:pk>/eliminar/', FichaDeleteView.as_view(), name='ficha_delete'),
     path('fichas/<int:pk>/detalle/', FichaDetailView.as_view(), name='ficha_detail'),
     path('fichas/<int:pk>/toggle-pasivar/', TogglePasivadoFichaView.as_view(), name='ficha_toggle_pasivar'),
     path('fichas/<int:pk>/tarjeta/', FichaTarjetaView.as_view(), name='ficha_tarjeta'),
@@ -98,7 +90,6 @@ urlpatterns = [
     path('movimientos-ficha/', MovimientoFichaListView.as_view(), name='movimiento_ficha_list'),
     path('movimientos-ficha/crear/', MovimientoFichaCreateView.as_view(), name='movimiento_ficha_create'),
     path('movimientos-ficha/<int:pk>/editar/', MovimientoFichaUpdateView.as_view(), name='movimiento_ficha_update'),
-    path('movimientos-ficha/<int:pk>/eliminar/', MovimientoFichaDeleteView.as_view(), name='movimiento_ficha_delete'),
     path('movimientos-ficha/<int:pk>/detalle/', MovimientoFichaDetailView.as_view(), name='movimiento_ficha_detail'),
     path('movimientos-ficha/historial/', MovimientosFichasHistoryListView.as_view(), name='movimiento_ficha_history'),
 
@@ -106,7 +97,6 @@ urlpatterns = [
     path('servicios-clinicos/', ServicioClinicoListView.as_view(), name='servicio_clinico_list'),
     path('servicios-clinicos/crear/', ServicioClinicoCreateView.as_view(), name='servicio_clinico_create'),
     path('servicios-clinicos/<int:pk>/editar/', ServicioClinicoUpdateView.as_view(), name='servicio_clinico_update'),
-    path('servicios-clinicos/<int:pk>/eliminar/', ServicioClinicoDeleteView.as_view(), name='servicio_clinico_delete'),
     path('servicios-clinicos/<int:pk>/detalle/', ServicioClinicoDetailView.as_view(), name='servicio_clinico_detail'),
     path('servicios-clinicos/historial/', ServicioClinicoHistoryListView.as_view(), name='servicio_clinico_history'),
 
@@ -115,7 +105,6 @@ urlpatterns = [
     path('sectores/nuevo/', SectorCreateView.as_view(), name='sector_create'),
     path('sectores/<int:pk>/', SectorDetailView.as_view(), name='sector_detail'),
     path('sectores/<int:pk>/editar/', SectorUpdateView.as_view(), name='sector_update'),
-    path('sectores/<int:pk>/eliminar/', SectorDeleteView.as_view(), name='sector_delete'),
     path('sectores/historial/', SectorHistoryListView.as_view(), name='sector_history'),
 
     path('pdf/', pdf_index, name='pdf_prueba'),

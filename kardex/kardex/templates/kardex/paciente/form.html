@@ -446,7 +446,7 @@
             </div>
             <div class="card-body">
                 <div class="row g-2">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label class="form-label" for="{{ form.prevision.id_for_label }}">Previsión</label>
                         {{ form.prevision }}
                         {% if form.prevision.errors %}
@@ -454,11 +454,18 @@
                         {% endif %}
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label class="form-label" for="{{ form.sector.id_for_label }}">Sector</label>
                         {{ form.sector }}
                         {% if form.sector.errors %}
                         <div class="text-danger small">{{ form.sector.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="{{ form.observacion.id_for_label }}">Observación</label>
+                        {{ form.observacion }}
+                        {% if form.observacion.errors %}
+                        <div class="text-danger small">{{ form.observacion.errors }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -608,6 +615,8 @@
                 el.val(String(value).split("T")[0]);
             } else if (element.tagName === "SELECT") {
                 el.val(value).trigger('change');
+            } else if (element.tagName === "TEXTAREA") {  // ← Manejar textarea específicamente
+                el.val(value || "");
             } else {
                 el.val(value || "");
             }
@@ -710,7 +719,8 @@
             sector: "#{{ form.sector.id_for_label }}",
             numero_telefono1: "#{{ form.numero_telefono1.id_for_label }}",
             numero_telefono2: "#{{ form.numero_telefono2.id_for_label }}",
-            fecha_fallecimiento: "#{{ form.fecha_fallecimiento.id_for_label }}"
+            fecha_fallecimiento: "#{{ form.fecha_fallecimiento.id_for_label }}",
+            observacion: "#{{ form.observacion.id_for_label }}"
         };
 
         const MAPA_CHECKBOX = {
@@ -1116,7 +1126,8 @@
                 'prevision': '{{ form.prevision.id_for_label }}',
                 'sector': '{{ form.sector.id_for_label }}',
                 'numero_telefono1': '{{ form.numero_telefono1.id_for_label }}',
-                'fecha_fallecimiento': '{{ form.fecha_fallecimiento.id_for_label }}'
+                'fecha_fallecimiento': '{{ form.fecha_fallecimiento.id_for_label }}',
+                'observacion': '{{ form.observacion.id_for_label }}'
             };
 
             let erroresTexto = "";
@@ -1154,7 +1165,8 @@
                 'sector': 'Sector',
                 'numero_telefono1': 'Número de Teléfono',
                 'fecha_fallecimiento': 'Fecha de Fallecimiento',
-                'sin_telefono': 'Sin Teléfono'
+                'sin_telefono': 'Sin Teléfono',
+                'observacion': 'Observación'
             };
 
             return nombres[campo] || campo.replace(/_/g, ' ').toUpperCase();

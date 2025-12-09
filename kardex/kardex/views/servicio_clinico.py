@@ -26,11 +26,9 @@ class ServicioClinicoListView(PermissionRequiredMixin, DataTableMixin, TemplateV
 
     permission_view = 'kardex.view_servicioclinico'
     permission_update = 'kardex.change_servicioclinico'
-    permission_delete = 'kardex.delete_servicioclinico'
 
     url_detail = 'kardex:servicio_clinico_detail'
     url_update = 'kardex:servicio_clinico_update'
-    url_delete = 'kardex:servicio_clinico_delete'
 
     def get_base_queryset(self):
         """Filtra por el establecimiento del usuario logueado."""
@@ -146,31 +144,6 @@ class ServicioClinicoUpdateView(PermissionRequiredMixin, UpdateView):
         context['module_name'] = MODULE_NAME
         return context
 
-
-class ServicioClinicoDeleteView(PermissionRequiredMixin, DeleteView):
-    model = ServicioClinico
-    template_name = 'kardex/servicio_clinico/confirm_delete.html'
-    success_url = reverse_lazy('kardex:servicio_clinico_list')
-    permission_required = 'kardex.delete_servicio_clinico'
-    raise_exception = True
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Servicio clínico eliminado correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar el servicio clínico: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Servicio Clínico'
-        context['list_url'] = self.success_url
-        context['module_name'] = MODULE_NAME
-        return context
 
 
 class ServicioClinicoHistoryListView(GenericHistoryListView):

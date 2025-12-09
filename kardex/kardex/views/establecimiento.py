@@ -25,11 +25,9 @@ class EstablecimientoListView(PermissionRequiredMixin, DataTableMixin, TemplateV
 
     permission_view = 'kardex.view_establecimiento'
     permission_update = 'kardex.change_establecimiento'
-    permission_delete = 'kardex.delete_establecimiento'
 
     url_detail = 'kardex:establecimiento_detail'
     url_update = 'kardex:establecimiento_update'
-    url_delete = 'kardex:establecimiento_delete'
 
     def render_row(self, obj):
         return {
@@ -131,31 +129,6 @@ class EstablecimientoUpdateView(PermissionRequiredMixin, UpdateView):
         context['title'] = 'Editar Establecimiento'
         context['list_url'] = self.success_url
         context['action'] = 'edit'
-        context['module_name'] = MODULE_NAME
-        return context
-
-
-class EstablecimientoDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Establecimiento
-    template_name = 'kardex/establecimiento/confirm_delete.html'
-    success_url = reverse_lazy('kardex:establecimiento_list')
-    permission_required = 'kardex:delete_establecimiento'
-
-    def post(self, request, *args, **kwargs):
-        from django.contrib import messages
-        from django.shortcuts import redirect
-        try:
-            obj = self.get_object()
-            obj.delete()
-            messages.success(request, 'Establecimiento eliminado correctamente')
-        except Exception as e:
-            messages.error(request, f'No se pudo eliminar el establecimiento: {e}')
-        return redirect(self.success_url)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminar Establecimiento'
-        context['list_url'] = self.success_url
         context['module_name'] = MODULE_NAME
         return context
 
