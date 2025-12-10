@@ -43,7 +43,7 @@ class FormProfesional(forms.ModelForm):
             'placeholder': '+569 1234 5678',
             'id': 'telefono_personal'
         }),
-        required=True
+        required=False
     )
 
     anexo = forms.CharField(
@@ -53,7 +53,7 @@ class FormProfesional(forms.ModelForm):
             'placeholder': '44 123 4567',
             'id': 'telefono_establecimiento'
         }),
-        required=True
+        required=False
     )
 
     profesion = forms.ModelChoiceField(
@@ -64,7 +64,7 @@ class FormProfesional(forms.ModelForm):
             'class': 'form-control select2',
             'id': 'profesion_profesional'
         }),
-        required=True
+        required=False
     )
 
     establecimiento = forms.ModelChoiceField(

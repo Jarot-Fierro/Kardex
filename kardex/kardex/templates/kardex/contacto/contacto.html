@@ -24,6 +24,9 @@
                                         <li class="small"><span class="fa-li"><i class="fas fa-lg fa-phone"></i></span>
                                             Anexo #: 414346
                                         </li>
+                                        <li class="small"><span class="fa-li"></span>
+                                            Correo: jarot.fierro.c@redsalud.gob.cl
+                                        </li>
                                     </ul>
                                 </div>
                                 <div class="col-5 text-center">
@@ -41,127 +44,127 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="timeline">
-
-                        <!-- PASO 1 - COMPLETADO -->
-                        <div>
-                            <i class="fas fa-check bg-success"></i>
-
-                            <div class="timeline-item">
-                                <span class="time"><i class="far fa-clock"></i> Paso 1</span>
-
-                                <h3 class="timeline-header">
-                                    <b>Registrar paciente</b>
-                                </h3>
-
-                                <div class="timeline-body">
-
-                                    <p>
-                                        Ingrese los datos básicos del paciente:
-                                        RUT, nombre, apellidos, sexo, fecha de nacimiento, etc.
-                                    </p>
-
-                                    <img src="{% static 'tutoriales/paso_1.jpg' %}"
-                                         alt="Registro paciente"
-                                         class="img-fluid img-thumbnail">
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- PASO 2 - ACTIVO -->
-                        <div>
-                            <i class="fas fa-user-edit bg-primary"></i>
-
-                            <div class="timeline-item">
-                                <span class="time"><i class="far fa-clock"></i> Paso 2</span>
-
-                                <h3 class="timeline-header">
-                                    <b>Crear ficha clínica</b>
-                                </h3>
-
-                                <div class="timeline-body">
-
-                                    <p>
-                                        Seleccione establecimiento y servicio.
-                                        Luego presione <b>Generar ficha</b>.
-                                    </p>
-
-                                    <img src="{% static 'tutoriales/paso_2.jpg' %}"
-                                         alt="Crear ficha"
-                                         class="img-fluid img-thumbnail">
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- PASO 3 - PENDIENTE -->
-                        <div>
-                            <i class="fas fa-hourglass-half bg-secondary"></i>
-
-                            <div class="timeline-item">
-                                <span class="time"><i class="far fa-clock"></i> Paso 3</span>
-
-                                <h3 class="timeline-header">
-                                    <b>Asignar profesional</b>
-                                </h3>
-
-                                <div class="timeline-body">
-
-                                    <p>
-                                        Vincule el profesional responsable que
-                                        atenderá al paciente.
-                                    </p>
-
-                                    <img src="{% static 'tutoriales/paso_3.jpg' %}"
-                                         alt="Asignar profesional"
-                                         class="img-fluid img-thumbnail">
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- PASO 4 - PENDIENTE -->
-                        <div>
-                            <i class="fas fa-file-medical-alt bg-secondary"></i>
-
-                            <div class="timeline-item">
-                                <span class="time"><i class="far fa-clock"></i> Paso 4</span>
-
-                                <h3 class="timeline-header">
-                                    <b>Finalizar proceso</b>
-                                </h3>
-
-                                <div class="timeline-body">
-
-                                    <p>
-                                        Revise la información y presione
-                                        <b>Confirmar</b> para finalizar.
-                                    </p>
-
-                                    <img src="{% static 'tutoriales/paso_4.jpg' %}"
-                                         alt="Finalizar proceso"
-                                         class="img-fluid img-thumbnail">
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- FIN -->
-                        <div>
-                            <i class="fas fa-flag-checkered bg-gray"></i>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
+            {#            <div class="row">#}
+            {#                <div class="col-12">#}
+            {#                    <div class="timeline">#}
+            {##}
+            {#                        <!-- PASO 1 - COMPLETADO -->#}
+            {#                        <div>#}
+            {#                            <i class="fas fa-check bg-success"></i>#}
+            {##}
+            {#                            <div class="timeline-item">#}
+            {#                                <span class="time"><i class="far fa-clock"></i> Paso 1</span>#}
+            {##}
+            {#                                <h3 class="timeline-header">#}
+            {#                                    <b>Registrar paciente</b>#}
+            {#                                </h3>#}
+            {##}
+            {#                                <div class="timeline-body">#}
+            {##}
+            {#                                    <p>#}
+            {#                                        Ingrese los datos básicos del paciente:#}
+            {#                                        RUT, nombre, apellidos, sexo, fecha de nacimiento, etc.#}
+            {#                                    </p>#}
+            {##}
+            {#                                    <img src="{% static 'tutoriales/paso_1.jpg' %}"#}
+            {#                                         alt="Registro paciente"#}
+            {#                                         class="img-fluid img-thumbnail">#}
+            {##}
+            {#                                </div>#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {##}
+            {##}
+            {#                        <!-- PASO 2 - ACTIVO -->#}
+            {#                        <div>#}
+            {#                            <i class="fas fa-user-edit bg-primary"></i>#}
+            {##}
+            {#                            <div class="timeline-item">#}
+            {#                                <span class="time"><i class="far fa-clock"></i> Paso 2</span>#}
+            {##}
+            {#                                <h3 class="timeline-header">#}
+            {#                                    <b>Crear ficha clínica</b>#}
+            {#                                </h3>#}
+            {##}
+            {#                                <div class="timeline-body">#}
+            {##}
+            {#                                    <p>#}
+            {#                                        Seleccione establecimiento y servicio.#}
+            {#                                        Luego presione <b>Generar ficha</b>.#}
+            {#                                    </p>#}
+            {##}
+            {#                                    <img src="{% static 'tutoriales/paso_2.jpg' %}"#}
+            {#                                         alt="Crear ficha"#}
+            {#                                         class="img-fluid img-thumbnail">#}
+            {##}
+            {#                                </div>#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {##}
+            {##}
+            {#                        <!-- PASO 3 - PENDIENTE -->#}
+            {#                        <div>#}
+            {#                            <i class="fas fa-hourglass-half bg-secondary"></i>#}
+            {##}
+            {#                            <div class="timeline-item">#}
+            {#                                <span class="time"><i class="far fa-clock"></i> Paso 3</span>#}
+            {##}
+            {#                                <h3 class="timeline-header">#}
+            {#                                    <b>Asignar profesional</b>#}
+            {#                                </h3>#}
+            {##}
+            {#                                <div class="timeline-body">#}
+            {##}
+            {#                                    <p>#}
+            {#                                        Vincule el profesional responsable que#}
+            {#                                        atenderá al paciente.#}
+            {#                                    </p>#}
+            {##}
+            {#                                    <img src="{% static 'tutoriales/paso_3.jpg' %}"#}
+            {#                                         alt="Asignar profesional"#}
+            {#                                         class="img-fluid img-thumbnail">#}
+            {##}
+            {#                                </div>#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {##}
+            {##}
+            {#                        <!-- PASO 4 - PENDIENTE -->#}
+            {#                        <div>#}
+            {#                            <i class="fas fa-file-medical-alt bg-secondary"></i>#}
+            {##}
+            {#                            <div class="timeline-item">#}
+            {#                                <span class="time"><i class="far fa-clock"></i> Paso 4</span>#}
+            {##}
+            {#                                <h3 class="timeline-header">#}
+            {#                                    <b>Finalizar proceso</b>#}
+            {#                                </h3>#}
+            {##}
+            {#                                <div class="timeline-body">#}
+            {##}
+            {#                                    <p>#}
+            {#                                        Revise la información y presione#}
+            {#                                        <b>Confirmar</b> para finalizar.#}
+            {#                                    </p>#}
+            {##}
+            {#                                    <img src="{% static 'tutoriales/paso_4.jpg' %}"#}
+            {#                                         alt="Finalizar proceso"#}
+            {#                                         class="img-fluid img-thumbnail">#}
+            {##}
+            {#                                </div>#}
+            {#                            </div>#}
+            {#                        </div>#}
+            {##}
+            {##}
+            {#                        <!-- FIN -->#}
+            {#                        <div>#}
+            {#                            <i class="fas fa-flag-checkered bg-gray"></i>#}
+            {#                        </div>#}
+            {##}
+            {#                    </div>#}
+            {#                </div>#}
+            {##}
+            {#            </div>#}
         </div>
     </div>
 {% endblock %}

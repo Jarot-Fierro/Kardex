@@ -21,7 +21,7 @@ class RecepcionFichaView(LoginRequiredMixin, PermissionRequiredMixin, DataTableM
     template_name = 'kardex/movimiento_ficha/recepcion_ficha.html'
     model = MovimientoFicha
 
-    permission_required = 'kardex.view_movimientoficha'
+    permission_required = 'kardex.add_movimientoficha'
     raise_exception = True
 
     datatable_columns = ['ID', 'RUT', 'Ficha', 'Nombre completo', 'Servicio Clínico', 'Profesional', 'Fecha de salida',
@@ -327,7 +327,7 @@ MODULE_NAME = 'Movimientos de Ficha'
 class TraspasoFichaView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'kardex/movimiento_ficha/traspaso_ficha.html'
     model = MovimientoFicha
-    permission_required = 'kardex.view_movimientoficha'
+    permission_required = 'kardex.add_movimientoficha'
     raise_exception = True
 
     def post(self, request, *args, **kwargs):
@@ -477,7 +477,7 @@ class MovimientoFichaCreateView(PermissionRequiredMixin, CreateView):
     form_class = MovimientoFichaForm  # ← ESTE era el error
     success_url = reverse_lazy('kardex:movimiento_ficha_list')
 
-    permission_required = 'kardex.add_movimiento_ficha'
+    permission_required = 'kardex.add_movimientoficha'
     raise_exception = True
 
     def get_context_data(self, **kwargs):
@@ -490,6 +490,11 @@ class MovimientoFichaCreateView(PermissionRequiredMixin, CreateView):
 
 
 class MovimientoFichaUpdateView(UpdateView, FormView):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     template_name = 'kardex/movimiento_ficha/form_update.html'
     model = MovimientoFicha
     form_class = MovimientoFichaForm
@@ -561,11 +566,11 @@ class MovimientoFichaTransitoListView(PermissionRequiredMixin, DataTableMixin, T
         'observacion_envio__icontains',
     ]
 
-    permission_required = 'kardex.view_movimiento_ficha'
+    permission_required = 'kardex.view_movimientoficha'
     raise_exception = True
 
-    permission_view = 'kardex.view_movimiento_ficha'
-    permission_update = 'kardex.change_movimiento_ficha'
+    permission_view = 'kardex.view_movimientoficha'
+    permission_update = 'kardex.change_movimientoficha'
 
     url_detail = 'kardex:movimiento_ficha_detail'
     url_update = 'kardex:movimiento_ficha_update'

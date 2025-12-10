@@ -16,7 +16,8 @@ from kardex.views.profesion import *
 from kardex.views.profesionales import *
 from kardex.views.sectores import *
 from kardex.views.servicio_clinico import *
-from kardex.views.soporte import TicketCreateView
+from kardex.views.soporte import TicketCreateView, SoporteListView
+from kardex.views.tutoriales import TutorialesView
 
 app_name = 'kardex'
 
@@ -138,6 +139,9 @@ urlpatterns = [
     #     Soporte
     path('contacto/', ContactoView.as_view(), name='contacto'),
     path('tickets/nuevo/', TicketCreateView.as_view(), name='ticket_create'),
+    path('ticket/listado/', SoporteListView.as_view(), name='ticket_listado'),
+
+    path('tutoriales/', TutorialesView.as_view(), name='tutoriales'),
 
 ]
 

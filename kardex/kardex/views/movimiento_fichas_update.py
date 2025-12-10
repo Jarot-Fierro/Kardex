@@ -2,7 +2,7 @@
 
 import json
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -17,7 +17,7 @@ from kardex.mixin import DataTableMixin
 from kardex.models import MovimientoFicha, Profesional
 
 
-class SalidaFicha2View(LoginRequiredMixin, CreateView):
+class SalidaFicha2View(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     """
     Vista para registro masivo de salidas de fichas con AJAX.
     Optimizada para escaneo continuo con lector de códigos de barras.
@@ -26,6 +26,9 @@ class SalidaFicha2View(LoginRequiredMixin, CreateView):
     form_class = FormSalidaFicha
     template_name = 'kardex/movimiento_ficha/salida_ficha_update.html'
     success_url = reverse_lazy('lista_movimientos')
+
+    permission_required = 'kardex.add_movimientoficha'
+    raise_exception = True
 
     def get_form_kwargs(self):
         """Pasar el usuario al formulario"""

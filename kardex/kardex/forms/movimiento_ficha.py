@@ -482,7 +482,8 @@ class FiltroSalidaFichaForm(forms.Form):
 
 
 from django import forms
-from django.forms import DateTimeInput
+from django.forms import DateInput
+from django.utils import timezone
 from kardex.models import (
     MovimientoFicha,
     ServicioClinico,
@@ -494,23 +495,86 @@ from kardex.choices import ESTADO_RESPUESTA
 
 
 class MovimientoFichaForm(forms.ModelForm):
-    # ---------------- FECHAS ----------------
-    fecha_envio = forms.DateTimeField(
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        # Limitar opciones por establecimiento del usuario
+        est = getattr(self.user, 'establecimiento', None) if self.user else None
+        if est is not None:
+            for fname in ['servicio_clinico_envio', 'servicio_clinico_recepcion', 'servicio_clinico_traspaso']:
+                if fname in self.fields:
+                    self.fields[fname].queryset = ServicioClinico.objects.filter(establecimiento=est)
+            for fname in ['profesional_envio', 'profesional_recepcion', 'profesional_traspaso']:
+                if fname in self.fields:
+                    self.fields[fname].queryset = Profesional.objects.filter(establecimiento=est)
+
+        # Ficha: por defecto vacío; si estamos editando, asegurar que la ficha actual esté disponible
+        instance = kwargs.get('instance') or getattr(self, 'instance', None)
+        if instance and getattr(instance, 'ficha_id', None):
+            # Restringir a la ficha actual para que aparezca como seleccionada
+            self.fields['ficha'].queryset = Ficha.objects.filter(pk=instance.ficha_id)
+            self.fields['ficha'].initial = instance.ficha_id
+        else:
+            # Vacío, se cargará vía API por JS
+            self.fields['ficha'].queryset = Ficha.objects.none()
+
+        # Marcar el widget para JS (Select2 con AJAX hacia la API existente)
+        if 'ficha' in self.fields:
+            attrs = self.fields['ficha'].widget.attrs
+            attrs['data-api-url'] = '/kardex/api/api_pacientes/'
+            attrs['data-placeholder'] = 'Buscar por número de ficha'
+
+        # Inicializar los campos de fecha si ya existe una instancia
+        if instance:
+            if instance.fecha_envio:
+                self.fields['fecha_envio_date'].initial = instance.fecha_envio.date()
+            if instance.fecha_recepcion:
+                self.fields['fecha_recepcion_date'].initial = instance.fecha_recepcion.date()
+            if instance.fecha_traspaso:
+                self.fields['fecha_traspaso_date'].initial = instance.fecha_traspaso.date()
+
+    # ---------------- CAMPOS DE FECHA (SOLO FECHA) ----------------
+    fecha_envio_date = forms.DateField(
         label="Fecha de envío",
-        widget=DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        required=False
+        widget=DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'id': 'id_fecha_envio_date'
+            },
+            format='%Y-%m-%d'
+        ),
+        required=False,
+        help_text="Seleccione solo la fecha, la hora se asignará automáticamente"
     )
 
-    fecha_recepcion = forms.DateTimeField(
+    fecha_recepcion_date = forms.DateField(
         label="Fecha de recepción",
-        widget=DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        required=False
+        widget=DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'id': 'id_fecha_recepcion_date'
+            },
+            format='%Y-%m-%d'
+        ),
+        required=False,
+        help_text="Seleccione solo la fecha, la hora se asignará automáticamente"
     )
 
-    fecha_traspaso = forms.DateTimeField(
+    fecha_traspaso_date = forms.DateField(
         label="Fecha de traspaso",
-        widget=DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        required=False
+        widget=DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'id': 'id_fecha_traspaso_date'
+            },
+            format='%Y-%m-%d'
+        ),
+        required=False,
+        help_text="Seleccione solo la fecha, la hora se asignará automáticamente"
     )
 
     # ---------------- OBSERVACIONES ----------------
@@ -613,6 +677,63 @@ class MovimientoFichaForm(forms.ModelForm):
         required=False
     )
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # Combinar fecha seleccionada con hora actual
+        now = timezone.now()
+
+        # Para fecha de envío
+        fecha_envio_date = cleaned_data.get('fecha_envio_date')
+        if fecha_envio_date:
+            # Combinar fecha seleccionada con hora actual
+            cleaned_data['fecha_envio'] = timezone.make_aware(
+                timezone.datetime.combine(fecha_envio_date, now.time())
+            )
+        elif self.instance and self.instance.fecha_envio:
+            # Si ya existe una fecha en la instancia, mantenerla
+            cleaned_data['fecha_envio'] = self.instance.fecha_envio
+
+        # Para fecha de recepción
+        fecha_recepcion_date = cleaned_data.get('fecha_recepcion_date')
+        if fecha_recepcion_date:
+            cleaned_data['fecha_recepcion'] = timezone.make_aware(
+                timezone.datetime.combine(fecha_recepcion_date, now.time())
+            )
+        elif self.instance and self.instance.fecha_recepcion:
+            cleaned_data['fecha_recepcion'] = self.instance.fecha_recepcion
+
+        # Para fecha de traspaso
+        fecha_traspaso_date = cleaned_data.get('fecha_traspaso_date')
+        if fecha_traspaso_date:
+            cleaned_data['fecha_traspaso'] = timezone.make_aware(
+                timezone.datetime.combine(fecha_traspaso_date, now.time())
+            )
+        elif self.instance and self.instance.fecha_traspaso:
+            cleaned_data['fecha_traspaso'] = self.instance.fecha_traspaso
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Si estamos creando un nuevo movimiento y no tiene fecha de envío
+        if not instance.pk and not instance.fecha_envio:
+            instance.fecha_envio = timezone.now()
+
+        # Si estamos editando y se marcó como recibido sin fecha de recepción
+        if self.cleaned_data.get('estado_recepcion') == 'RECIBIDO' and not instance.fecha_recepcion:
+            instance.fecha_recepcion = timezone.now()
+
+        # Si estamos editando y se marcó como traspasado sin fecha de traspaso
+        if self.cleaned_data.get('estado_traspaso') == 'TRASPASADO' and not instance.fecha_traspaso:
+            instance.fecha_traspaso = timezone.now()
+
+        if commit:
+            instance.save()
+
+        return instance
+
     # ---------------- META ----------------
     class Meta:
         model = MovimientoFicha
@@ -620,12 +741,8 @@ class MovimientoFichaForm(forms.ModelForm):
             'fecha_envio', 'fecha_recepcion', 'fecha_traspaso',
             'observacion_envio', 'observacion_recepcion', 'observacion_traspaso',
             'estado_envio', 'estado_recepcion', 'estado_traspaso',
-
             'servicio_clinico_envio', 'servicio_clinico_recepcion', 'servicio_clinico_traspaso',
-
             'profesional_envio', 'profesional_recepcion', 'profesional_traspaso',
-
             'establecimiento',
-
             'ficha'
         ]

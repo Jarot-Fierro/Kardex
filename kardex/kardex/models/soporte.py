@@ -57,8 +57,6 @@ class Soporte(StandardModel):
         related_name="soportes_creados"
     )
 
-    adjunto = models.FileField(upload_to='soportes/', blank=True, null=True)
-
     establecimiento = models.ForeignKey(
         'kardex.Establecimiento',
         on_delete=models.PROTECT,

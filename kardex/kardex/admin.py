@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from simple_history.admin import SimpleHistoryAdmin
 
 from .models import *
@@ -22,14 +21,12 @@ class PaisAdmin(SimpleHistoryAdmin):
 
 @admin.register(Soporte)
 class TicketAdmin(SimpleHistoryAdmin):
-    list_display = ("id", "titulo", "estado", "creado_por", "ver_adjunto")
+    list_display = ("id", "titulo", "estado", "creado_por",)
+    search_fields = ("titulo", "descripcion",)
+    ordering = ("-updated_at",)
 
-    def ver_adjunto(self, obj):
-        if obj.adjunto:
-            return format_html('<a href="{}" target="_blank">{}</a>', obj.adjunto.url, obj.adjunto.label)
-        return "-"
-
-    ver_adjunto.short_description = "Adjunto"
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # === COMUNA ===

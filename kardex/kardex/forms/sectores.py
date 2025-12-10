@@ -20,7 +20,7 @@ class FormSector(forms.ModelForm):
         required=True
     )
     color = forms.ChoiceField(
-        label='Código del Sector',
+        label='Color del Sector',
         choices=SECTOR_COLORS,
         widget=forms.Select(
             attrs={
