@@ -5,7 +5,7 @@ from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DeleteView, CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView
 from django.views.generic import TemplateView
 
 from kardex.forms.fichas import FormFicha, FormFichaTarjeta
@@ -23,12 +23,12 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
     datatable_order_fields = ['id', 'numero_ficha_sistema', 'numero_ficha_tarjeta', 'establecimiento__nombre',
                               'paciente__rut', 'paciente__codigo', None, 'created_at']
     datatable_search_fields = [
-        'numero_ficha_sistema__exact',
-        'numero_ficha_tarjeta__exact',
-        'profesional__nombres__icontains',
+        'numero_ficha_sistema__icontains',
+        'numero_ficha_tarjeta__icontains',
         'usuario__username__icontains',
         'paciente__rut__icontains',
         'paciente__codigo__icontains',
+        'paciente__nombre__icontains',
         'establecimiento__nombre__icontains'
     ]
 
@@ -71,7 +71,7 @@ class FichaListView(PermissionRequiredMixin, DataTableMixin, TemplateView):
             'create_url': reverse_lazy('kardex:ficha_create'),
             'export_report_url_name': self.export_report_url_name,
             'datatable_enabled': True,
-            'datatable_order': [[0, 'asc']],
+            'datatable_order': [[0, 'desc']],
             'datatable_page_length': 100,
             'columns': self.datatable_columns,
         })
@@ -377,6 +377,7 @@ class FichaTarjetaView(PermissionRequiredMixin, UpdateView):
 
         messages.error(request, 'Hay errores en el formulario de ficha')
         return self.form_invalid(form)
+
 
 class PacientePasivadosListView(FichaListView):
     export_report_url_name = 'reports:export_ficha_pasivada'
