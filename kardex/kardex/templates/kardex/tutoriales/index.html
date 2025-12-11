@@ -3,7 +3,175 @@
 
 {% block title %}Tutoriales - Sistema de Gestión de Fichas{% endblock %}
 
+{% block extra_css %}
+    <style>
+        /* Estilos personalizados para la página de tutoriales */
+        .bg-purple {
+            background-color: #6f42c1 !important;
+        }
+
+        .text-purple {
+            color: #6f42c1 !important;
+        }
+
+        .btn-outline-purple {
+            color: #6f42c1;
+            border-color: #6f42c1;
+        }
+
+        .btn-outline-purple:hover {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .bg-teal {
+            background-color: #20c997 !important;
+        }
+
+        .text-teal {
+            color: #20c997 !important;
+        }
+
+        .btn-outline-teal {
+            color: #20c997;
+            border-color: #20c997;
+        }
+
+        .btn-outline-teal:hover {
+            background-color: #20c997;
+            color: white;
+        }
+
+        .bg-coral {
+            background-color: #FF7F50 !important;
+        }
+
+        .text-coral {
+            color: #FF7F50 !important;
+        }
+
+        .btn-outline-coral {
+            color: #FF7F50;
+            border-color: #FF7F50;
+        }
+
+        .btn-outline-coral:hover {
+            background-color: #FF7F50;
+            color: white;
+        }
+
+        .card {
+            transition: all 0.3s ease;
+            border: 1px solid #dee2e6;
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 0.5rem 0;
+        }
+
+        .ratio-16x9 {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header h5 {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+        }
+
+        /* Animación para los iconos */
+        .fa-3x {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .fa-3x {
+            transform: scale(1.1);
+        }
+
+        /* Para Bootstrap 4 embed-responsive */
+        .embed-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        /* Efecto hover mejorado */
+        .card:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* Estilo para el popup de advertencia */
+        .warning-badge {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        /* Estilo para los botones de tutorial */
+        .tutorial-btn {
+            transition: all 0.3s ease;
+        }
+
+        .tutorial-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilo para el modal personalizado */
+        .custom-modal-header {
+            background-color: #ffc107;
+            color: #856404;
+            border-bottom: 1px solid #ffeaa7;
+        }
+
+        .custom-modal-body {
+            padding: 1.5rem;
+        }
+
+        .custom-modal-footer {
+            border-top: 1px solid #dee2e6;
+            padding: 1rem;
+        }
+
+        /* Badge de advertencia en los videos */
+        .video-warning-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
+    <!-- Badge de advertencia flotante -->
+    <div class="warning-badge">
+        <span class="badge badge-warning p-2">
+            <i class="fas fa-wifi me-1"></i> Videos requieren WiFi
+        </span>
+    </div>
+
     <div class="container-fluid">
         <!-- Encabezado de la página -->
         <div class="row mb-4">
@@ -29,6 +197,25 @@
                         </h3>
                     </div>
                     <div class="card-body">
+                        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Importante: Requisitos para ver videos
+                            </h5>
+                            <p class="mb-1">
+                                <strong>Los videos tutoriales solo son accesibles mediante conexión WiFi.</strong>
+                            </p>
+                            <p class="mb-0">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    La red MINSAL bloquea el acceso a YouTube por restricciones de seguridad.
+                                    Para visualizar los tutoriales, por favor conéctate a una red WiFi personal o móvil.
+                                </small>
+                            </p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
                         <p class="text-muted mb-4">
                             Aprende paso a paso con nuestros tutoriales en video
                         </p>
@@ -43,24 +230,29 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="ratio ratio-16x9 mb-3">
-                                            <!-- Aquí iría el video embed real -->
-                                            <div class="bg-dark d-flex align-items-center justify-content-center text-white"
-                                                 style="height: 100%;">
-                                                <div class="text-center">
-                                                    <i class="fas fa-play-circle fa-3x mb-3"></i>
-                                                    <p>Video Tutorial: Gestión de Pacientes y Fichas</p>
-                                                    <small class="text-muted">Duración: 8:45 min</small>
-                                                </div>
-                                            </div>
-                                            <!--
-                                            <iframe src="https://www.youtube.com/embed/TU_ID_VIDEO_1"
+                                        <h5 class="card-title">Tutorial Pacientes y Fichas</h5>
+
+                                        <!-- Contenedor del video -->
+                                        <div class="embed-responsive embed-responsive-16by9 position-relative">
+                                            <span class="badge badge-warning video-warning-badge">
+                                                <i class="fas fa-wifi"></i> WiFi
+                                            </span>
+                                            <iframe
+                                                    class="embed-responsive-item"
+                                                    src="https://www.youtube.com/embed/gcS5wekOUnw"
                                                     title="Tutorial Pacientes y Fichas"
                                                     frameborder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                                     allowfullscreen>
                                             </iframe>
-                                            -->
                                         </div>
+
+                                        <p class="card-text mt-3">
+                                            En este video aprenderás a gestionar pacientes y fichas médicas en el
+                                            sistema.
+                                            Desde la creación de nuevos registros hasta la administración completa de la
+                                            información clínica.
+                                        </p>
 
                                         <h6 class="card-subtitle mb-2 text-muted">En este tutorial aprenderás:</h6>
                                         <ul class="list-group list-group-flush">
@@ -89,9 +281,16 @@
                                         <div class="mt-3">
                                             <span class="badge bg-info me-2">Nivel: Básico</span>
                                             <span class="badge bg-warning">Tiempo: 8-10 min</span>
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-wifi me-1"></i> Requiere WiFi
+                                            </span>
                                         </div>
                                     </div>
-
+                                    <div class="card-footer">
+                                        <button class="btn btn-primary w-100 mark-complete tutorial-btn">
+                                            <i class="fas fa-check-circle me-2"></i>Marcar como Completado
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -104,24 +303,24 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="ratio ratio-16x9 mb-3">
-                                            <!-- Aquí iría el video embed real -->
-                                            <div class="bg-dark d-flex align-items-center justify-content-center text-white"
-                                                 style="height: 100%;">
-                                                <div class="text-center">
-                                                    <i class="fas fa-play-circle fa-3x mb-3"></i>
-                                                    <p>Video Tutorial: Movimientos entre Servicios</p>
-                                                    <small class="text-muted">Duración: 10:20 min</small>
-                                                </div>
+                                        <h5 class="card-title">Tutorial Movimientos entre Servicios</h5>
+
+                                        <!-- Placeholder para futuro video -->
+                                        <div class="embed-responsive embed-responsive-16by9 bg-dark d-flex align-items-center justify-content-center position-relative">
+                                            <span class="badge badge-warning video-warning-badge">
+                                                <i class="fas fa-wifi"></i> WiFi
+                                            </span>
+                                            <div class="text-center text-white">
+                                                <i class="fas fa-video fa-3x mb-3"></i>
+                                                <p>Tutorial en producción</p>
+                                                <small class="text-light">Disponible próximamente</small>
                                             </div>
-                                            <!--
-                                            <iframe src="https://www.youtube.com/embed/TU_ID_VIDEO_2"
-                                                    title="Tutorial Movimientos de Fichas"
-                                                    frameborder="0"
-                                                    allowfullscreen>
-                                            </iframe>
-                                            -->
                                         </div>
+
+                                        <p class="card-text mt-3">
+                                            Aprende a mover fichas entre diferentes servicios clínicos y a gestionar
+                                            los traspasos de pacientes dentro del sistema.
+                                        </p>
 
                                         <h6 class="card-subtitle mb-2 text-muted">En este tutorial aprenderás:</h6>
                                         <ul class="list-group list-group-flush">
@@ -150,7 +349,13 @@
                                         <div class="mt-3">
                                             <span class="badge bg-info me-2">Nivel: Intermedio</span>
                                             <span class="badge bg-warning">Tiempo: 10-12 min</span>
+                                            <span class="badge bg-secondary">Próximamente</span>
                                         </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-outline-success w-100 tutorial-btn" disabled>
+                                            <i class="fas fa-clock me-2"></i>Disponible Próximamente
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -170,6 +375,16 @@
                         </h3>
                     </div>
                     <div class="card-body">
+                        <div class="alert alert-info mb-4">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>Tutoriales disponibles en cualquier red
+                            </h6>
+                            <p class="mb-0">
+                                Los tutoriales en formato PDF y con imágenes están disponibles para descarga
+                                tanto en red MINSAL como en conexión WiFi.
+                            </p>
+                        </div>
+
                         <p class="text-muted mb-4">
                             Guías paso a paso con capturas de pantalla para operaciones CRUD
                         </p>
@@ -213,7 +428,8 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-primary btn-sm w-100">
+                                        <a href="{% static 'pdfs/Servicios-Clinicos.pdf' %}" download
+                                           class="btn btn-outline-primary btn-sm w-100">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -258,7 +474,7 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-success btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-success btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -303,7 +519,7 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-info btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-info btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -348,7 +564,7 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-warning btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-warning btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -393,7 +609,7 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-danger btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-danger btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -438,7 +654,7 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-purple btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-purple btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -483,7 +699,7 @@
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-teal btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-teal btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -509,14 +725,26 @@
                                             Aprende a utilizar el sistema de reporte y asistencia técnica.
                                         </p>
                                         <ul class="list-unstyled">
-                                            <li>
+                                            <li class="mb-1">
                                                 <i class="fas fa-file-alt text-secondary me-2"></i>
-                                                Descargar Reportes
+                                                Generar reportes automáticos
+                                            </li>
+                                            <li class="mb-1">
+                                                <i class="fas fa-chart-bar text-info me-2"></i>
+                                                Visualizar estadísticas y métricas
+                                            </li>
+                                            <li class="mb-1">
+                                                <i class="fas fa-download text-primary me-2"></i>
+                                                Exportar reportes en diferentes formatos
+                                            </li>
+                                            <li>
+                                                <i class="fas fa-question-circle text-warning me-2"></i>
+                                                Utilizar la asistencia técnica
                                             </li>
                                         </ul>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="#" class="btn btn-outline-teal btn-sm w-100">
+                                        <a href="#" class="btn btn-outline-coral btn-sm w-100 tutorial-btn">
                                             <i class="fas fa-download me-1"></i> Descargar PDF
                                         </a>
                                     </div>
@@ -529,32 +757,140 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de advertencia de WiFi -->
+    <div class="modal fade" id="wifiWarningModal" tabindex="-1" role="dialog" aria-labelledby="wifiWarningModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header custom-modal-header">
+                    <h5 class="modal-title" id="wifiWarningModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Importante: Acceso a Videos Tutoriales
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body custom-modal-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-wifi fa-4x text-warning mb-3"></i>
+                        <h4 class="text-warning">Acceso Restringido a Videos</h4>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-ban me-2"></i>Restricción en Red MINSAL
+                        </h6>
+                        <p class="mb-2">
+                            La red institucional MINSAL tiene bloqueado el acceso a YouTube por políticas de seguridad.
+                        </p>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-check-circle me-2"></i>Solución Disponible
+                        </h6>
+                        <p class="mb-2">
+                            Para visualizar los videos tutoriales, debes conectarte a:
+                        </p>
+                        <ul class="mb-0">
+                            <li><strong>Red WiFi personal</strong></li>
+                            <li><strong>Datos móviles</strong> (3G/4G/5G)</li>
+                            <li><strong>Otra red WiFi externa</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Alternativas disponibles en red MINSAL:</h6>
+                        <ul>
+                            <li>Tutoriales en PDF para descargar</li>
+                            <li>Guías con imágenes paso a paso</li>
+                            <li>Instrucciones detalladas en texto</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer custom-modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Entendido
+                    </button>
+                    <button type="button" class="btn btn-warning" id="dontShowAgainBtn">
+                        <i class="fas fa-eye-slash me-2"></i>No mostrar nuevamente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}
+    <!-- SweetAlert2 para mensajes -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // Script para mejorar la interacción con los tutoriales
         $(document).ready(function () {
+            // Mostrar modal de advertencia al cargar la página
+            function showWiFiWarning() {
+                // Verificar si el usuario ya eligió no mostrar el mensaje
+                var dontShowAgain = localStorage.getItem('dontShowWiFiWarning');
+
+                if (!dontShowAgain) {
+                    // Esperar un momento para que la página cargue completamente
+                    setTimeout(function () {
+                        $('#wifiWarningModal').modal('show');
+                    }, 500);
+                }
+            }
+
+            // Mostrar el modal
+            showWiFiWarning();
+
+            // Botón "No mostrar nuevamente"
+            $('#dontShowAgainBtn').click(function () {
+                localStorage.setItem('dontShowWiFiWarning', 'true');
+                $('#wifiWarningModal').modal('hide');
+
+                Swal.fire({
+                    title: 'Preferencia guardada',
+                    text: 'No se mostrará esta advertencia en futuras visitas.',
+                    icon: 'info',
+                    confirmButtonText: 'Entendido'
+                });
+            });
+
+            // Mostrar alerta al intentar ver video sin WiFi
+            $('.embed-responsive iframe').on('click', function () {
+                // Esta es una simulación - en un caso real podrías detectar la red
+                Swal.fire({
+                    title: 'Verificando conexión...',
+                    text: 'Los videos requieren conexión WiFi para reproducirse',
+                    icon: 'info',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            });
+
             // Efecto hover en las tarjetas de tutoriales
             $('.card').hover(
                 function () {
-                    $(this).addClass('shadow-lg').css('transform', 'translateY(-5px)');
+                    $(this).addClass('shadow-lg');
                     $(this).css('transition', 'all 0.3s ease');
                 },
                 function () {
-                    $(this).removeClass('shadow-lg').css('transform', 'translateY(0)');
+                    $(this).removeClass('shadow-lg');
                 }
             );
 
             // Contador de visitas a tutoriales (ejemplo)
-            $('.btn-outline-primary, .btn-outline-success, .btn-outline-info, .btn-outline-warning, .btn-outline-danger, .btn-outline-purple, .btn-outline-teal').click(function (e) {
+            $('.tutorial-btn').click(function (e) {
                 e.preventDefault();
-                var tutorialTitle = $(this).closest('.card').find('.card-title').text().trim();
+                var card = $(this).closest('.card');
+                var tutorialTitle = card.find('.card-title').text().trim();
 
                 // Mostrar mensaje de carga
                 Swal.fire({
                     title: 'Cargando tutorial...',
-                    text: 'Preparando ' + tutorialTitle,
+                    text: 'Preparando: ' + tutorialTitle,
                     icon: 'info',
                     showConfirmButton: false,
                     timer: 1500
@@ -564,7 +900,7 @@
                 setTimeout(function () {
                     Swal.fire({
                         title: 'Tutorial listo',
-                        text: 'El tutorial se abrirá en una nueva ventana',
+                        text: 'El tutorial se descargará en unos momentos',
                         icon: 'success',
                         confirmButtonText: 'Entendido'
                     });
@@ -574,6 +910,7 @@
             // Botón para marcar tutorial como completado
             $('.mark-complete').click(function () {
                 var tutorial = $(this).closest('.card').find('.card-title').text();
+                var button = $(this);
 
                 Swal.fire({
                     title: '¿Marcar como completado?',
@@ -581,11 +918,20 @@
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: 'Sí, completado',
-                    cancelButtonText: 'No, aún no'
+                    cancelButtonText: 'No, aún no',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $(this).html('<i class="fas fa-check me-1"></i> Completado');
-                        $(this).removeClass('btn-outline-secondary').addClass('btn-success');
+                        button.html('<i class="fas fa-check me-1"></i> Completado');
+                        button.removeClass('btn-primary').addClass('btn-success');
+                        button.prop('disabled', true);
+
+                        // Añadir badge de completado
+                        button.closest('.card').find('.badge.bg-success').remove();
+                        button.closest('.card').find('.mt-3').append(
+                            '<span class="badge bg-success ms-2">Completado</span>'
+                        );
 
                         Swal.fire(
                             '¡Excelente!',
@@ -595,76 +941,70 @@
                     }
                 });
             });
+
+            // Control de reproducción de video
+            $('iframe').on('load', function () {
+                console.log('Video de YouTube cargado correctamente');
+            }).on('error', function () {
+                console.error('Error al cargar el video de YouTube');
+
+                // Mostrar advertencia específica de WiFi
+                Swal.fire({
+                    title: 'Error de conexión',
+                    html: `
+                    <div class="text-center">
+                        <i class="fas fa-wifi-slash fa-3x text-danger mb-3"></i>
+                        <p>No se pudo cargar el video de YouTube.</p>
+                        <div class="alert alert-warning text-left mt-3">
+                            <h6><i class="fas fa-exclamation-triangle"></i> Posibles causas:</h6>
+                            <ul class="mb-0">
+                                <li>Estás conectado a la red MINSAL (bloquea YouTube)</li>
+                                <li>No tienes conexión a internet</li>
+                                <li>El firewall bloquea el acceso</li>
+                            </ul>
+                        </div>
+                        <p class="mt-3">
+                            <strong>Solución:</strong> Conéctate a una red WiFi personal o usa datos móviles.
+                        </p>
+                    </div>
+                `,
+                    icon: 'error',
+                    confirmButtonText: 'Entendido',
+                    width: 600
+                });
+            });
+
+            // Botón para resetear preferencias (para testing)
+            $('#resetPreferences').click(function () {
+                localStorage.removeItem('dontShowWiFiWarning');
+                Swal.fire({
+                    title: 'Preferencias reseteadas',
+                    text: 'La advertencia de WiFi se mostrará nuevamente.',
+                    icon: 'success'
+                }).then(() => {
+                    location.reload();
+                });
+            });
         });
+
+        // Función para verificar si es posible conexión a YouTube (simulación)
+        function checkYouTubeAccess() {
+            return new Promise((resolve) => {
+                // Esta es una simulación simple
+                // En un caso real, podrías hacer un ping a YouTube o verificar la red
+                setTimeout(() => {
+                    // Simulamos que no hay acceso desde MINSAL
+                    resolve(false);
+                }, 100);
+            });
+        }
     </script>
 
-    <style>
-        /* Estilos personalizados para la página de tutoriales */
-        .bg-purple {
-            background-color: #6f42c1 !important;
-        }
-
-        .text-purple {
-            color: #6f42c1 !important;
-        }
-
-        .btn-outline-purple {
-            color: #6f42c1;
-            border-color: #6f42c1;
-        }
-
-        .btn-outline-purple:hover {
-            background-color: #6f42c1;
-            color: white;
-        }
-
-        .bg-teal {
-            background-color: #20c997 !important;
-        }
-
-        .text-teal {
-            color: #20c997 !important;
-        }
-
-        .btn-outline-teal {
-            color: #20c997;
-            border-color: #20c997;
-        }
-
-        .btn-outline-teal:hover {
-            background-color: #20c997;
-            color: white;
-        }
-
-        .card {
-            transition: all 0.3s ease;
-        }
-
-        .list-group-item {
-            border: none;
-            padding: 0.5rem 0;
-        }
-
-        .ratio-16x9 {
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .card-header h5 {
-            font-size: 1.1rem;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-        }
-
-        /* Animación para los iconos */
-        .fa-3x {
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover .fa-3x {
-            transform: scale(1.1);
-        }
-    </style>
+    <!-- Botón flotante para resetear preferencias (solo para desarrollo) -->
+    {% if debug %}
+        <button id="resetPreferences" class="btn btn-sm btn-secondary"
+                style="position: fixed; bottom: 10px; left: 10px; z-index: 9999;">
+            <i class="fas fa-redo"></i> Reset WiFi Warning
+        </button>
+    {% endif %}
 {% endblock %}
